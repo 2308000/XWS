@@ -1,17 +1,30 @@
 package model
 
 import (
+	"encoding/json"
+	"io"
 	"time"
 
-	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type User struct {
-	ID        uuid.UUID `json:"id,omitempty"`
-	Name      string    `json:"name,omitempty"`
-	Surname   string    `json:"surname,omitempty"`
-	Email     string    `json:"email,omitempty"`
-	Password  string    `json:"password,omitempty"`
-	BirthDate time.Time `json:"birthDate,omitempty"`
-	Role      string    `json:"role,omitempty"`
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	Name      string             `bson:"name,omitempty" json:"name"`
+	Surname   string             `bson:"surname,omitempty" json:"surname"`
+	Email     string             `bson:"email,omitempty" json:"email"`
+	Password  string             `bson:"password,omitempty" json:"password"`
+	Salt      string             `bson:"salt,omitempty" json:"salt"`
+	BirthDate time.Time          `bson:"birthDate,omitempty" json:"birthDate"`
+	Role      string             `bson:"role,omitempty" json:"role"`
+}
+
+func (u *User) ToJSON(w io.Writer) error {
+	e := json.NewEncoder(w)
+	return e.Encode(u)
+}
+
+func (u *User) FromJSON(r io.Reader) error {
+	d := json.NewDecoder(r)
+	return d.Decode(u)
 }
