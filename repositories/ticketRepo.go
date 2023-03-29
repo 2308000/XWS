@@ -70,14 +70,14 @@ func (tr *TicketRepo) Ping() {
 	fmt.Println(databases)
 }
 
-func (tr *TicketRepo) GetAll() ([]*model.Ticket, error) {
+func (tr *TicketRepo) GetAll() (model.Tickets, error) {
 	// Initialise context (after 5 seconds timeout, abort operation)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	ticketsCollection := tr.getCollection()
 
-	var tickets []*model.Ticket
+	var tickets model.Tickets
 	ticketsCursor, err := ticketsCollection.Find(ctx, bson.M{})
 	if err != nil {
 		tr.logger.Println(err)
@@ -106,13 +106,13 @@ func (tr *TicketRepo) GetById(id string) (*model.Ticket, error) {
 	return &ticket, nil
 }
 
-func (tr *TicketRepo) GetByUser(user *model.User) ([]*model.Ticket, error) {
+func (tr *TicketRepo) GetByUser(user *model.User) (model.Tickets, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	ticketsCollection := tr.getCollection()
 
-	var tickets []*model.Ticket
+	var tickets model.Tickets
 	ticketsCursor, err := ticketsCollection.Find(ctx, bson.M{"user": user})
 	if err != nil {
 		tr.logger.Println(err)

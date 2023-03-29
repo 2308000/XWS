@@ -70,14 +70,14 @@ func (lr *LocationRepo) Ping() {
 	fmt.Println(databases)
 }
 
-func (lr *LocationRepo) GetAll() ([]*model.Location, error) {
+func (lr *LocationRepo) GetAll() (model.Locations, error) {
 	// Initialise context (after 5 seconds timeout, abort operation)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	patientsCollection := lr.getCollection()
 
-	var locations []*model.Location
+	var locations model.Locations
 	patientsCursor, err := patientsCollection.Find(ctx, bson.M{})
 	if err != nil {
 		lr.logger.Println(err)
@@ -90,14 +90,17 @@ func (lr *LocationRepo) GetAll() ([]*model.Location, error) {
 	return locations, nil
 }
 
-func (lr *LocationRepo) GetByCountry(country string) ([]*model.Location, error) {
+func (lr *LocationRepo) GetByCity(city string) (model.Locations, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	patientsCollection := lr.getCollection()
 
-	var locations []*model.Location
-	patientsCursor, err := patientsCollection.Find(ctx, bson.M{"country": country})
+	var locations model.Locations
+
+	patientsCursor, err := patientsCollection.Find(ctx, bson.M{
+		"city": city})
+
 	if err != nil {
 		lr.logger.Println(err)
 		return nil, err
@@ -109,14 +112,17 @@ func (lr *LocationRepo) GetByCountry(country string) ([]*model.Location, error) 
 	return locations, nil
 }
 
-func (lr *LocationRepo) GetByCity(city string) ([]*model.Location, error) {
+func (lr *LocationRepo) GetByCountry(country string) (model.Locations, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	patientsCollection := lr.getCollection()
 
-	var locations []*model.Location
-	patientsCursor, err := patientsCollection.Find(ctx, bson.M{"city": city})
+	var locations model.Locations
+
+	patientsCursor, err := patientsCollection.Find(ctx, bson.M{
+		"country": country})
+
 	if err != nil {
 		lr.logger.Println(err)
 		return nil, err
@@ -128,18 +134,19 @@ func (lr *LocationRepo) GetByCity(city string) ([]*model.Location, error) {
 	return locations, nil
 }
 
-func (lr *LocationRepo) GetByLocation(country, city, street, number string) ([]*model.Location, error) {
+func (lr *LocationRepo) GetByLocation(country, city, airport string) (model.Locations, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	patientsCollection := lr.getCollection()
 
-	var locations []*model.Location
+	var locations model.Locations
+
 	patientsCursor, err := patientsCollection.Find(ctx, bson.M{
 		"city":    city,
 		"country": country,
-		"street":  street,
-		"number":  number})
+		"airport": airport})
+
 	if err != nil {
 		lr.logger.Println(err)
 		return nil, err

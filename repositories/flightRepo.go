@@ -70,15 +70,42 @@ func (fr *FlightRepo) Ping() {
 	fmt.Println(databases)
 }
 
-func (fr *FlightRepo) GetAll() ([]*model.Flight, error) {
+func (fr *FlightRepo) GetAll() (model.Flights, error) {
 	// Initialise context (after 5 seconds timeout, abort operation)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	flightsCollection := fr.getCollection()
 
-	var flights []*model.Flight
+	var flights model.Flights
 	flightsCursor, err := flightsCollection.Find(ctx, bson.M{})
+	if err != nil {
+		fr.logger.Println(err)
+		return nil, err
+	}
+	if err = flightsCursor.All(ctx, &flights); err != nil {
+		fr.logger.Println(err)
+		return nil, err
+	}
+	return flights, nil
+}
+
+func (fr *FlightRepo) GetFlightsByDate(flightDate time.Time) (model.Flights, error) {
+	// Initialise context (after 5 seconds timeout, abort operation)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	dateFilterStart := time.Date(flightDate.Year(), flightDate.Month(), flightDate.Day(), 0, 0, 0, 0, time.Local)
+	dateFilterEnd := time.Date(flightDate.Year(), flightDate.Month(), flightDate.Day(), 23, 59, 99, 0, time.Local)
+
+	flightsCollection := fr.getCollection()
+
+	var flights model.Flights
+	flightsCursor, err := flightsCollection.Find(ctx, bson.M{"startTime": bson.M{
+		"$gte": dateFilterStart.Format(time.RFC3339),
+		"$lte": dateFilterEnd.Format(time.RFC3339),
+	}})
+
 	if err != nil {
 		fr.logger.Println(err)
 		return nil, err
@@ -96,22 +123,22 @@ func (fr *FlightRepo) GetById(id string) (*model.Flight, error) {
 
 	flightsCollection := fr.getCollection()
 
-	var patient model.Flight
+	var flight model.Flight
 	objID, _ := primitive.ObjectIDFromHex(id)
-	err := flightsCollection.FindOne(ctx, bson.M{"_id": objID}).Decode(&patient)
+	err := flightsCollection.FindOne(ctx, bson.M{"_id": objID}).Decode(&flight)
 	if err != nil {
 		fr.logger.Println(err)
 		return nil, err
 	}
-	return &patient, nil
+	return &flight, nil
 }
 
-func (fr *FlightRepo) Insert(patient *model.Flight) error {
+func (fr *FlightRepo) Insert(flight *model.Flight) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	flightsCollection := fr.getCollection()
 
-	result, err := flightsCollection.InsertOne(ctx, &patient)
+	result, err := flightsCollection.InsertOne(ctx, &flight)
 	if err != nil {
 		fr.logger.Println(err)
 		return err
@@ -120,7 +147,7 @@ func (fr *FlightRepo) Insert(patient *model.Flight) error {
 	return nil
 }
 
-func (fr *FlightRepo) UpdateSoldTickets(id string, flight *model.Flight) error {
+func (fr *FlightRepo) Update(id string, flight *model.Flight) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	flightsCollection := fr.getCollection()
@@ -158,7 +185,7 @@ func (fr *FlightRepo) Delete(id string) error {
 }
 
 func (fr *FlightRepo) getCollection() *mongo.Collection {
-	patientDatabase := fr.cli.Database("db")
-	flightsCollection := patientDatabase.Collection("flights")
+	flightDatabase := fr.cli.Database("db")
+	flightsCollection := flightDatabase.Collection("flights")
 	return flightsCollection
 }

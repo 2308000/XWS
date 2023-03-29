@@ -70,14 +70,14 @@ func (ur *UserRepo) Ping() {
 	fmt.Println(databases)
 }
 
-func (ur *UserRepo) GetAll() ([]*model.User, error) {
+func (ur *UserRepo) GetAll() (model.Users, error) {
 	// Initialise context (after 5 seconds timeout, abort operation)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	usersCollection := ur.getCollection()
 
-	var users []*model.User
+	var users model.Users
 	usersCursor, err := usersCollection.Find(ctx, bson.M{})
 	if err != nil {
 		ur.logger.Println(err)

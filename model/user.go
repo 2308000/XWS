@@ -19,6 +19,13 @@ type User struct {
 	Role      string             `bson:"role,omitempty" json:"role"`
 }
 
+type Users []*User
+
+func (u *Users) ToJSON(w io.Writer) error {
+	e := json.NewEncoder(w)
+	return e.Encode(u)
+}
+
 func (u *User) ToJSON(w io.Writer) error {
 	e := json.NewEncoder(w)
 	return e.Encode(u)
