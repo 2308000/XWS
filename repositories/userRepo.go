@@ -76,8 +76,8 @@ func (ur *UserRepo) GetAll() (model.Users, error) {
 	defer cancel()
 
 	usersCollection := ur.getCollection()
-
 	var users model.Users
+
 	usersCursor, err := usersCollection.Find(ctx, bson.M{})
 	if err != nil {
 		ur.logger.Println(err)

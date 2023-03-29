@@ -111,8 +111,8 @@ func (tr *TicketRepo) GetByUser(user *model.User) (model.Tickets, error) {
 	defer cancel()
 
 	ticketsCollection := tr.getCollection()
-
 	var tickets model.Tickets
+
 	ticketsCursor, err := ticketsCollection.Find(ctx, bson.M{"user": user})
 	if err != nil {
 		tr.logger.Println(err)

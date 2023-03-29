@@ -95,7 +95,6 @@ func (lr *LocationRepo) GetByCity(city string) (model.Locations, error) {
 	defer cancel()
 
 	patientsCollection := lr.getCollection()
-
 	var locations model.Locations
 
 	patientsCursor, err := patientsCollection.Find(ctx, bson.M{

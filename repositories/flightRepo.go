@@ -78,6 +78,7 @@ func (fr *FlightRepo) GetAll() (model.Flights, error) {
 	flightsCollection := fr.getCollection()
 
 	var flights model.Flights
+  
 	flightsCursor, err := flightsCollection.Find(ctx, bson.M{})
 	if err != nil {
 		fr.logger.Println(err)
@@ -126,6 +127,7 @@ func (fr *FlightRepo) GetById(id string) (*model.Flight, error) {
 	var flight model.Flight
 	objID, _ := primitive.ObjectIDFromHex(id)
 	err := flightsCollection.FindOne(ctx, bson.M{"_id": objID}).Decode(&flight)
+
 	if err != nil {
 		fr.logger.Println(err)
 		return nil, err
@@ -187,5 +189,6 @@ func (fr *FlightRepo) Delete(id string) error {
 func (fr *FlightRepo) getCollection() *mongo.Collection {
 	flightDatabase := fr.cli.Database("db")
 	flightsCollection := flightDatabase.Collection("flights")
+
 	return flightsCollection
 }
