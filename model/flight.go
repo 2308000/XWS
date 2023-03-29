@@ -16,7 +16,13 @@ type Flight struct {
 	TicketPrice     float32            `bson:"price,omitempty" json:"price"`
 	Capacity        int                `bson:"capacity,omitempty" json:"capacity"`
 	TicketsSold     int                `bson:"sold,omitempty" json:"sold"`
-	Passengers      []*User            `bson:"passengers,omitempty" json:"passengers"`
+}
+
+type Flights []*Flight
+
+func (f *Flights) ToJSON(w io.Writer) error {
+	e := json.NewEncoder(w)
+	return e.Encode(f)
 }
 
 func (f *Flight) ToJSON(w io.Writer) error {

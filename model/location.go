@@ -8,8 +8,14 @@ import (
 type Location struct {
 	Country string `bson:"country,omitempty" json:"country"`
 	City    string `bson:"country,omitempty" json:"city"`
-	Street  string `bson:"street,omitempty" json:"street"`
-	Number  string `bson:"number,omitempty" json:"number"`
+	Airport string `bson:"airport,omitempty" json:"airport"`
+}
+
+type Locations []*Location
+
+func (l *Locations) ToJSON(w io.Writer) error {
+	e := json.NewEncoder(w)
+	return e.Encode(l)
 }
 
 func (l *Location) ToJSON(w io.Writer) error {
