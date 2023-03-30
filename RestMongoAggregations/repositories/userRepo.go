@@ -1,12 +1,11 @@
 package repositories
 
 import (
+	"Rest/model"
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"time"
-	"xws_projekat/model"
 
 	// NoSQL: module containing Mongo api client
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,9 +23,9 @@ type UserRepo struct {
 
 // NoSQL: Constructor which reads db configuration from environment
 func NewUserRepo(ctx context.Context, logger *log.Logger) (*UserRepo, error) {
-	dburi := os.Getenv("MONGO_DB_URI")
+	//dburi := os.Getenv("MONGO_DB_URI")
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(dburi))
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://root:pass@mongo:27017"))
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +141,7 @@ func (ur *UserRepo) Delete(id string) error {
 }
 
 func (ur *UserRepo) getCollection() *mongo.Collection {
-	patientDatabase := ur.cli.Database("db")
-	usersCollection := patientDatabase.Collection("users")
+	userDatabase := ur.cli.Database("mongoDemo")
+	usersCollection := userDatabase.Collection("users")
 	return usersCollection
 }

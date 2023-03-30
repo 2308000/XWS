@@ -1,12 +1,11 @@
 package repositories
 
 import (
+	"Rest/model"
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"time"
-	"xws_projekat/model"
 
 	// NoSQL: module containing Mongo api client
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,9 +23,9 @@ type TicketRepo struct {
 
 // NoSQL: Constructor which reads db configuration from environment
 func NewTicketRepo(ctx context.Context, logger *log.Logger) (*TicketRepo, error) {
-	dburi := os.Getenv("MONGO_DB_URI")
+	//dburi := os.Getenv("MONGO_DB_URI")
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(dburi))
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://root:pass@mongo:27017"))
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +155,7 @@ func (tr *TicketRepo) Delete(id string) error {
 }
 
 func (tr *TicketRepo) getCollection() *mongo.Collection {
-	ticketDatabase := tr.cli.Database("db")
+	ticketDatabase := tr.cli.Database("mongoDemo")
 	ticketsCollection := ticketDatabase.Collection("tickets")
 	return ticketsCollection
 }

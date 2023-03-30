@@ -2,11 +2,11 @@ package handlers
 
 import (
 	//"Rest/data"
+	"Rest/model"
+	"Rest/repositories"
 	"context"
 	"log"
 	"net/http"
-	"xws_projekat/model"
-	"xws_projekat/repositories"
 
 	"github.com/gorilla/mux"
 )
