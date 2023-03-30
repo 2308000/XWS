@@ -16,13 +16,12 @@ type KeyProduct struct{}
 type FlightsHandler struct {
 	logger *log.Logger
 	// NoSQL: injecting product repository
-	flightRepo   *repositories.FlightRepo
-	locationRepo *repositories.LocationRepo
+	flightRepo *repositories.FlightRepo
 }
 
 // Injecting the logger makes this code much more testable.
-func NewFlightsHandler(l *log.Logger, fr *repositories.FlightRepo, lr *repositories.LocationRepo) *FlightsHandler {
-	return &FlightsHandler{l, fr, lr}
+func NewFlightsHandler(l *log.Logger, fr *repositories.FlightRepo) *FlightsHandler {
+	return &FlightsHandler{l, fr}
 }
 
 func (f *FlightsHandler) GetAllFlights(rw http.ResponseWriter, h *http.Request) {
