@@ -1,8 +1,6 @@
 package main
 
 import (
-	/*"Rest/data"
-	"Rest/handlers"*/
 	"context"
 	"log"
 	"net/http"
@@ -48,6 +46,8 @@ func main() {
 	router := mux.NewRouter()
 	router.Use(flightsHandler.MiddlewareContentTypeSet)
 
+	getRouter := router.Methods(http.MethodGet).Subrouter()
+	getRouter.HandleFunc("/", flightsHandler.GetAllFlights)
 	/*flight1 := model.Flight{primitive.NewObjectID(), "Madrid", "Belgrade", time.Now(), 100.0, 150, 120}
 	store.Insert(&flight1)
 	flight2 := model.Flightprimitive.NewObjectID(), "Belgrade", "Vienna", time.Now(), 100.0, 120, 110)
@@ -61,6 +61,35 @@ func main() {
 	postRouter.Use(flightsHandler.MiddlewareFlightDeserialization)
 
 	/*getByNameRouter := router.Methods(http.MethodGet).Subrouter()
+	getByNameRouter.HandleFunc("/filter", flightsHandler.GetPatientsByName)
+
+	receiptRouter := router.Methods(http.MethodGet).Subrouter()
+	receiptRouter.HandleFunc("/receipt/{id}", flightsHandler.Receipt)
+
+	reportRouter := router.Methods(http.MethodGet).Subrouter()
+	reportRouter.HandleFunc("/report", flightsHandler.Report)
+
+	getByIdRouter := router.Methods(http.MethodGet).Subrouter()
+	getByIdRouter.HandleFunc("/{id}", flightsHandler.GetPatientById)
+
+	patchRouter := router.Methods(http.MethodPatch).Subrouter()
+	patchRouter.HandleFunc("/{id}", flightsHandler.PatchPatient)
+	patchRouter.Use(flightsHandler.MiddlewarePatientDeserialization)
+
+	changePhoneRouter := router.Methods(http.MethodPatch).Subrouter()
+	changePhoneRouter.HandleFunc("/phone/{id}/{index}", flightsHandler.ChangePhone)
+
+	pushPhoneRouter := router.Methods(http.MethodPatch).Subrouter()
+	pushPhoneRouter.HandleFunc("/phone/{id}", flightsHandler.AddPhoneNumber)
+
+	addAnamnesisRouter := router.Methods(http.MethodPatch).Subrouter()
+	addAnamnesisRouter.HandleFunc("/anamnesis/{id}", flightsHandler.AddAnamnesis)
+
+	addTherapyRouter := router.Methods(http.MethodPatch).Subrouter()
+	addTherapyRouter.HandleFunc("/therapy/{id}", flightsHandler.AddTherapy)
+
+	changeAddressRouter := router.Methods(http.MethodPatch).Subrouter()
+	changeAddressRouter.HandleFunc("/address/{id}", flightsHandler.ChangeAddress)*/
 	getByNameRouter.HandleFunc("/filter", patientsHandler.GetPatientsByName)
 
 	receiptRouter := router.Methods(http.MethodGet).Subrouter()
