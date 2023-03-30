@@ -30,7 +30,6 @@ func main() {
 	logger := log.New(os.Stdout, "[product-api] ", log.LstdFlags)
 	storeLogger := log.New(os.Stdout, "[flight-store] ", log.LstdFlags)
 
-	// NoSQL: Initialize Product Repository store
 	store, err := repositories.NewFlightRepo(timeoutContext, storeLogger)
 	if err != nil {
 		logger.Fatal(err)
@@ -49,6 +48,13 @@ func main() {
 
 	getRouter := router.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/", flightsHandler.GetAllFlights)
+	/*flight1 := model.Flight{primitive.NewObjectID(), "Madrid", "Belgrade", time.Now(), 100.0, 150, 120}
+	store.Insert(&flight1)
+	flight2 := model.Flightprimitive.NewObjectID(), "Belgrade", "Vienna", time.Now(), 100.0, 120, 110)
+	flight3 := model.Flight(primitive.NewObjectID(), "Vienna", "Berlin", time.Now(), 100.0, 110, 100)*/
+
+	getFlightRouter := router.Methods(http.MethodGet).Subrouter()
+	getFlightRouter.HandleFunc("/", flightsHandler.GetAllFlights)
 
 	postRouter := router.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/", flightsHandler.CreateFlight)
@@ -84,6 +90,35 @@ func main() {
 
 	changeAddressRouter := router.Methods(http.MethodPatch).Subrouter()
 	changeAddressRouter.HandleFunc("/address/{id}", flightsHandler.ChangeAddress)*/
+	getByNameRouter.HandleFunc("/filter", patientsHandler.GetPatientsByName)
+
+	receiptRouter := router.Methods(http.MethodGet).Subrouter()
+	receiptRouter.HandleFunc("/receipt/{id}", patientsHandler.Receipt)
+
+	reportRouter := router.Methods(http.MethodGet).Subrouter()
+	reportRouter.HandleFunc("/report", patientsHandler.Report)
+
+	getByIdRouter := router.Methods(http.MethodGet).Subrouter()
+	getByIdRouter.HandleFunc("/{id}", patientsHandler.GetPatientById)*/
+
+	patchRouter := router.Methods(http.MethodPatch).Subrouter()
+	patchRouter.HandleFunc("/{id}", flightsHandler.UpdateFlight)
+	postRouter.Use(flightsHandler.MiddlewareFlightDeserialization)
+
+	/*changePhoneRouter := router.Methods(http.MethodPatch).Subrouter()
+	changePhoneRouter.HandleFunc("/phone/{id}/{index}", patientsHandler.ChangePhone)
+
+	pushPhoneRouter := router.Methods(http.MethodPatch).Subrouter()
+	pushPhoneRouter.HandleFunc("/phone/{id}", patientsHandler.AddPhoneNumber)
+
+	addAnamnesisRouter := router.Methods(http.MethodPatch).Subrouter()
+	addAnamnesisRouter.HandleFunc("/anamnesis/{id}", patientsHandler.AddAnamnesis)
+
+	addTherapyRouter := router.Methods(http.MethodPatch).Subrouter()
+	addTherapyRouter.HandleFunc("/therapy/{id}", patientsHandler.AddTherapy)
+
+	changeAddressRouter := router.Methods(http.MethodPatch).Subrouter()
+	changeAddressRouter.HandleFunc("/address/{id}", patientsHandler.ChangeAddress)*/
 
 	deleteRouter := router.Methods(http.MethodDelete).Subrouter()
 	deleteRouter.HandleFunc("/{id}", flightsHandler.DeleteFlight)
