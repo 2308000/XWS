@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"time"
 	"xws_projekat/model"
 
@@ -24,9 +23,9 @@ type UserRepo struct {
 
 // NoSQL: Constructor which reads db configuration from environment
 func NewUserRepo(ctx context.Context, logger *log.Logger) (*UserRepo, error) {
-	dburi := os.Getenv("MONGO_DB_URI")
+	//buri := os.Getenv("MONGO_DB_URI")
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(dburi))
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://root:pass@mongo:27017"))
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +141,7 @@ func (ur *UserRepo) Delete(id string) error {
 }
 
 func (ur *UserRepo) getCollection() *mongo.Collection {
-	patientDatabase := ur.cli.Database("db")
+	patientDatabase := ur.cli.Database("mongoDemo")
 	usersCollection := patientDatabase.Collection("users")
 	return usersCollection
 }
