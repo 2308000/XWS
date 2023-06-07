@@ -38,7 +38,7 @@ namespace AvioApp.Service
             {
                 throw new NotFoundException($"Flight with id {id} does not exist!");
             }
-            _flightRepository.Delete(flight);
+            _flightRepository.Delete(flight.Id);
         }
 
         public IEnumerable<FlightAdminPreviewDTO> GetAll()
