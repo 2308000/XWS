@@ -1,36 +1,31 @@
 ﻿using AvioApp.Model;
-using Microsoft.EntityFrameworkCore;
 
 namespace AvioApp.Repository
 {
     public class FlightRepository : IFlightRepository
     {
-        private readonly DbContext _dbContext;
 
-        public FlightRepository(DbContext dbContext)
+        public FlightRepository()
         {
-            _dbContext = dbContext;
         }
         public Flight? Create(Flight entity)
         {
-            _dbContext.Set<Flight>().Add(entity);
-            return entity;
+            throw new NotImplementedException();
         }
 
         public void Delete(Flight entity)
         {
-            _dbContext.Set<Flight>().Remove(entity);
+            throw new NotImplementedException();
         }
 
         public IQueryable<Flight> GetAll()
         {
-            return _dbContext.Set<Flight>();
+            throw new NotImplementedException();
         }
 
         public Flight Update(Flight entity)
         {
-            _dbContext.Set<Flight>().Update(entity);
-            return entity;
+            throw new NotImplementedException();
         }
     }
 }

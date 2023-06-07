@@ -37,6 +37,5 @@ namespace AvioApp.Controllers
             _userService.UpdateCode(code, User.FindFirstValue(ClaimTypes.Email));
             return Ok();
         }
-
     }
 }

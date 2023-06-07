@@ -1,15 +1,16 @@
-using AvioApp.Data;
 using AvioApp.Repository;
 using AvioApp.Service;
 using AvioApp.SupportClasses;
 using AvioApp.SupportClasses.GEH;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 // Add services to the container.
 
@@ -59,10 +60,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
-builder.Services.AddDbContext<XWS_DbContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("ConStr")));
-builder.Services.AddScoped<DbContext, XWS_DbContext>();
+
+builder.Services.AddSingleton<IMongoClient>(s =>
+        new MongoClient("mongodb://localhost:27017"));
+
 builder.Services.AddScoped<IJWTGenerator, JWTGenerator>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFlightRepository, FlightRepository>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();

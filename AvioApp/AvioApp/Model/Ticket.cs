@@ -1,12 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace AvioApp.Model
+﻿namespace AvioApp.Model
 {
+    //[BsonIgnoreExtraElements]
     public class Ticket
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
-        public User User { get; set; }
-        public Flight Flight { get; set; }
+        /*[BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
+        [BsonElement("duration")]
+        public string UserId { get; set; }
+        public string FlightId { get; set; }*/
     }
 }

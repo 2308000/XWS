@@ -4,8 +4,8 @@ namespace AvioApp.Service
 {
     public interface IFlightService
     {
-        long Create(NewFlightDTO newFlight);
-        void Delete(long id);
+        string Create(NewFlightDTO newFlight);
+        void Delete(string id);
         IEnumerable<FlightAdminPreviewDTO> GetAll();
         IEnumerable<FlightUserPreviewDTO> Search(FlightSearchDTO query);
     }

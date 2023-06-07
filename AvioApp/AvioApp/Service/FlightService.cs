@@ -2,20 +2,21 @@
 using AvioApp.Model.DTO;
 using AvioApp.Repository;
 using AvioApp.SupportClasses.GEH.CustomExceptions;
-using Microsoft.EntityFrameworkCore;
 
 namespace AvioApp.Service
 {
     public class FlightService : IFlightService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IFlightRepository _flightRepository;
+        private readonly ITicketRepository _ticketRepository;
 
-        public FlightService(IUnitOfWork unitOfWork)
+        public FlightService(IFlightRepository flightRepository, ITicketRepository ticketRepository)
         {
-            _unitOfWork = unitOfWork;
+            _flightRepository = flightRepository;
+            _ticketRepository = ticketRepository;
         }
 
-        public long Create(NewFlightDTO flight)
+        public string Create(NewFlightDTO flight)
         {
             var newFlight = new Flight
             {
@@ -26,25 +27,23 @@ namespace AvioApp.Service
                 Price = flight.Price,
                 Tickets = flight.Tickets,
             };
-            newFlight = _unitOfWork.FlightRepository.Create(newFlight);
-            _unitOfWork.SaveChanges();
+            newFlight = _flightRepository.Create(newFlight);
             return newFlight.Id;
         }
 
-        public void Delete(long id)
+        public void Delete(string id)
         {
-            var flight = _unitOfWork.FlightRepository.GetAll().FirstOrDefault(f => f.Id == id);
+            var flight = _flightRepository.GetAll().FirstOrDefault(f => f.Id == id);
             if (flight == null)
             {
                 throw new NotFoundException($"Flight with id {id} does not exist!");
             }
-            _unitOfWork.FlightRepository.Delete(flight);
-            _unitOfWork.SaveChanges();
+            _flightRepository.Delete(flight);
         }
 
         public IEnumerable<FlightAdminPreviewDTO> GetAll()
         {
-            var flights = _unitOfWork.FlightRepository.GetAll();
+            var flights = _flightRepository.GetAll();
             return flights.Select(
                     f => new FlightAdminPreviewDTO
                     {
@@ -55,17 +54,17 @@ namespace AvioApp.Service
                         Destination = f.Destination,
                         Price = f.Price,
                         Tickets = f.Tickets,
-                        RemainingTickets = f.Tickets - _unitOfWork.TicketRepository.GetAll().Include(t => t.Flight).Where(t => t.Flight.Id == f.Id).Count()
+                        RemainingTickets = 0//f.Tickets - _ticketRepository.GetAll().Include(t => t.Flight).Where(t => t.Flight.Id == f.Id).Count()
                     }
                 );
         }
 
         public IEnumerable<FlightUserPreviewDTO> Search(FlightSearchDTO query)
         {
-            var flights = _unitOfWork.FlightRepository.GetAll().Where(f => f.Date.Date == query.Date)
+            var flights = _flightRepository.GetAll().Where(f => f.Date.Date == query.Date)
                                                                .Where(f => query.Start != "" ? f.Start.Contains(query.Start) : true)
-                                                               .Where(f => query.Destination != "" ? f.Destination.Contains(query.Destination) : true)
-                                                               .Where(f => query.RequiredTickets != 0 ? (f.Tickets - _unitOfWork.TicketRepository.GetAll().Include(t => t.Flight).Where(t => t.Flight.Id == f.Id).Count()) >= query.RequiredTickets : true);
+                                                               .Where(f => query.Destination != "" ? f.Destination.Contains(query.Destination) : true);
+            //.Where(f => query.RequiredTickets != 0 ? (f.Tickets - _ticketRepository.GetAll().Include(t => t.Flight).Where(t => t.Flight.Id == f.Id).Count()) >= query.RequiredTickets : true);
             return flights.Select(
                     f => new FlightUserPreviewDTO
                     {
