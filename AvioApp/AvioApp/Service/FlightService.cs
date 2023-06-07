@@ -54,7 +54,7 @@ namespace AvioApp.Service
                         Destination = f.Destination,
                         Price = f.Price,
                         Tickets = f.Tickets,
-                        RemainingTickets = 0//f.Tickets - _ticketRepository.GetAll().Include(t => t.Flight).Where(t => t.Flight.Id == f.Id).Count()
+                        RemainingTickets = f.Tickets - _ticketRepository.GetAll().Where(t => t.FlightId == f.Id).Count()
                     }
                 );
         }
@@ -63,8 +63,8 @@ namespace AvioApp.Service
         {
             var flights = _flightRepository.GetAll().Where(f => f.Date.Date == query.Date)
                                                                .Where(f => query.Start != "" ? f.Start.Contains(query.Start) : true)
-                                                               .Where(f => query.Destination != "" ? f.Destination.Contains(query.Destination) : true);
-            //.Where(f => query.RequiredTickets != 0 ? (f.Tickets - _ticketRepository.GetAll().Include(t => t.Flight).Where(t => t.Flight.Id == f.Id).Count()) >= query.RequiredTickets : true);
+                                                               .Where(f => query.Destination != "" ? f.Destination.Contains(query.Destination) : true)
+                                                               .Where(f => query.RequiredTickets != 0 ? (f.Tickets - _ticketRepository.GetAll().Where(t => t.FlightId == f.Id).Count()) >= query.RequiredTickets : true);
             return flights.Select(
                     f => new FlightUserPreviewDTO
                     {

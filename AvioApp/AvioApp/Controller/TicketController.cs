@@ -18,7 +18,7 @@ namespace AvioApp.Controller
 
         [HttpPost("{flightId}/{amount}", Name = "Buy")]
         [Authorize(Roles = "USER")]
-        public ActionResult<string> Buy(long flightId, int amount)
+        public ActionResult<string> Buy(string flightId, int amount)
         {
             _ticketService.Buy(flightId, amount, User.FindFirstValue(ClaimTypes.Email));
             return Ok();

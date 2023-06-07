@@ -1,31 +1,40 @@
 ﻿using AvioApp.Model;
+using MongoDB.Driver;
 
 namespace AvioApp.Repository
 {
     public class TicketRepository : ITicketRepository
     {
-        public TicketRepository()
+        private readonly IMongoCollection<Ticket> _tickets;
+        public TicketRepository(IMongoClient mongoClient)
         {
+            var db = mongoClient.GetDatabase("XWS_DB");
+            _tickets = db.GetCollection<Ticket>("tickets");
+        }
+        public Ticket Create(Ticket entity)
+        {
+            _tickets.InsertOne(entity);
+            return entity;
         }
 
-        public Ticket? Create(Ticket entity)
+        public void Delete(string id)
         {
-            throw new NotImplementedException();
+            _tickets.DeleteOne(t => t.Id == id);
         }
 
-        public void Delete(Ticket entity)
+        public Ticket Get(string id)
         {
-            throw new NotImplementedException();
+            return _tickets.Find(t => t.Id == id).FirstOrDefault();
         }
 
-        public IQueryable<Ticket> GetAll()
+        public IEnumerable<Ticket> GetAll()
         {
-            throw new NotImplementedException();
+            return _tickets.Find(t => true).ToList();
         }
 
-        public Ticket Update(Ticket entity)
+        public void Update(string id, Ticket entity)
         {
-            throw new NotImplementedException();
+            _tickets.ReplaceOne(t => t.Id == id, entity);
         }
     }
 }
