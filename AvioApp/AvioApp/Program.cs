@@ -71,6 +71,7 @@ builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFlightService, FlightService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<IInitService, InitService>();
 
 // Enabled CORS
 

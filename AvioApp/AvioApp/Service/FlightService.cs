@@ -38,6 +38,11 @@ namespace AvioApp.Service
             {
                 throw new NotFoundException($"Flight with id {id} does not exist!");
             }
+            var tickets = _ticketRepository.GetAll().Where(t => t.FlightId == flight.Id);
+            foreach (var ticket in tickets)
+            {
+                _ticketRepository.Delete(ticket.Id);
+            }
             _flightRepository.Delete(flight.Id);
         }
 
