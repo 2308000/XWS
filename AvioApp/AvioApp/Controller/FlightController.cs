@@ -24,7 +24,7 @@ namespace AvioApp.Controller
 
         [HttpDelete("{id}", Name = "Delete")]
         [Authorize(Roles = "ADMIN")]
-        public ActionResult Delete(long id)
+        public ActionResult Delete(string id)
         {
             _flightService.Delete(id);
             return Ok();

@@ -1,12 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace AvioApp.Model
 {
+    [BsonIgnoreExtraElements]
     public class Ticket
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
-        public User User { get; set; }
-        public Flight Flight { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
+        [BsonElement("userid")]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string UserId { get; set; }
+        [BsonElement("flightid")]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string FlightId { get; set; }
     }
 }

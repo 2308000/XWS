@@ -4,9 +4,10 @@ namespace AvioApp.Repository
 {
     public interface ITicketRepository
     {
-        public IQueryable<Ticket> GetAll();
-        public Ticket? Create(Ticket entity);
-        public Ticket Update(Ticket entity);
-        public void Delete(Ticket entity);
+        public IEnumerable<Ticket> GetAll();
+        public Ticket Get(string id);
+        public Ticket Create(Ticket entity);
+        public void Update(string id, Ticket entity);
+        public void Delete(string id);
     }
 }

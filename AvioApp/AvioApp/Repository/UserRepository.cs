@@ -1,36 +1,40 @@
 ﻿using AvioApp.Model;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 
 namespace AvioApp.Repository
 {
     public class UserRepository : IUserRepository
     {
-        private readonly DbContext _dbContext;
-
-        public UserRepository(DbContext dbContext)
+        private readonly IMongoCollection<User> _users;
+        public UserRepository(IMongoClient mongoClient)
         {
-            _dbContext = dbContext;
+            var db = mongoClient.GetDatabase("XWS_DB");
+            _users = db.GetCollection<User>("users");
         }
-        public User? Create(User entity)
+        public User Create(User entity)
         {
-            _dbContext.Set<User>().Add(entity);
+            _users.InsertOne(entity);
             return entity;
         }
 
-        public void Delete(User entity)
+        public void Delete(string id)
         {
-            _dbContext.Set<User>().Remove(entity);
+            _users.DeleteOne(u => u.Id == id);
         }
 
-        public IQueryable<User> GetAll()
+        public User Get(string id)
         {
-            return _dbContext.Set<User>();
+            return _users.Find(u => u.Id == id).FirstOrDefault();
         }
 
-        public User Update(User entity)
+        public IEnumerable<User> GetAll()
         {
-            _dbContext.Set<User>().Update(entity);
-            return entity;
+            return _users.Find(u => true).ToList();
+        }
+
+        public void Update(string id, User entity)
+        {
+            _users.ReplaceOne(u => u.Id == id, entity);
         }
     }
 }

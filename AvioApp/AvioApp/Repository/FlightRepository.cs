@@ -1,36 +1,40 @@
 ﻿using AvioApp.Model;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 
 namespace AvioApp.Repository
 {
     public class FlightRepository : IFlightRepository
     {
-        private readonly DbContext _dbContext;
-
-        public FlightRepository(DbContext dbContext)
+        private readonly IMongoCollection<Flight> _flights;
+        public FlightRepository(IMongoClient mongoClient)
         {
-            _dbContext = dbContext;
+            var db = mongoClient.GetDatabase("XWS_DB");
+            _flights = db.GetCollection<Flight>("flights");
         }
-        public Flight? Create(Flight entity)
+        public Flight Create(Flight entity)
         {
-            _dbContext.Set<Flight>().Add(entity);
+            _flights.InsertOne(entity);
             return entity;
         }
 
-        public void Delete(Flight entity)
+        public void Delete(string id)
         {
-            _dbContext.Set<Flight>().Remove(entity);
+            _flights.DeleteOne(f => f.Id == id);
         }
 
-        public IQueryable<Flight> GetAll()
+        public Flight Get(string id)
         {
-            return _dbContext.Set<Flight>();
+            return _flights.Find(f => f.Id == id).FirstOrDefault();
         }
 
-        public Flight Update(Flight entity)
+        public IEnumerable<Flight> GetAll()
         {
-            _dbContext.Set<Flight>().Update(entity);
-            return entity;
+            return _flights.Find(u => true).ToList();
+        }
+
+        public void Update(string id, Flight entity)
+        {
+            _flights.ReplaceOne(f => f.Id == id, entity);
         }
     }
 }

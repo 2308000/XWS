@@ -4,9 +4,10 @@ namespace AvioApp.Repository
 {
     public interface IUserRepository
     {
-        public IQueryable<User> GetAll();
-        public User? Create(User entity);
-        public User Update(User entity);
-        public void Delete(User entity);
+        public IEnumerable<User> GetAll();
+        public User Get(string id);
+        public User Create(User entity);
+        public void Update(string id, User entity);
+        public void Delete(string id);
     }
 }

@@ -1,36 +1,40 @@
 ﻿using AvioApp.Model;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 
 namespace AvioApp.Repository
 {
     public class TicketRepository : ITicketRepository
     {
-        private readonly DbContext _dbContext;
-        public TicketRepository(DbContext dbContext)
+        private readonly IMongoCollection<Ticket> _tickets;
+        public TicketRepository(IMongoClient mongoClient)
         {
-            _dbContext = dbContext;
+            var db = mongoClient.GetDatabase("XWS_DB");
+            _tickets = db.GetCollection<Ticket>("tickets");
         }
-
-        public Ticket? Create(Ticket entity)
+        public Ticket Create(Ticket entity)
         {
-            _dbContext.Set<Ticket>().Add(entity);
+            _tickets.InsertOne(entity);
             return entity;
         }
 
-        public void Delete(Ticket entity)
+        public void Delete(string id)
         {
-            _dbContext.Set<Ticket>().Remove(entity);
+            _tickets.DeleteOne(t => t.Id == id);
         }
 
-        public IQueryable<Ticket> GetAll()
+        public Ticket Get(string id)
         {
-            return _dbContext.Set<Ticket>();
+            return _tickets.Find(t => t.Id == id).FirstOrDefault();
         }
 
-        public Ticket Update(Ticket entity)
+        public IEnumerable<Ticket> GetAll()
         {
-            _dbContext.Set<Ticket>().Update(entity);
-            return entity;
+            return _tickets.Find(t => true).ToList();
+        }
+
+        public void Update(string id, Ticket entity)
+        {
+            _tickets.ReplaceOne(t => t.Id == id, entity);
         }
     }
 }

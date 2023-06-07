@@ -2,7 +2,7 @@
 {
     public class FlightUserPreviewDTO
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
         public DateTime Date { get; set; }
         public int Duration { get; set; }
         public string Start { get; set; } = string.Empty;

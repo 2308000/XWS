@@ -9,18 +9,18 @@ namespace AvioApp.Service
 {
     public class UserService : IUserService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserRepository _userRepository;
         private readonly IJWTGenerator _jwtGenerator;
 
-        public UserService(IUnitOfWork unitOfWork, IJWTGenerator jwtGenerator)
+        public UserService(IUserRepository userRepository, IJWTGenerator jwtGenerator)
         {
-            _unitOfWork = unitOfWork;
+            _userRepository = userRepository;
             _jwtGenerator = jwtGenerator;
         }
 
         public string Authenticate(CredentialsDTO credentials)
         {
-            User? user = _unitOfWork.UserRepository.GetAll().FirstOrDefault(u => u.Email == credentials.Email);
+            User? user = _userRepository.GetAll().FirstOrDefault(u => u.Email == credentials.Email);
             if (user == null)
             {
                 throw new NotFoundException($"User with email {credentials.Email} does not exists!");
@@ -32,9 +32,9 @@ namespace AvioApp.Service
             throw new BadCredentialsException($"Incorrect password for user with email {credentials.Email}!");
         }
 
-        public long Register(NewUserDTO user)
+        public string Register(NewUserDTO user)
         {
-            if (_unitOfWork.UserRepository.GetAll().Where(u => u.Email == user.Email).Any())
+            if (_userRepository.GetAll().Where(u => u.Email == user.Email).Any())
             {
                 throw new DuplicateItemException($"Email {user.Email} is already taken!");
             }
@@ -48,20 +48,19 @@ namespace AvioApp.Service
                 FirstName = user.FirstName,
                 LastName = user.LastName
             };
-            newUser = _unitOfWork.UserRepository.Create(newUser);
-            _unitOfWork.SaveChanges();
+            newUser = _userRepository.Create(newUser);
             return newUser.Id;
         }
 
         public void UpdateCode(string code, string email)
         {
-            var user = _unitOfWork.UserRepository.GetAll().FirstOrDefault(u => u.Email == email);
+            var user = _userRepository.GetAll().FirstOrDefault(u => u.Email == email);
             if (user == null)
             {
                 throw new NotFoundException($"User with email: {email} does not exists!");
             }
             user.Code = Encoding.ASCII.GetBytes(code);
-            _unitOfWork.SaveChanges();
+            _userRepository.Update(user.Id, user);
         }
     }
 }
