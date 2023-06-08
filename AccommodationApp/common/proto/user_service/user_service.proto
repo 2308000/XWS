@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+option go_package = "accommodation_booking/common/user";
+
+package user;
+
+import "google/api/annotations.proto";
+import "google/api/httpbody.proto";
+import "google/protobuf/timestamp.proto";
+
+service UserService{
+  rpc Get(GetRequest) returns(GetResponse) {
+    option (google.api.http) = {
+      get: "/user/username/{username}"
+    };
+  }
+  rpc GetAll(GetAllRequest) returns(GetAllResponse) {
+    option (google.api.http) = {
+      get: "/user"
+    };
+  }
+  rpc Register(RegisterRequest) returns(RegisterResponse) {
+    option (google.api.http) = {
+      post: "/user"
+      body: "*"
+    };
+  }
+  rpc Update(UpdateRequest) returns(UpdateResponse) {
+    option (google.api.http) = {
+      patch: "/user/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post : "/user/login"
+      body : "*"
+    };
+  }
+
+  rpc UpdatePassword(UpdatePasswordRequest) returns(UpdatePasswordResponse) {
+    option (google.api.http) = {
+      patch: "/user/updatePassword"
+      body: "*"
+    };
+  }
+}
+
+message GetRequest {
+  string username = 1;
+}
+
+message GetResponse {
+  User user = 1;
+}
+
+message GetAllRequest {
+}
+
+message GetAllResponse {
+  repeated User users = 1;
+}
+
+message RegisterRequest {
+  User user = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string email = 4;
+}
+
+message RegisterResponse {
+  User user = 1;
+}
+
+message User {
+  string id = 1;
+  string username = 2;
+  string password = 3;
+  string role = 4;
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse { string access_token = 1; }
+
+message UpdateRequest {
+  string id = 1;
+  string username = 2;
+}
+
+message UpdateResponse {
+  string username = 1;
+}
+
+message UpdatePasswordRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message UpdatePasswordResponse {}
