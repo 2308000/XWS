@@ -1,0 +1,35 @@
+version: "3.8"
+
+
+services:
+  avio_service:
+    image: productive-dev/avioapp
+    container_name: avio_service
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: on-failure
+    ports:
+      - 5000:5000
+      - 5001:5001
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORT: https://+:5001
+      ASPNETCORE_URLS: https://+:5000
+    depends_on:
+      - avio_db
+    networks:
+      - network
+
+  avio_db:
+    image: mongo
+    container_name: avio_db
+    restart: on-failure
+    ports:
+      - 27017:27017
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge

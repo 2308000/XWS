@@ -62,7 +62,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 
 builder.Services.AddSingleton<IMongoClient>(s =>
-        new MongoClient("mongodb://localhost:27017"));
+        new MongoClient("mongodb://avio_db:27017"));
 
 builder.Services.AddScoped<IJWTGenerator, JWTGenerator>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -84,7 +84,9 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddHealthChecks();
 var app = builder.Build();
+app.MapHealthChecks("/health");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
