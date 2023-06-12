@@ -1,6 +1,6 @@
 module accommodation_booking/user_service
 
-go 1.18
+go 1.20
 
 replace accommodation_booking/common => ../common
 
