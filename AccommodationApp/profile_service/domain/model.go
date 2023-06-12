@@ -1,7 +1,9 @@
 package domain
 
 import (
+	"github.com/go-playground/validator"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"regexp"
 	"time"
 )
 
@@ -23,4 +25,27 @@ type Address struct {
 	Country string `bson:"country"`
 	City    string `bson:"city"`
 	Street  string `bson:"street"`
+}
+
+func usernameValidator(fl validator.FieldLevel) bool {
+	matchString, err := regexp.MatchString(`^[_a-zA-Z0-9]([._-]([._-]?)|[a-zA-Z0-9]){3,18}[_a-zA-Z0-9]$`, fl.Field().String())
+	if err != nil {
+		return false
+	}
+	return matchString
+}
+
+func nameValidator(fl validator.FieldLevel) bool {
+	matchString, err := regexp.MatchString(`^[A-Z][a-z]+$`, fl.Field().String())
+	if err != nil {
+		return false
+	}
+	return matchString
+}
+
+func NewProfileValidator() *validator.Validate {
+	validate := validator.New()
+	validate.RegisterValidation("username", usernameValidator)
+	validate.RegisterValidation("name", nameValidator)
+	return validate
 }

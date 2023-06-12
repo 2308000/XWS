@@ -2,6 +2,7 @@ package startup
 
 import (
 	cfg "accommodation_booking/api_gateway/startup/config"
+	profileGw "accommodation_booking/common/proto/profile_service"
 	userGw "accommodation_booking/common/proto/user_service"
 	"context"
 	"fmt"
@@ -31,6 +32,11 @@ func (server *Server) initHandlers() {
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 	userEndpoint := fmt.Sprintf("%s:%s", server.config.UserHost, server.config.UserPort)
 	err := userGw.RegisterUserServiceHandlerFromEndpoint(context.TODO(), server.mux, userEndpoint, opts)
+	if err != nil {
+		panic(err)
+	}
+	profileEndpoint := fmt.Sprintf("%s:%s", server.config.ProfileHost, server.config.ProfilePort)
+	err = profileGw.RegisterProfileServiceHandlerFromEndpoint(context.TODO(), server.mux, profileEndpoint, opts)
 	if err != nil {
 		panic(err)
 	}
