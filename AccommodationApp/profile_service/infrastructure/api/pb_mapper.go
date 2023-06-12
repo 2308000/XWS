@@ -10,9 +10,9 @@ import (
 
 func convertAddressFromPb(pbProfile *pb.Profile) *domain.Address {
 	address := &domain.Address{
-		Country: *pbProfile.Address.Country,
-		City:    *pbProfile.Address.City,
-		Street:  *pbProfile.Address.Street,
+		Country: pbProfile.Address.Country,
+		City:    pbProfile.Address.City,
+		Street:  pbProfile.Address.Street,
 	}
 
 	return address
@@ -23,16 +23,16 @@ func mapProfileToPb(profile *domain.Profile) *pb.Profile {
 	primitive := profile.Id.Hex()
 	id = &primitive
 	pbProfile := &pb.Profile{
-		Id:          id,
-		Username:    &profile.Username,
-		FirstName:   &profile.FirstName,
-		LastName:    &profile.LastName,
-		Email:       &profile.Email,
-		Address:     &pb.Address{Country: &profile.Address.Country, City: &profile.Address.City, Street: &profile.Address.Street},
+		Id:          *id,
+		Username:    profile.Username,
+		FirstName:   profile.FirstName,
+		LastName:    profile.LastName,
+		Email:       profile.Email,
+		Address:     &pb.Address{Country: profile.Address.Country, City: profile.Address.City, Street: profile.Address.Street},
 		DateOfBirth: timestamppb.New(profile.DateOfBirth),
-		PhoneNumber: &profile.PhoneNumber,
-		Gender:      &profile.Gender,
-		Token:       &profile.Token,
+		PhoneNumber: profile.PhoneNumber,
+		Gender:      profile.Gender,
+		Token:       profile.Token,
 	}
 
 	return pbProfile
@@ -40,17 +40,17 @@ func mapProfileToPb(profile *domain.Profile) *pb.Profile {
 
 func mapPbToProfile(pbProfile *pb.Profile) *domain.Profile {
 	profile := &domain.Profile{
-		Id:          getObjectId(*pbProfile.Id),
-		Username:    *pbProfile.Username,
-		FirstName:   *pbProfile.FirstName,
-		LastName:    *pbProfile.LastName,
-		FullName:    *pbProfile.FirstName + *pbProfile.LastName,
-		Email:       *pbProfile.Email,
-		Address:     domain.Address{Country: *pbProfile.Address.Country, City: *pbProfile.Address.City, Street: *pbProfile.Address.Street},
+		Id:          getObjectId(pbProfile.Id),
+		Username:    pbProfile.Username,
+		FirstName:   pbProfile.FirstName,
+		LastName:    pbProfile.LastName,
+		FullName:    pbProfile.FirstName + pbProfile.LastName,
+		Email:       pbProfile.Email,
+		Address:     domain.Address{Country: pbProfile.Address.Country, City: pbProfile.Address.City, Street: pbProfile.Address.Street},
 		DateOfBirth: pbProfile.DateOfBirth.AsTime(),
-		PhoneNumber: *pbProfile.PhoneNumber,
-		Gender:      *pbProfile.Gender,
-		Token:       *pbProfile.Token,
+		PhoneNumber: pbProfile.PhoneNumber,
+		Gender:      pbProfile.Gender,
+		Token:       pbProfile.Token,
 	}
 
 	return profile

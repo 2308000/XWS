@@ -3,6 +3,8 @@ package startup
 import (
 	"accommodation_booking/common/auth"
 	profile "accommodation_booking/common/proto/profile_service"
+	saga "accommodation_booking/common/saga/messaging"
+	"accommodation_booking/common/saga/messaging/nats"
 	"accommodation_booking/profile_service/application"
 	"accommodation_booking/profile_service/domain"
 	"accommodation_booking/profile_service/infrastructure/api"
@@ -21,6 +23,10 @@ import (
 type Server struct {
 	config *config.Config
 }
+
+const (
+	QueueGroup = "profile_service"
+)
 
 func NewServer(config *config.Config) *Server {
 	return &Server{
@@ -42,10 +48,42 @@ func (server *Server) Start() {
 
 	jwtManager := auth.NewJWTManager("secretKey", 60*time.Minute)
 
-	profileService := server.initProfileService(profileStore)
+	commandPublisher := server.initPublisher(server.config.UpdateProfileCommandSubject)
+	replySubscriber := server.initSubscriber(server.config.UpdateProfileReplySubject, QueueGroup)
+	updateProfileOrchestrator := server.initUpdateProfileOrchestrator(commandPublisher, replySubscriber)
+
+	profileService := server.initProfileService(profileStore, updateProfileOrchestrator)
 	profileHandler := server.initProfileHandler(profileService)
 
 	server.startGrpcServer(profileHandler, jwtManager)
+}
+
+func (server *Server) initPublisher(subject string) saga.Publisher {
+	publisher, err := nats.NewNATSPublisher(
+		server.config.NatsHost, server.config.NatsPort,
+		server.config.NatsUser, server.config.NatsPass, subject)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return publisher
+}
+
+func (server *Server) initSubscriber(subject, queueGroup string) saga.Subscriber {
+	subscriber, err := nats.NewNATSSubscriber(
+		server.config.NatsHost, server.config.NatsPort,
+		server.config.NatsUser, server.config.NatsPass, subject, queueGroup)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return subscriber
+}
+
+func (server *Server) initUpdateProfileOrchestrator(publisher saga.Publisher, subscriber saga.Subscriber) *application.UpdateProfileOrchestrator {
+	orchestrator, err := application.NewUpdateProfileOrchestrator(publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return orchestrator
 }
 
 func (server *Server) initMongoClient() *mongo.Client {
@@ -75,8 +113,8 @@ func (server *Server) initProfileStore(client *mongo.Client) domain.ProfileStore
 	return store
 }
 
-func (server *Server) initProfileService(store domain.ProfileStore) *application.ProfileService {
-	return application.NewProfileService(store)
+func (server *Server) initProfileService(store domain.ProfileStore, orchestrator *application.UpdateProfileOrchestrator) *application.ProfileService {
+	return application.NewProfileService(store, orchestrator)
 }
 
 func (server *Server) startGrpcServer(profileHandler *api.ProfileHandler, jwtManager *auth.JWTManager) {

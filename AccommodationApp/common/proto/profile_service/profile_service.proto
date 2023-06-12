@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "proto3";
 
 option go_package = "accommodation_booking/common/profile";
 
@@ -51,15 +51,15 @@ service ProfileService{
 }
 
 message GetRequest {
-  required string id = 1;
+  string id = 1;
 }
 
 message GetResponse {
-  required Profile profile = 1;
+  Profile profile = 1;
 }
 
 message GetAllRequest {
-  required string search = 1;
+  string search = 1;
 }
 
 message GetAllResponse {
@@ -67,63 +67,63 @@ message GetAllResponse {
 }
 
 message CreateRequest {
-  required Profile profile = 1;
+  Profile profile = 1;
 }
 
 message CreateResponse {
-  required Profile profile = 1;
+  Profile profile = 1;
 }
 
 message UpdateRequest {
-  required string id = 1;
-  required Profile profile = 2;
+  string id = 1;
+  Profile profile = 2;
 }
 
 message UpdateResponse {
-  required Profile profile = 1;
+  Profile profile = 1;
 }
 
 message DeleteRequest {
-  required string id = 1;
+  string id = 1;
 }
 
 message DeleteResponse {
 }
 
 message GenerateTokenRequest {
-  required string id = 1;
+  string id = 1;
 }
 
 message GenerateTokenResponse {
-  required string token = 1;
+  string token = 1;
 }
 
 message GetByTokenRequest {
-  required string token = 1;
+  string token = 1;
 }
 
 message GetByTokenResponse {
-  required Profile profile = 1;
+  Profile profile = 1;
 }
 
 message Profile {
-  required string id = 1 [default = ""];
-  optional string username = 2 [default = ""];
-  optional string firstName = 3 [default = ""];
-  optional string lastName = 4 [default = ""];
-  optional string email = 5 [default = ""];
-  optional Address address = 6;
-  optional google.protobuf.Timestamp dateOfBirth = 7;
-  optional string phoneNumber = 8 [default = ""];
-  optional string gender = 9 [default = ""];
-  optional string token = 10 [default = ""];
+  string id = 1;
+  string username = 2;
+  string firstName = 3;
+  string lastName = 4;
+  string email = 5;
+  Address address = 6;
+  google.protobuf.Timestamp dateOfBirth = 7;
+  string phoneNumber = 8;
+  string gender = 9;
+  string token = 10;
 }
 
 message Address {
-  optional string country = 1 [default = ""];
-  optional string city = 2 [default = ""];
-  optional string street = 3 [default = ""];
+  string country = 1;
+  string city = 2;
+  string street = 3;
 }
 message Search {
-  required string search = 1;
+  string search = 1;
 }
