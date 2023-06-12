@@ -1,8 +1,8 @@
 package main
 
 import (
-	"accommodation_booking/user_service/startup"
-	cfg "accommodation_booking/user_service/startup/config"
+	"accommodation_booking/api_gateway/startup"
+	cfg "accommodation_booking/api_gateway/startup/config"
 	"os"
 	"os/signal"
 	"syscall"
@@ -23,7 +23,7 @@ func main() {
 
 	config := cfg.NewConfig()
 	server := startup.NewServer(config)
-	fmt.Printf("User service has been started!")
+	fmt.Printf("Gateway has been started!")
 	server.Start()
 	<-done
 }
