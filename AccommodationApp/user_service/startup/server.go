@@ -3,6 +3,8 @@ package startup
 import (
 	"accommodation_booking/common/auth"
 	user "accommodation_booking/common/proto/user_service"
+	saga "accommodation_booking/common/saga/messaging"
+	"accommodation_booking/common/saga/messaging/nats"
 	"accommodation_booking/user_service/application"
 	"accommodation_booking/user_service/domain"
 	"accommodation_booking/user_service/infrastructure/api"
@@ -22,6 +24,10 @@ type Server struct {
 	config *config.Config
 }
 
+const (
+	QueueGroup = "user_service"
+)
+
 func NewServer(config *config.Config) *Server {
 	return &Server{
 		config: config,
@@ -32,7 +38,7 @@ func accessibleRoles() map[string][]string {
 	const userServicePath = "/user.UserService/"
 
 	return map[string][]string{
-		userServicePath + "GetAll": {"*"},
+		userServicePath + "GetAll": {"user", "admin"},
 	}
 }
 
@@ -41,11 +47,42 @@ func (server *Server) Start() {
 	userStore := server.initUserStore(mongoClient)
 	userService := server.initUserService(userStore)
 
+	commandSubscriber := server.initSubscriber(server.config.UpdateProfileCommandSubject, QueueGroup)
+	replyPublisher := server.initPublisher(server.config.UpdateProfileReplySubject)
+	server.initUpdateProfileHandler(userService, replyPublisher, commandSubscriber)
+
 	jwtManager := auth.NewJWTManager("secretKey", 60*time.Minute)
 
 	userHandler := server.initUserHandler(userService, jwtManager)
 
 	server.startGrpcServer(userHandler, jwtManager)
+}
+
+func (server *Server) initPublisher(subject string) saga.Publisher {
+	publisher, err := nats.NewNATSPublisher(
+		server.config.NatsHost, server.config.NatsPort,
+		server.config.NatsUser, server.config.NatsPass, subject)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return publisher
+}
+
+func (server *Server) initSubscriber(subject, queueGroup string) saga.Subscriber {
+	subscriber, err := nats.NewNATSSubscriber(
+		server.config.NatsHost, server.config.NatsPort,
+		server.config.NatsUser, server.config.NatsPass, subject, queueGroup)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return subscriber
+}
+
+func (server *Server) initUpdateProfileHandler(service *application.UserService, publisher saga.Publisher, subscriber saga.Subscriber) {
+	_, err := api.NewUpdateProfileCommandHandler(service, publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (server *Server) initMongoClient() *mongo.Client {
