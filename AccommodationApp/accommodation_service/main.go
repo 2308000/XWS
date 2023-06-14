@@ -1,8 +1,8 @@
 package main
 
 import (
-	"accommodation_booking/profile_service/startup"
-	cfg "accommodation_booking/profile_service/startup/config"
+	"accommodation_booking/accommodation_service/startup"
+	cfg "accommodation_booking/accommodation_service/startup/config"
 	"fmt"
 	"os"
 	"os/signal"
@@ -17,13 +17,13 @@ func main() {
 
 	go func() {
 		<-sigs
-		fmt.Println("Profile service stopped")
 		done <- true
 		os.Exit(0)
 	}()
+
 	config := cfg.NewConfig()
 	server := startup.NewServer(config)
-	fmt.Println("Profile service has started!")
+	fmt.Println("Accommodation service has been started!")
 	server.Start()
 	<-done
 }

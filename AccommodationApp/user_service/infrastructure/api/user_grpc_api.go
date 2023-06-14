@@ -99,7 +99,7 @@ func (handler *UserHandler) Login(ctx context.Context, req *pb.LoginRequest) (*p
 		return nil, status.Errorf(codes.NotFound, "incorrect username/password")
 	}
 
-	token, err := handler.jwtManager.Generate(user, false)
+	token, err := handler.jwtManager.Generate(user)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "cannot generate access token")
 	}

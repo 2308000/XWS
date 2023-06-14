@@ -38,14 +38,19 @@ func accessibleRoles() map[string][]string {
 	const userServicePath = "/user.UserService/"
 
 	return map[string][]string{
-		userServicePath + "GetAll": {"user", "admin"},
+		userServicePath + "GetAll": {"user", "admin", "host"},
 	}
 }
 
 func (server *Server) Start() {
 	mongoClient := server.initMongoClient()
 	userStore := server.initUserStore(mongoClient)
-	userService := server.initUserService(userStore)
+
+	commandPublisher := server.initPublisher(server.config.CreateProfileCommandSubject)
+	replySubscriber := server.initSubscriber(server.config.CreateProfileReplySubject, QueueGroup)
+	createProfileOrchestrator := server.initCreateProfileOrchestrator(commandPublisher, replySubscriber)
+
+	userService := server.initUserService(userStore, createProfileOrchestrator)
 
 	commandSubscriber := server.initSubscriber(server.config.UpdateProfileCommandSubject, QueueGroup)
 	replyPublisher := server.initPublisher(server.config.UpdateProfileReplySubject)
@@ -76,6 +81,14 @@ func (server *Server) initSubscriber(subject, queueGroup string) saga.Subscriber
 		log.Fatal(err)
 	}
 	return subscriber
+}
+
+func (server *Server) initCreateProfileOrchestrator(publisher saga.Publisher, subscriber saga.Subscriber) *application.CreateProfileOrchestrator {
+	orchestrator, err := application.NewCreateProfileOrchestrator(publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return orchestrator
 }
 
 func (server *Server) initUpdateProfileHandler(service *application.UserService, publisher saga.Publisher, subscriber saga.Subscriber) {
@@ -109,8 +122,8 @@ func (server *Server) initUserStore(client *mongo.Client) domain.UserStore {
 	return store
 }
 
-func (server *Server) initUserService(store domain.UserStore) *application.UserService {
-	return application.NewUserService(store)
+func (server *Server) initUserService(store domain.UserStore, orchestrator *application.CreateProfileOrchestrator) *application.UserService {
+	return application.NewUserService(store, orchestrator)
 }
 
 func (server *Server) initUserHandler(service *application.UserService,

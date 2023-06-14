@@ -2,6 +2,7 @@ package startup
 
 import (
 	cfg "accommodation_booking/api_gateway/startup/config"
+	accommodationGw "accommodation_booking/common/proto/accommodation_service"
 	profileGw "accommodation_booking/common/proto/profile_service"
 	userGw "accommodation_booking/common/proto/user_service"
 	"context"
@@ -36,6 +37,11 @@ func (server *Server) initHandlers() {
 	}
 	profileEndpoint := fmt.Sprintf("%s:%s", server.config.ProfileHost, server.config.ProfilePort)
 	err = profileGw.RegisterProfileServiceHandlerFromEndpoint(context.TODO(), server.mux, profileEndpoint, opts)
+	if err != nil {
+		panic(err)
+	}
+	accommodationEndpoint := fmt.Sprintf("%s:%s", server.config.AccommodationHost, server.config.AccommodationPort)
+	err = accommodationGw.RegisterAccommodationServiceHandlerFromEndpoint(context.TODO(), server.mux, accommodationEndpoint, opts)
 	if err != nil {
 		panic(err)
 	}

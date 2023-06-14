@@ -38,7 +38,7 @@ func accessibleRoles() map[string][]string {
 	const profileServicePath = "/profile.ProfileService/"
 
 	return map[string][]string{
-		profileServicePath + "GetAll": {"*"},
+		profileServicePath + "GetAll": {"user", "host"},
 	}
 }
 
@@ -54,6 +54,10 @@ func (server *Server) Start() {
 
 	profileService := server.initProfileService(profileStore, updateProfileOrchestrator)
 	profileHandler := server.initProfileHandler(profileService)
+
+	commandSubscriber := server.initSubscriber(server.config.CreateProfileCommandSubject, QueueGroup)
+	replyPublisher := server.initPublisher(server.config.CreateProfileReplySubject)
+	server.initCreateProfileHandler(profileService, replyPublisher, commandSubscriber)
 
 	server.startGrpcServer(profileHandler, jwtManager)
 }
@@ -84,6 +88,13 @@ func (server *Server) initUpdateProfileOrchestrator(publisher saga.Publisher, su
 		log.Fatal(err)
 	}
 	return orchestrator
+}
+
+func (server *Server) initCreateProfileHandler(service *application.ProfileService, publisher saga.Publisher, subscriber saga.Subscriber) {
+	_, err := api.NewCreateProfileCommandHandler(service, publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (server *Server) initMongoClient() *mongo.Client {

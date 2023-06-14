@@ -16,10 +16,9 @@ type JWTManager struct {
 // UserClaims is a custom JWT claims that contains some user's information
 type UserClaims struct {
 	jwt.StandardClaims
-	UserId                 string `json:"userId"`
-	Username               string `json:"username"`
-	Role                   string `json:"role"`
-	TwoFactorAuthenticated bool   `json:"twoFactorAuthenticated"`
+	UserId   string `json:"userId"`
+	Username string `json:"username"`
+	Role     string `json:"role"`
 }
 
 // NewJWTManager returns a new JWT manager
@@ -28,15 +27,14 @@ func NewJWTManager(secretKey string, tokenDuration time.Duration) *JWTManager {
 }
 
 // Generate generates and signs a new token for a user
-func (manager *JWTManager) Generate(user *domain.User, authenticated bool) (string, error) {
+func (manager *JWTManager) Generate(user *domain.User) (string, error) {
 	claims := UserClaims{
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(manager.tokenDuration).Unix(),
 		},
-		UserId:                 user.Id.Hex(),
-		Username:               user.Username,
-		Role:                   user.Role,
-		TwoFactorAuthenticated: authenticated,
+		UserId:   user.Id.Hex(),
+		Username: user.Username,
+		Role:     user.Role,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

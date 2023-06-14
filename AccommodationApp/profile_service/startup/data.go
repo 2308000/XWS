@@ -31,7 +31,7 @@ var profiles = []*domain.Profile{
 	},
 	{
 		Id:          getObjectId("55306d1b623b3da748f63fa1"),
-		Username:    "guest",
+		Username:    "user",
 		FirstName:   "Dejan",
 		LastName:    "Barcal",
 		FullName:    "DejanBarcal",
