@@ -1,9 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import dayjs from "dayjs";
 import classes from "./Flights.module.css";
+import { useNavigate } from "react-router-dom";
+import AuthContext from "../store/auth-context";
 
 const NewFlight = () => {
   const [value, setValue] = useState(dayjs(Date.now()));
@@ -12,14 +14,15 @@ const NewFlight = () => {
   const durationRef = useRef();
   const priceRef = useRef();
   const ticketsRef = useRef();
-
+  const navigate = useNavigate();
+  const authCtx = useContext(AuthContext);
   const addFlightHandler = () => {
     event.preventDefault();
-    fetch("http://localhost:5041/api/Flight", {
+    fetch("https://localhost:5000/api/Flight", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer ",
+        Authorization: "Bearer " + authCtx.token,
       },
       body: JSON.stringify({
         date: value,
@@ -30,9 +33,9 @@ const NewFlight = () => {
         tickets: ticketsRef.current.value,
       }),
     })
-      .then((response) => response.json())
+      .then((response) => response)
       .then((actualData) => {
-        console.log(actualData.items);
+        navigate("/admin-flights");
       });
   };
 

@@ -4,7 +4,7 @@ namespace AvioApp.Service
 {
     public interface IUserService
     {
-        public string Authenticate(CredentialsDTO credentials);
+        public JWTDTO Authenticate(CredentialsDTO credentials);
         public string Register(NewUserDTO user);
         public void UpdateCode(string code, string email);
     }

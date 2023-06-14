@@ -66,7 +66,7 @@ namespace AvioApp.Service
 
         public IEnumerable<FlightUserPreviewDTO> Search(FlightSearchDTO query)
         {
-            var flights = _flightRepository.GetAll().Where(f => f.Date.Date == query.Date)
+            var flights = _flightRepository.GetAll().Where(f => f.Date.Date == query.Date.Date)
                                                                .Where(f => query.Start != "" ? f.Start.Contains(query.Start) : true)
                                                                .Where(f => query.Destination != "" ? f.Destination.Contains(query.Destination) : true)
                                                                .Where(f => query.RequiredTickets != 0 ? (f.Tickets - _ticketRepository.GetAll().Where(t => t.FlightId == f.Id).Count()) >= query.RequiredTickets : true);

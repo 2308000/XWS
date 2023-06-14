@@ -77,7 +77,7 @@ namespace AvioApp.Service
                     }
                     _flightRepository.Create(new Flight
                     {
-                        Date = DateTime.Today.Date.AddDays(random.Next(3, 6)).AddHours(random.Next(8, 20)),
+                        Date = DateTime.Today.Date.AddDays(random.Next(1, 3)).AddHours(random.Next(8, 20)),
                         Duration = random.Next(30, 46),
                         Start = cities[num1],
                         Destination = cities[num2],
