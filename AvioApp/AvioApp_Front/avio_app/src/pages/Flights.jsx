@@ -3,47 +3,19 @@ import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import classes from "./Flights.module.css";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-
-const flights = [
-  {
-    id: 1,
-    date: new Date(),
-    duration: 1,
-    start: "Belgrade",
-    destination: "Paris",
-    price: 50,
-    tickets: 10,
-    remainingTickets: 2,
-  },
-  {
-    id: 2,
-    date: new Date(),
-    duration: 2,
-    start: "Belgrade",
-    destination: "Paris",
-    price: 250,
-    tickets: 20,
-    remainingTickets: 10,
-  },
-  {
-    id: 3,
-    date: new Date(),
-    duration: 3,
-    start: "Belgrade",
-    destination: "Paris",
-    price: 150,
-    tickets: 15,
-    remainingTickets: 5,
-  },
-];
+import AuthContext from "../store/auth-context";
+import { useNavigate } from "react-router-dom";
 
 const Flights = () => {
-  const [value, setValue] = useState(dayjs(Date.now()));
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const [value, setValue] = useState(dayjs(tomorrow));
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -52,7 +24,9 @@ const Flights = () => {
   const startRef = useRef();
   const destRef = useRef();
   const reqTicketRef = useRef();
-
+  const [flights, setFlights] = useState();
+  const authCtx = useContext(AuthContext);
+  const navigate = useNavigate();
   const style = {
     position: "absolute",
     top: "50%",
@@ -68,43 +42,53 @@ const Flights = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:5041/api/Flight", {
-      method: "GET",
+    fetch("https://localhost:5000/api/Flight/search", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer ",
       },
+      body: JSON.stringify({
+        date: tomorrow,
+        start: "",
+        destination: "",
+        requiredTickets: 1,
+      }),
     })
       .then((response) => response.json())
       .then((actualData) => {
-        console.log(actualData.items);
+        console.log(actualData);
+        setFlights(actualData);
       });
   }, []);
 
   const searchHandler = () => {
-    fetch("http://localhost:5041/api/Flight/search", {
+    if (numberOfTickets <= 0) {
+      alert("You must enter at least 1 for required tickets");
+      return;
+    }
+    fetch("https://localhost:5000/api/Flight/search", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer ",
       },
       body: JSON.stringify({
         date: value,
         start: startRef.current.value,
         destination: destRef.current.value,
-        requiredTickets: reqTicketRef.current.value,
+        requiredTickets: numberOfTickets,
       }),
     })
       .then((response) => response.json())
       .then((actualData) => {
-        console.log(actualData.items);
+        console.log(actualData);
+        setFlights(actualData);
       });
   };
 
   const buyTicketHandler = () => {
     event.preventDefault();
     fetch(
-      "http://localhost:5041/api/Ticket/" +
+      "https://localhost:5000/api/Ticket/" +
         selectedFlight.id +
         "/" +
         numberOfTickets,
@@ -112,14 +96,15 @@ const Flights = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer ",
+          Authorization: "Bearer " + authCtx.token,
         },
         body: JSON.stringify({}),
       }
     )
-      .then((response) => response.json())
+      .then((response) => response)
       .then((actualData) => {
-        console.log(actualData.items);
+        alert("Succes!");
+        navigate("/reservations");
       });
   };
 
@@ -149,7 +134,11 @@ const Flights = () => {
           </div>
           <div className={classes.filter}>
             <label>Required tickets</label>
-            <input className={classes.inputNumber} ref={reqTicketRef}></input>
+            <input
+              className={classes.inputNumber}
+              value={numberOfTickets}
+              onChange={changeNumberHandler}
+            ></input>
           </div>
           <button className={classes.searchButton} onClick={searchHandler}>
             Search
@@ -157,42 +146,50 @@ const Flights = () => {
         </div>
 
         <div className={classes.tableContainer}>
-          <table className={classes.styledTable}>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Duration</th>
-                <th>Start</th>
-                <th>Destination</th>
-                <th>Price</th>
-
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {flights.map((flight) => (
-                <tr key={flight.id}>
-                  <td>{dayjs(flight.duration).format("DD.MM.YYYY")}</td>
-                  <td>{flight.duration}</td>
-                  <td>{flight.start}</td>
-                  <td>{flight.destination}</td>
-                  <td>{flight.price}</td>
-
-                  <td>
-                    <button
-                      className={classes.buyButton}
-                      onClick={() => {
-                        handleOpen();
-                        setSelectedFlight(flight);
-                      }}
-                    >
-                      Buy
-                    </button>
-                  </td>
+          {flights?.length > 0 ? (
+            <table className={classes.styledTable}>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Duration</th>
+                  <th>Start</th>
+                  <th>Destination</th>
+                  <th>Price</th>
+                  <th>Total Price</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {flights?.map((flight) => (
+                  <tr key={flight.id}>
+                    <td>{dayjs(flight.date).format("DD.MM.YYYY")}</td>
+                    <td>{flight.duration}</td>
+                    <td>{flight.start}</td>
+                    <td>{flight.destination}</td>
+                    <td>{flight.price}</td>
+                    <td>
+                      {numberOfTickets > 0
+                        ? flight.price * numberOfTickets
+                        : flight.price}
+                    </td>
+                    <td>
+                      <button
+                        className={classes.buyButton}
+                        onClick={() => {
+                          handleOpen();
+                          setSelectedFlight(flight);
+                        }}
+                      >
+                        Buy
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div>No flights </div>
+          )}
         </div>
       </div>
       <Modal
@@ -223,11 +220,7 @@ const Flights = () => {
               </div>
               <div className={classes.spanReserve}>
                 <label>Number of tickets: </label>
-                <input
-                  className={classes.inputNumber}
-                  value={numberOfTickets}
-                  onChange={changeNumberHandler}
-                ></input>
+                <span>{numberOfTickets}</span>
               </div>
               <div className={classes.spanReserve}>
                 <label>Total price:</label>

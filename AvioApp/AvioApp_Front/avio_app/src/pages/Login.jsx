@@ -1,31 +1,64 @@
 import React from "react";
 import classes from "./Login.module.css";
 import { Link } from "react-router-dom";
-import { useRef } from "react";
+import { useRef, useContext } from "react";
+import AuthContext from "../store/auth-context";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const emailRef = useRef();
   const permaRef = useRef();
   const pwRef = useRef();
-
+  const authCtx = useContext(AuthContext);
+  const navigate = useNavigate();
   const loginHandler = () => {
     event.preventDefault();
-    fetch("http://localhost:5041/api/User/login", {
+
+    fetch("https://localhost:5000/api/User/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer ",
       },
       body: JSON.stringify({
         email: emailRef.current.value,
         password: pwRef.current.value,
-        isLoginPermanent: permaRef.current.value,
+        isLoginPermanent: permaRef.current.checked,
       }),
     })
-      .then((response) => response.json())
-      .then((actualData) => {
-        console.log(actualData.items);
+      .then((res) => {
+        if (res.ok) {
+          console.log("c");
+          return res.json();
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        const parsedJWT = parseJwt(data.token);
+        authCtx.login(parsedJWT.role, parsedJWT.email, data.token);
+        setTimeout(() => {
+          navigateLogin(parsedJWT.role);
+        }, 100);
+      })
+      .catch((error) => {
+        alert("Wrong credentials!");
       });
+  };
+
+  function parseJwt(token) {
+    if (!token) {
+      return;
+    }
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace("-", "+").replace("_", "/");
+    return JSON.parse(window.atob(base64));
+  }
+
+  const navigateLogin = (role) => {
+    if (role == "ADMIN") {
+      navigate("/admin-flights", { replace: true });
+    } else {
+      navigate("/flights", { replace: true });
+    }
   };
 
   return (

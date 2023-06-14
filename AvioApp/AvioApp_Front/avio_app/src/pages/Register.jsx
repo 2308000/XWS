@@ -1,5 +1,5 @@
 import classes from "./Login.module.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
 
 const Register = () => {
@@ -9,6 +9,7 @@ const Register = () => {
   const [pw, setPw] = useState();
   const [rePw, setRePw] = useState();
   const [validation, setValidation] = useState(true);
+  const navigate = useNavigate();
 
   const changePwHandler = () => {
     setPw(event.target.value);
@@ -18,7 +19,6 @@ const Register = () => {
   };
 
   useEffect(() => {
-    console.log("a");
     if (rePw !== pw) {
       setValidation(false);
     } else {
@@ -28,7 +28,7 @@ const Register = () => {
 
   const registerHandler = () => {
     event.preventDefault();
-    fetch("http://localhost:5041/api/User/registration", {
+    fetch("https://localhost:5000/api/User/registration", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -41,9 +41,19 @@ const Register = () => {
         lastName: lastNameRef.current.value,
       }),
     })
-      .then((response) => response.json())
-      .then((actualData) => {
-        console.log(actualData.items);
+      .then((res) => {
+        if (res.ok) {
+          return res;
+        } else if (res.status == 400) {
+          throw new Error("Error");
+        }
+      })
+      .then((data) => {
+        if (data) console.log(data);
+        navigate("/login");
+      })
+      .catch((error) => {
+        alert(error);
       });
   };
 

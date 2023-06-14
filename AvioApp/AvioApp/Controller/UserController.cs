@@ -18,7 +18,7 @@ namespace AvioApp.Controllers
 
         [HttpPost("login", Name = "Login")]
         [AllowAnonymous]
-        public ActionResult<string> Login([FromBody] CredentialsDTO credentials)
+        public ActionResult<JWTDTO> Login([FromBody] CredentialsDTO credentials)
         {
             return Ok(_userService.Authenticate(credentials));
         }

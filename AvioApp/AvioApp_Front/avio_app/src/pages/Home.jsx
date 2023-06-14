@@ -7,70 +7,50 @@ import { useState, useRef } from "react";
 import classes from "./Flights.module.css";
 import { useNavigate } from "react-router-dom";
 
-const flights = [
-  {
-    id: 1,
-    date: new Date(),
-    duration: 1,
-    start: "Paris",
-    destination: "London",
-    price: 50,
-    tickets: 10,
-    remainingTickets: 2,
-  },
-  {
-    id: 2,
-    date: new Date(),
-    duration: 2,
-    start: "Paris",
-    destination: "London",
-    price: 250,
-    tickets: 20,
-    remainingTickets: 10,
-  },
-  {
-    id: 3,
-    date: new Date(),
-    duration: 3,
-    start: "Paris",
-    destination: "London",
-    price: 150,
-    tickets: 15,
-    remainingTickets: 5,
-  },
-];
-
 const Home = () => {
-  const [value, setValue] = useState(dayjs(Date.now()));
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const [value, setValue] = useState(dayjs(tomorrow));
   const [numberOfTickets, setNumberOfTickets] = useState(1);
   const startRef = useRef();
   const destRef = useRef();
   const navigate = useNavigate();
+  const [flights, setFlights] = useState();
 
   const changeNumberHandler = () => {
     setNumberOfTickets(event.target.value);
   };
 
   useEffect(() => {
-    fetch("http://localhost:5041/api/Flight", {
-      method: "GET",
+    fetch("https://localhost:5000/api/Flight/search", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer ",
       },
+      body: JSON.stringify({
+        date: tomorrow,
+        start: "",
+        destination: "",
+        requiredTickets: 1,
+      }),
     })
       .then((response) => response.json())
       .then((actualData) => {
-        console.log(actualData.items);
+        console.log(actualData);
+        setFlights(actualData);
       });
   }, []);
 
   const searchHandler = () => {
-    fetch("http://localhost:5041/api/Flight/search", {
+    if (numberOfTickets <= 0) {
+      alert("You must enter at least 1 for required tickets");
+      return;
+    }
+    fetch("https://localhost:5000/api/Flight/search", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer ",
       },
       body: JSON.stringify({
         date: value,
@@ -81,7 +61,8 @@ const Home = () => {
     })
       .then((response) => response.json())
       .then((actualData) => {
-        console.log(actualData.items);
+        console.log(actualData);
+        setFlights(actualData);
       });
   };
 
@@ -123,43 +104,49 @@ const Home = () => {
         </div>
 
         <div className={classes.tableContainer}>
-          <table className={classes.styledTable}>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Duration</th>
-                <th>Start</th>
-                <th>Destination</th>
-                <th>Remaining tickets</th>
-                <th>Price</th>
-                <th>Total Price</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {flights.map((flight) => (
-                <tr key={flight.id}>
-                  <td>{dayjs(flight.duration).format("DD.MM.YYYY")}</td>
-                  <td>{flight.duration}</td>
-                  <td>{flight.start}</td>
-                  <td>{flight.destination}</td>
-                  <td>{flight.remainingTickets}</td>
-                  <td>{flight.price}</td>
-                  <td>{flight.price * numberOfTickets}</td>
-                  <td>
-                    <button
-                      className={classes.buyButton}
-                      onClick={() => {
-                        navigate("/login");
-                      }}
-                    >
-                      Buy
-                    </button>
-                  </td>
+          {flights?.length > 0 ? (
+            <table className={classes.styledTable}>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Duration</th>
+                  <th>Start</th>
+                  <th>Destination</th>
+                  <th>Price</th>
+                  <th>Total Price</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {flights?.map((flight) => (
+                  <tr key={flight.id}>
+                    <td>{dayjs(flight.date).format("DD.MM.YYYY")}</td>
+                    <td>{flight.duration}</td>
+                    <td>{flight.start}</td>
+                    <td>{flight.destination}</td>
+                    <td>{flight.price}</td>
+                    <td>
+                      {numberOfTickets > 0
+                        ? flight.price * numberOfTickets
+                        : flight.price}
+                    </td>
+                    <td>
+                      <button
+                        className={classes.buyButton}
+                        onClick={() => {
+                          navigate("/login");
+                        }}
+                      >
+                        Buy
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div>No flights </div>
+          )}
         </div>
       </div>
     </div>

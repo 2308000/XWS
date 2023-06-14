@@ -2,70 +2,43 @@ import React from "react";
 import dayjs, { Dayjs } from "dayjs";
 import classes from "./Flights.module.css";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-
-const flights = [
-  {
-    id: 1,
-    date: new Date(),
-    duration: 1,
-    start: "bg",
-    destination: "ns",
-    price: 50,
-    tickets: 10,
-    remainingTickets: 2,
-  },
-  {
-    id: 2,
-    date: new Date(),
-    duration: 2,
-    start: "par",
-    destination: "lnd",
-    price: 250,
-    tickets: 20,
-    remainingTickets: 10,
-  },
-  {
-    id: 3,
-    date: new Date(),
-    duration: 3,
-    start: "tok",
-    destination: "lsb",
-    price: 150,
-    tickets: 15,
-    remainingTickets: 5,
-  },
-];
+import { useEffect, useContext, useState } from "react";
+import AuthContext from "../store/auth-context";
 
 const AdminFlights = () => {
   const navigate = useNavigate();
+  const [flights, setFlights] = useState();
+  const authCtx = useContext(AuthContext);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:5041/api/Flight", {
+    fetch("https://localhost:5000/api/Flight", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer ",
+        Authorization: "Bearer " + authCtx.token,
       },
     })
       .then((response) => response.json())
       .then((actualData) => {
-        console.log(actualData.items);
+        console.log(actualData);
+        setFlights(actualData);
       });
-  }, []);
+  }, [refresh]);
 
   const deleteFlightHandler = (id) => {
     console.log(id);
-    fetch("http://localhost:5041/api/Flight/" + id, {
+    fetch("https://localhost:5000/api/Flight/" + id, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer ",
+        Authorization: "Bearer " + authCtx.token,
       },
     })
-      .then((response) => response.json())
+      .then((response) => response)
       .then((actualData) => {
-        console.log(actualData.items);
+        alert("Success!");
+        setRefresh(true);
       });
   };
 
@@ -99,9 +72,9 @@ const AdminFlights = () => {
               </tr>
             </thead>
             <tbody>
-              {flights.map((flight) => (
+              {flights?.map((flight) => (
                 <tr key={flight.id}>
-                  <td>{dayjs(flight.duration).format("DD.MM.YYYY")}</td>
+                  <td>{dayjs(flight.date).format("DD.MM.YYYY")}</td>
                   <td>{flight.duration}</td>
                   <td>{flight.start}</td>
                   <td>{flight.destination}</td>

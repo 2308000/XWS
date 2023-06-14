@@ -16,6 +16,7 @@ import AdminFlights from "./pages/AdminFlights";
 import NewFlight from "./pages/NewFlight";
 import Flights from "./pages/Flights";
 import Reservations from "./pages/Reservations";
+import AuthContext from "./store/auth-context";
 
 const router = createBrowserRouter(
   createRoutesFromElements(

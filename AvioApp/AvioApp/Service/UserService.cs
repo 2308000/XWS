@@ -18,7 +18,7 @@ namespace AvioApp.Service
             _jwtGenerator = jwtGenerator;
         }
 
-        public string Authenticate(CredentialsDTO credentials)
+        public JWTDTO Authenticate(CredentialsDTO credentials)
         {
             User? user = _userRepository.GetAll().FirstOrDefault(u => u.Email == credentials.Email);
             if (user == null)
@@ -27,7 +27,7 @@ namespace AvioApp.Service
             }
             if (PasswordHasher.VerifyPassword(credentials.Password, user.Password, user.Salt))
             {
-                return _jwtGenerator.GenerateToken(user, credentials.IsLoginPermanent);
+                return new JWTDTO { Token = _jwtGenerator.GenerateToken(user, credentials.IsLoginPermanent) };
             }
             throw new BadCredentialsException($"Incorrect password for user with email {credentials.Email}!");
         }
