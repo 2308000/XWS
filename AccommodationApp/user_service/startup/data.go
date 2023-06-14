@@ -14,21 +14,21 @@ var users = []*auth.User{
 	},
 	{
 		Id:       getObjectId("62706d1b624b4da648f53fe3"),
-		Username: "user",
+		Username: "host",
 		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
-		Role:     "user",
+		Role:     "host",
 	},
 	{
 		Id:       getObjectId("62706d1b623b3da748f63fa1"),
-		Username: "nikola",
+		Username: "guest",
 		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
-		Role:     "user",
+		Role:     "guest",
 	},
 	{
 		Id:       getObjectId("55306d1b623b3da748f63fa1"),
 		Username: "dane",
 		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
-		Role:     "user",
+		Role:     "guest",
 	},
 }
 

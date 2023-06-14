@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+option go_package = "accommodation_booking/common/accommodation";
+
+package profile;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+
+service AccommodationService{
+  rpc Get(GetAccommodationRequest) returns(GetAccommodationResponse) {
+    option (google.api.http) = {
+      get: "/accommodation/{id}"
+    };
+  }
+
+  rpc GetByHost(GetAccommodationRequest) returns(GetAllAccommodationsResponse) {
+    option (google.api.http) = {
+      get: "/accommodation/host/{id}"
+    };
+  }
+
+  rpc GetAll(GetAllAccommodationsRequest) returns(GetAllAccommodationsResponse) {
+    option (google.api.http) = {
+      get: "/accommodation"
+    };
+  }
+  rpc Create(CreateAccommodationRequest) returns(CreateAccommodationResponse) {
+    option (google.api.http) = {
+      post: "/accommodation"
+      body: "accommodation"
+    };
+  }
+  rpc Update(UpdateAccommodationRequest) returns(UpdateAccommodationResponse) {
+    option (google.api.http) = {
+      put: "/accommodation/{id}"
+      body: "accommodation"
+    };
+  }
+  rpc Delete(DeleteAccommodationRequest) returns(DeleteAccommodationResponse) {
+    option (google.api.http) = {
+      delete: "/accommodation/{id}"
+    };
+  }
+}
+
+message GetAccommodationRequest {
+  string id = 1;
+}
+
+message GetAccommodationResponse {
+  Accommodation accommodation = 1;
+}
+
+message GetAllAccommodationsRequest {
+}
+
+message GetAllAccommodationsResponse {
+  repeated Accommodation accommodations = 1;
+}
+
+message CreateAccommodationRequest {
+  Accommodation accommodation = 1;
+}
+
+message CreateAccommodationResponse {
+  Accommodation accommodation = 1;
+}
+
+message UpdateAccommodationRequest {
+  Accommodation accommodation = 1;
+}
+
+message UpdateAccommodationResponse {
+  Accommodation accommodation = 1;
+}
+
+message DeleteAccommodationRequest {
+  string id = 1;
+}
+
+message DeleteAccommodationResponse {
+}
+
+message Accommodation {
+  string id = 1;
+  Host host = 2;
+  string name = 3;
+  Location location = 4;
+  bool hasWifi = 5;
+  bool hasAirConditioning = 6;
+  bool hasFreeParking = 7;
+  bool hasKitchen = 8;
+  bool hasWashingMachine = 9;
+  bool hasBathtub = 10;
+  bool hasBalcony = 11;
+  repeated bytes photos = 12;
+  int32 minNumberOfGuests = 13;
+  int32 maxNumberOfGuests = 14;
+}
+
+message Host {
+  string hostId = 1;
+  string username = 2;
+  string phoneNumber = 3;
+}
+
+message Location {
+  string country = 1;
+  string city = 2;
+  string street = 3;
+}

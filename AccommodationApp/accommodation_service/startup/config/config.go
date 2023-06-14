@@ -8,16 +8,16 @@ import (
 
 type Config struct {
 	Port                        string
-	ProfileDBHost               string
-	ProfileDBPort               string
+	AccommodationDBHost         string
+	AccommodationDBPort         string
+	ProfileHost                 string
+	ProfilePort                 string
 	NatsHost                    string
 	NatsPort                    string
 	NatsUser                    string
 	NatsPass                    string
 	UpdateProfileCommandSubject string
 	UpdateProfileReplySubject   string
-	CreateProfileCommandSubject string
-	CreateProfileReplySubject   string
 }
 
 func NewConfig() *Config {
@@ -26,24 +26,24 @@ func NewConfig() *Config {
 		return nil
 	}
 	return &Config{
-		Port:                        os.Getenv("PROFILE_SERVICE_PORT"),
-		ProfileDBHost:               os.Getenv("PROFILE_DB_HOST"),
-		ProfileDBPort:               os.Getenv("PROFILE_DB_PORT"),
+		Port:                        os.Getenv("ACCOMMODATION_SERVICE_PORT"),
+		AccommodationDBHost:         os.Getenv("ACCOMMODATION_DB_HOST"),
+		AccommodationDBPort:         os.Getenv("ACCOMMODATION_DB_PORT"),
+		ProfileHost:                 os.Getenv("PROFILE_SERVICE_HOST"),
+		ProfilePort:                 os.Getenv("PROFILE_SERVICE_PORT"),
 		NatsHost:                    os.Getenv("NATS_HOST"),
 		NatsPort:                    os.Getenv("NATS_PORT"),
 		NatsUser:                    os.Getenv("NATS_USER"),
 		NatsPass:                    os.Getenv("NATS_PASS"),
 		UpdateProfileCommandSubject: os.Getenv("UPDATE_PROFILE_COMMAND_SUBJECT"),
 		UpdateProfileReplySubject:   os.Getenv("UPDATE_PROFILE_REPLY_SUBJECT"),
-		CreateProfileCommandSubject: os.Getenv("CREATE_PROFILE_COMMAND_SUBJECT"),
-		CreateProfileReplySubject:   os.Getenv("CREATE_PROFILE_REPLY_SUBJECT"),
 	}
 }
 
 func SetEnvironment() error {
 	if os.Getenv("OS_ENV") != "docker" {
 		if err := godotenv.Load("../.env.dev"); err != nil {
-			log.Fatal("Error loading .env file")
+			log.Fatal("ENVF")
 		}
 	}
 	return nil

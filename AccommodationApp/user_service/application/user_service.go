@@ -8,12 +8,14 @@ import (
 )
 
 type UserService struct {
-	store domain.UserStore
+	store        domain.UserStore
+	orchestrator *CreateProfileOrchestrator
 }
 
-func NewUserService(store domain.UserStore) *UserService {
+func NewUserService(store domain.UserStore, orchestrator *CreateProfileOrchestrator) *UserService {
 	return &UserService{
-		store: store,
+		store:        store,
+		orchestrator: orchestrator,
 	}
 }
 
@@ -30,6 +32,15 @@ func (service *UserService) Register(ctx context.Context, user *auth.User, first
 	if err != nil {
 		return nil, err
 	}
+	profile := &auth.Profile{
+		Id:        registeredUser.Id,
+		Username:  registeredUser.Username,
+		FirstName: firstName,
+		LastName:  lastName,
+		FullName:  firstName + lastName,
+		Email:     email,
+	}
+	service.orchestrator.Start(profile)
 	return registeredUser, nil
 }
 

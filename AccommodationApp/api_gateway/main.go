@@ -3,10 +3,10 @@ package main
 import (
 	"accommodation_booking/api_gateway/startup"
 	cfg "accommodation_booking/api_gateway/startup/config"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
-	"fmt"
 )
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 
 	config := cfg.NewConfig()
 	server := startup.NewServer(config)
-	fmt.Printf("Gateway has been started!")
+	fmt.Println("Gateway has been started!")
 	server.Start()
 	<-done
 }

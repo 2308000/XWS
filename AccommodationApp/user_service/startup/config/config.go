@@ -18,6 +18,8 @@ type Config struct {
 	NatsPass                    string
 	UpdateProfileCommandSubject string
 	UpdateProfileReplySubject   string
+	CreateProfileCommandSubject string
+	CreateProfileReplySubject   string
 }
 
 func NewConfig() *Config {
@@ -37,6 +39,8 @@ func NewConfig() *Config {
 		NatsPass:                    os.Getenv("NATS_PASS"),
 		UpdateProfileCommandSubject: os.Getenv("UPDATE_PROFILE_COMMAND_SUBJECT"),
 		UpdateProfileReplySubject:   os.Getenv("UPDATE_PROFILE_REPLY_SUBJECT"),
+		CreateProfileCommandSubject: os.Getenv("CREATE_PROFILE_COMMAND_SUBJECT"),
+		CreateProfileReplySubject:   os.Getenv("CREATE_PROFILE_REPLY_SUBJECT"),
 	}
 }
 

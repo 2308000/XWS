@@ -7,11 +7,13 @@ import (
 )
 
 type Config struct {
-	Port        string
-	UserHost    string
-	UserPort    string
-	ProfileHost string
-	ProfilePort string
+	Port              string
+	UserHost          string
+	UserPort          string
+	ProfileHost       string
+	ProfilePort       string
+	AccommodationHost string
+	AccommodationPort string
 }
 
 func NewConfig() *Config {
@@ -20,11 +22,13 @@ func NewConfig() *Config {
 		return nil
 	}
 	return &Config{
-		Port:        os.Getenv("GATEWAY_PORT"),
-		UserHost:    os.Getenv("USER_SERVICE_HOST"),
-		UserPort:    os.Getenv("USER_SERVICE_PORT"),
-		ProfileHost: os.Getenv("PROFILE_SERVICE_HOST"),
-		ProfilePort: os.Getenv("PROFILE_SERVICE_PORT"),
+		Port:              os.Getenv("GATEWAY_PORT"),
+		UserHost:          os.Getenv("USER_SERVICE_HOST"),
+		UserPort:          os.Getenv("USER_SERVICE_PORT"),
+		ProfileHost:       os.Getenv("PROFILE_SERVICE_HOST"),
+		ProfilePort:       os.Getenv("PROFILE_SERVICE_PORT"),
+		AccommodationHost: os.Getenv("ACCOMMODATION_SERVICE_HOST"),
+		AccommodationPort: os.Getenv("ACCOMMODATION_SERVICE_PORT"),
 	}
 }
 
