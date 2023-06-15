@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+option go_package = "accommodation_booking/common/profile";
+
+package reservation;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+service ReservationService{
+  rpc Get(GetReservationRequest) returns(GetReservationResponse) {
+    option (google.api.http) = {
+      get: "/reservation/{id}"
+    };
+  }
+
+  rpc GetAll(GetAllReservationsRequest) returns(GetAllReservationsResponse) {
+    option (google.api.http) = {
+      get: "/reservation"
+    };
+  }
+
+  rpc Create(CreateReservationRequest) returns(CreateReservationResponse) {
+    option (google.api.http) = {
+      post: "/reservation"
+      body: "reservation"
+    };
+  }
+
+  rpc Update(UpdateReservationRequest) returns(UpdateReservationResponse) {
+    option (google.api.http) = {
+      put: "/reservation/{id}"
+      body: "reservation"
+    };
+  }
+
+  rpc Approve(ApproveReservationRequest) returns(ApproveReservationResponse) {
+    option (google.api.http) = {
+      put: "/reservation/approve/{id}"
+    };
+  }
+
+  rpc Cancel(CancelReservationRequest) returns(CancelReservationResponse) {
+    option (google.api.http) = {
+      put: "/reservation/cancel/{id}"
+    };
+  }
+
+  rpc Delete(DeleteReservationRequest) returns(DeleteReservationResponse) {
+    option (google.api.http) = {
+      delete: "/reservation/{id}"
+    };
+  }
+}
+
+message GetReservationRequest {
+  string id = 1;
+}
+
+message GetReservationResponse {
+  ReservationOut reservation = 1;
+}
+
+message GetAllReservationsRequest {
+  string search = 1;
+}
+
+message GetAllReservationsResponse {
+  repeated ReservationOut reservations = 1;
+}
+
+message CreateReservationRequest {
+  ReservationNew reservation = 1;
+}
+
+message CreateReservationResponse {
+  ReservationOut reservation = 1;
+}
+
+message UpdateReservationResponse {
+  ReservationOut reservation = 1;
+}
+
+message UpdateReservationRequest {
+  string id = 1;
+  ReservationIn reservation = 2;
+}
+
+message DeleteReservationRequest {
+  string id = 1;
+}
+
+message DeleteReservationResponse {
+}
+
+message ApproveReservationRequest {
+  string id = 1;
+}
+
+message CancelReservationResponse {
+}
+
+message CancelReservationRequest {
+  string id = 1;
+}
+
+message ApproveReservationResponse {
+}
+
+message ReservationOut {
+    string id = 1;
+    AccommodationDetails accommodation = 2;
+    UserDetails user = 3;
+    google.protobuf.Timestamp beginning = 4;
+    google.protobuf.Timestamp ending = 5;
+    int32 guests = 6;
+    int32 reservationStatus = 7;
+}
+
+message ReservationIn {
+  string id = 1;
+  string accommodationId = 2;
+  google.protobuf.Timestamp beginning = 3;
+  google.protobuf.Timestamp ending = 4;
+  int32 guests = 5;
+  int32 reservationStatus = 6;
+}
+
+message ReservationNew {
+  string accommodationId = 1;
+  google.protobuf.Timestamp beginning = 2;
+  google.protobuf.Timestamp ending = 3;
+  int32 guests = 4;
+  int32 reservationStatus = 5;
+}
+
+message AccommodationDetails{
+  string id = 1;
+  string name = 2;
+}
+
+message UserDetails{
+  string id = 1;
+  string username = 2;
+}

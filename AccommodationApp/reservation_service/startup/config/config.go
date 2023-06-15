@@ -8,14 +8,12 @@ import (
 
 type Config struct {
 	Port              string
+	ReservationDBHost string
+	ReservationDBPort string
 	UserHost          string
 	UserPort          string
-	ProfileHost       string
-	ProfilePort       string
 	AccommodationHost string
 	AccommodationPort string
-	ReservationHost   string
-	ReservationPort   string
 }
 
 func NewConfig() *Config {
@@ -24,15 +22,13 @@ func NewConfig() *Config {
 		return nil
 	}
 	return &Config{
-		Port:              os.Getenv("GATEWAY_PORT"),
+		Port:              os.Getenv("RESERVATION_SERVICE_PORT"),
+		ReservationDBHost: os.Getenv("RESERVATION_DB_HOST"),
+		ReservationDBPort: os.Getenv("RESERVATION_DB_PORT"),
 		UserHost:          os.Getenv("USER_SERVICE_HOST"),
 		UserPort:          os.Getenv("USER_SERVICE_PORT"),
-		ProfileHost:       os.Getenv("PROFILE_SERVICE_HOST"),
-		ProfilePort:       os.Getenv("PROFILE_SERVICE_PORT"),
 		AccommodationHost: os.Getenv("ACCOMMODATION_SERVICE_HOST"),
 		AccommodationPort: os.Getenv("ACCOMMODATION_SERVICE_PORT"),
-		ReservationHost:   os.Getenv("RESERVATION_SERVICE_HOST"),
-		ReservationPort:   os.Getenv("RESERVATION_SERVICE_PORT"),
 	}
 }
 

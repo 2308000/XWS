@@ -14,6 +14,11 @@ service UserService{
       get: "/user/username/{username}"
     };
   }
+  rpc GetById(GetByIdRequest) returns(GetResponse) {
+    option (google.api.http) = {
+      get: "/user/{id}"
+    };
+  }
   rpc GetAll(GetAllRequest) returns(GetAllResponse) {
     option (google.api.http) = {
       get: "/user"
@@ -49,6 +54,10 @@ service UserService{
 
 message GetRequest {
   string username = 1;
+}
+
+message GetByIdRequest {
+  string id = 1;
 }
 
 message GetResponse {

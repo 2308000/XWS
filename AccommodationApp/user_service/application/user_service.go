@@ -23,6 +23,10 @@ func (service *UserService) Get(ctx context.Context, username string) (*auth.Use
 	return service.store.Get(ctx, username)
 }
 
+func (service *UserService) GetById(ctx context.Context, id string) (*auth.User, error) {
+	return service.store.GetById(ctx, id)
+}
+
 func (service *UserService) GetAll(ctx context.Context) ([]*auth.User, error) {
 	return service.store.GetAll(ctx)
 }

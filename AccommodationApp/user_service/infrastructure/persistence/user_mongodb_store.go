@@ -31,6 +31,15 @@ func (store *UserMongoDBStore) Get(ctx context.Context, username string) (*auth.
 	return store.filterOne(filter)
 }
 
+func (store *UserMongoDBStore) GetById(ctx context.Context, userId string) (*auth.User, error) {
+	id, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		return nil, err
+	}
+	filter := bson.M{"_id": id}
+	return store.filterOne(filter)
+}
+
 func (store *UserMongoDBStore) GetAll(ctx context.Context) ([]*auth.User, error) {
 	filter := bson.D{{}}
 	return store.filter(filter)

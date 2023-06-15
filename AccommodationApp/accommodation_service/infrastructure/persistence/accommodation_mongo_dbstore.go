@@ -25,7 +25,11 @@ func NewAccommodationMongoDBStore(client *mongo.Client) domain.AccommodationStor
 	}
 }
 
-func (store *AccommodationMongoDBStore) Get(ctx context.Context, id string) (*domain.Accommodation, error) {
+func (store *AccommodationMongoDBStore) Get(ctx context.Context, accommodationId string) (*domain.Accommodation, error) {
+	id, err := primitive.ObjectIDFromHex(accommodationId)
+	if err != nil {
+		return nil, err
+	}
 	filter := bson.M{"_id": id}
 	return store.filterOne(filter)
 }
