@@ -1,6 +1,7 @@
 package api
 
 import (
+	accommodation "accommodation_booking/common/proto/accommodation_service"
 	pb "accommodation_booking/common/proto/reservation_service"
 	user "accommodation_booking/common/proto/user_service"
 	"accommodation_booking/reservation_service/application"
@@ -13,14 +14,17 @@ import (
 
 type ReservationHandler struct {
 	pb.UnimplementedReservationServiceServer
-	service    *application.ReservationService
-	userClient user.UserServiceClient
+	service             *application.ReservationService
+	userClient          user.UserServiceClient
+	accommodationClient accommodation.AccommodationServiceClient
 }
 
-func NewReservationHandler(service *application.ReservationService, userClient user.UserServiceClient) *ReservationHandler {
+func NewReservationHandler(service *application.ReservationService, userClient user.UserServiceClient,
+	accommodationClient accommodation.AccommodationServiceClient) *ReservationHandler {
 	return &ReservationHandler{
-		service:    service,
-		userClient: userClient,
+		service:             service,
+		userClient:          userClient,
+		accommodationClient: accommodationClient,
 	}
 }
 
@@ -38,9 +42,17 @@ func (handler *ReservationHandler) Get(ctx context.Context, request *pb.GetReser
 		Id:       foundUser.User.Id,
 		Username: foundUser.User.Username,
 	}
+	foundAccommodation, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: Reservation.AccommodationId.Hex()})
+	if err != nil {
+		return nil, err
+	}
+	accommodationDetails := &pb.AccommodationDetails{
+		Id:   foundAccommodation.Accommodation.Id,
+		Name: foundAccommodation.Accommodation.Name,
+	}
 	ReservationPb := &pb.ReservationOut{
 		Id:                Reservation.Id.Hex(),
-		Accommodation:     nil,
+		Accommodation:     accommodationDetails,
 		User:              userDetails,
 		Beginning:         timestamppb.New(Reservation.Beginning),
 		Ending:            timestamppb.New(Reservation.Ending),

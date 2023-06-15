@@ -3,6 +3,7 @@ package startup
 import (
 	"accommodation_booking/common/auth"
 	"accommodation_booking/common/client"
+	accommodation "accommodation_booking/common/proto/accommodation_service"
 	reservation "accommodation_booking/common/proto/reservation_service"
 	user "accommodation_booking/common/proto/user_service"
 	"accommodation_booking/reservation_service/application"
@@ -54,7 +55,12 @@ func (server *Server) Start() {
 		log.Fatalf("PCF: %v", err)
 	}
 
-	reservationHandler := server.initReservationHandler(reservationService, userClient)
+	accommodationClient, err := client.NewAccommodationClient(fmt.Sprintf("%s:%s", server.config.AccommodationHost, server.config.AccommodationPort))
+	if err != nil {
+		log.Fatalf("PCF: %v", err)
+	}
+
+	reservationHandler := server.initReservationHandler(reservationService, userClient, accommodationClient)
 
 	server.startGrpcServer(reservationHandler, jwtManager)
 }
@@ -67,8 +73,9 @@ func (server *Server) initMongoClient() *mongo.Client {
 	return client
 }
 
-func (server *Server) initReservationHandler(service *application.ReservationService, userClient user.UserServiceClient) *api.ReservationHandler {
-	return api.NewReservationHandler(service, userClient)
+func (server *Server) initReservationHandler(service *application.ReservationService, userClient user.UserServiceClient,
+	accommodationClient accommodation.AccommodationServiceClient) *api.ReservationHandler {
+	return api.NewReservationHandler(service, userClient, accommodationClient)
 }
 
 func (server *Server) initReservationStore(client *mongo.Client) domain.ReservationStore {
