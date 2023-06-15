@@ -8,6 +8,7 @@ require (
 	accommodation_booking/common v0.0.0-00010101000000-000000000000
 	github.com/joho/godotenv v1.5.1
 	go.mongodb.org/mongo-driver v1.11.7
+	google.golang.org/grpc v1.47.0
 )
 
 require (
@@ -36,6 +37,5 @@ require (
 	golang.org/x/sys v0.7.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	google.golang.org/genproto v0.0.0-20220617124728-180714bec0ad // indirect
-	google.golang.org/grpc v1.47.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 )

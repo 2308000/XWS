@@ -8,6 +8,8 @@ import (
 	"accommodation_booking/accommodation_service/startup/config"
 	"accommodation_booking/common/auth"
 	accommodation "accommodation_booking/common/proto/accommodation_service"
+	saga "accommodation_booking/common/saga/messaging"
+	"accommodation_booking/common/saga/messaging/nats"
 	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,9 +24,9 @@ type Server struct {
 	config *config.Config
 }
 
-/*const (
+const (
 	QueueGroup = "accommodation_service"
-)*/
+)
 
 func NewServer(config *config.Config) *Server {
 	return &Server{
@@ -46,21 +48,24 @@ func (server *Server) Start() {
 
 	jwtManager := auth.NewJWTManager("secretKey", 60*time.Minute)
 
-	/*commandPublisher := server.initPublisher(server.config.UpdateAccommodationCommandSubject)
-	replySubscriber := server.initSubscriber(server.config.UpdateAccommodationReplySubject, QueueGroup)
-	updateAccommodationOrchestrator := server.initUpdateAccommodationOrchestrator(commandPublisher, replySubscriber)*/
-
 	accommodationService := server.initAccommodationService(accommodationStore)
 	accommodationHandler := server.initAccommodationHandler(accommodationService)
 
-	/*commandSubscriber := server.initSubscriber(server.config.CreateAccommodationCommandSubject, QueueGroup)
-	replyPublisher := server.initPublisher(server.config.CreateAccommodationReplySubject)
-	server.initCreateAccommodationHandler(accommodationService, replyPublisher, commandSubscriber)*/
+	commandSubscriber := server.initSubscriber(server.config.UpdateProfileCommandSubject, QueueGroup)
+	replyPublisher := server.initPublisher(server.config.UpdateProfileReplySubject)
+	server.initUpdateProfileHandler(accommodationService, replyPublisher, commandSubscriber)
 
 	server.startGrpcServer(accommodationHandler, jwtManager)
 }
 
-/*func (server *Server) initPublisher(subject string) saga.Publisher {
+func (server *Server) initUpdateProfileHandler(service *application.AccommodationService, publisher saga.Publisher, subscriber saga.Subscriber) {
+	_, err := api.NewUpdateProfileCommandHandler(service, publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (server *Server) initPublisher(subject string) saga.Publisher {
 	publisher, err := nats.NewNATSPublisher(
 		server.config.NatsHost, server.config.NatsPort,
 		server.config.NatsUser, server.config.NatsPass, subject)
@@ -78,22 +83,7 @@ func (server *Server) initSubscriber(subject, queueGroup string) saga.Subscriber
 		log.Fatal(err)
 	}
 	return subscriber
-}*/
-
-/*func (server *Server) initUpdateAccommodationOrchestrator(publisher saga.Publisher, subscriber saga.Subscriber) *application.UpdateAccommodationOrchestrator {
-	orchestrator, err := application.NewUpdateAccommodationOrchestrator(publisher, subscriber)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return orchestrator
 }
-
-func (server *Server) initCreateAccommodationHandler(service *application.AccommodationService, publisher saga.Publisher, subscriber saga.Subscriber) {
-	_, err := api.NewCreateAccommodationCommandHandler(service, publisher, subscriber)
-	if err != nil {
-		log.Fatal(err)
-	}
-}*/
 
 func (server *Server) initMongoClient() *mongo.Client {
 	client, err := persistence.GetClient(server.config.AccommodationDBHost, server.config.AccommodationDBPort)

@@ -31,7 +31,11 @@ func (store *AccommodationMongoDBStore) Get(ctx context.Context, id string) (*do
 }
 
 func (store *AccommodationMongoDBStore) GetByHost(ctx context.Context, hostId string) ([]*domain.Accommodation, error) {
-	filter := bson.M{"host.hostId": hostId}
+	id, err := primitive.ObjectIDFromHex(hostId)
+	if err != nil {
+		fmt.Println("Host with given Id does not exist!")
+	}
+	filter := bson.M{"host.hostId": id}
 	return store.filter(filter)
 }
 
