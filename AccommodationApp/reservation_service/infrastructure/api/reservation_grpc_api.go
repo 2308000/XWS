@@ -2,6 +2,7 @@ package api
 
 import (
 	pb "accommodation_booking/common/proto/reservation_service"
+	user "accommodation_booking/common/proto/user_service"
 	"accommodation_booking/reservation_service/application"
 	"accommodation_booking/reservation_service/domain"
 	"context"
@@ -12,12 +13,14 @@ import (
 
 type ReservationHandler struct {
 	pb.UnimplementedReservationServiceServer
-	service *application.ReservationService
+	service    *application.ReservationService
+	userClient user.UserServiceClient
 }
 
-func NewReservationHandler(service *application.ReservationService) *ReservationHandler {
+func NewReservationHandler(service *application.ReservationService, userClient user.UserServiceClient) *ReservationHandler {
 	return &ReservationHandler{
-		service: service,
+		service:    service,
+		userClient: userClient,
 	}
 }
 
@@ -27,10 +30,18 @@ func (handler *ReservationHandler) Get(ctx context.Context, request *pb.GetReser
 	if err != nil {
 		return nil, err
 	}
+	foundUser, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: Reservation.UserId.Hex()})
+	if err != nil {
+		return nil, err
+	}
+	userDetails := &pb.UserDetails{
+		Id:       foundUser.User.Id,
+		Username: foundUser.User.Username,
+	}
 	ReservationPb := &pb.ReservationOut{
 		Id:                Reservation.Id.Hex(),
 		Accommodation:     nil,
-		User:              nil,
+		User:              userDetails,
 		Beginning:         timestamppb.New(Reservation.Beginning),
 		Ending:            timestamppb.New(Reservation.Ending),
 		Guests:            Reservation.Guests,

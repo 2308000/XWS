@@ -8,6 +8,7 @@ import (
 
 type UserStore interface {
 	Get(ctx context.Context, username string) (*auth.User, error)
+	GetById(ctx context.Context, id string) (*auth.User, error)
 	GetAll(ctx context.Context) ([]*auth.User, error)
 	Register(ctx context.Context, user *auth.User) (*auth.User, error)
 	Update(ctx context.Context, id primitive.ObjectID, username string) (string, error)

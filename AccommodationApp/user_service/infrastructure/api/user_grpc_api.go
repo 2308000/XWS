@@ -42,6 +42,20 @@ func (handler *UserHandler) Get(ctx context.Context, request *pb.GetRequest) (*p
 	return response, nil
 }
 
+func (handler *UserHandler) GetById(ctx context.Context, request *pb.GetByIdRequest) (*pb.GetResponse, error) {
+	id := request.Id
+	User, err := handler.service.GetById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	UserPb := mapUserToPb(User)
+	UserPb.Password = ""
+	response := &pb.GetResponse{
+		User: UserPb,
+	}
+	return response, nil
+}
+
 func (handler *UserHandler) GetAll(ctx context.Context, request *pb.GetAllRequest) (*pb.GetAllResponse, error) {
 	Users, err := handler.service.GetAll(ctx)
 	if err != nil {
