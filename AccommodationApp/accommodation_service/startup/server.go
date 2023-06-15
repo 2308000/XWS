@@ -7,7 +7,9 @@ import (
 	"accommodation_booking/accommodation_service/infrastructure/persistence"
 	"accommodation_booking/accommodation_service/startup/config"
 	"accommodation_booking/common/auth"
+	"accommodation_booking/common/client"
 	accommodation "accommodation_booking/common/proto/accommodation_service"
+	profile "accommodation_booking/common/proto/profile_service"
 	saga "accommodation_booking/common/saga/messaging"
 	"accommodation_booking/common/saga/messaging/nats"
 	"context"
@@ -39,6 +41,7 @@ func accessibleRoles() map[string][]string {
 
 	return map[string][]string{
 		accommodationServicePath + "GetAll": {"host"},
+		accommodationServicePath + "Create": {"host"},
 	}
 }
 
@@ -48,8 +51,13 @@ func (server *Server) Start() {
 
 	jwtManager := auth.NewJWTManager("secretKey", 60*time.Minute)
 
+	profileClient, err := client.NewProfileClient(fmt.Sprintf("%s:%s", server.config.ProfileHost, server.config.ProfilePort))
+	if err != nil {
+		log.Fatalf("PCF: %v", err)
+	}
+
 	accommodationService := server.initAccommodationService(accommodationStore)
-	accommodationHandler := server.initAccommodationHandler(accommodationService)
+	accommodationHandler := server.initAccommodationHandler(accommodationService, profileClient)
 
 	commandSubscriber := server.initSubscriber(server.config.UpdateProfileCommandSubject, QueueGroup)
 	replyPublisher := server.initPublisher(server.config.UpdateProfileReplySubject)
@@ -93,8 +101,8 @@ func (server *Server) initMongoClient() *mongo.Client {
 	return client
 }
 
-func (server *Server) initAccommodationHandler(service *application.AccommodationService) *api.AccommodationHandler {
-	return api.NewAccommodationHandler(service)
+func (server *Server) initAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient) *api.AccommodationHandler {
+	return api.NewAccommodationHandler(service, profileClient)
 }
 
 func (server *Server) initAccommodationStore(client *mongo.Client) domain.AccommodationStore {
