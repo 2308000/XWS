@@ -4,17 +4,21 @@ import (
 	"accommodation_booking/accommodation_service/application"
 	"accommodation_booking/accommodation_service/domain"
 	pb "accommodation_booking/common/proto/accommodation_service"
+	profile "accommodation_booking/common/proto/profile_service"
 	"context"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type AccommodationHandler struct {
 	pb.UnimplementedAccommodationServiceServer
-	service *application.AccommodationService
+	service       *application.AccommodationService
+	profileClient profile.ProfileServiceClient
 }
 
-func NewAccommodationHandler(service *application.AccommodationService) *AccommodationHandler {
+func NewAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient) *AccommodationHandler {
 	return &AccommodationHandler{
-		service: service,
+		service:       service,
+		profileClient: profileClient,
 	}
 }
 
@@ -86,9 +90,40 @@ func (handler *AccommodationHandler) GetAllFiltered(ctx context.Context, request
 }
 
 func (handler AccommodationHandler) Create(ctx context.Context, request *pb.CreateAccommodationRequest) (*pb.CreateAccommodationResponse, error) {
-	accommodation := mapPbToAccommodation(request.Accommodation)
-
-	accommodation, err := handler.service.Create(ctx, accommodation)
+	host, err := handler.profileClient.Get(ctx, &profile.GetRequest{Id: request.Accommodation.HostId})
+	hostId, err := primitive.ObjectIDFromHex(host.Profile.Id)
+	/*log.Println(ctx.Value("userId").(string))
+	log.Println(ctx.Value("username").(string))
+	if ctx.Value("userId").(string) != hostId.Hex() {
+		return nil, errors.New("must be the host to add new accommodation")
+	}*/
+	hostInfo := &domain.Host{
+		HostId:        hostId,
+		Username:      host.Profile.Username,
+		PhoneNumber:   host.Profile.PhoneNumber,
+		IsOutstanding: true,
+	}
+	accommodationInfo := &domain.Accommodation{
+		Id:   primitive.NewObjectID(),
+		Host: *hostInfo,
+		Name: request.Accommodation.Name,
+		Location: domain.Location{
+			Country: request.Accommodation.Location.Country,
+			City:    request.Accommodation.Location.City,
+			Street:  request.Accommodation.Location.Street,
+		},
+		HasWifi:            request.Accommodation.HasWifi,
+		HasAirConditioning: request.Accommodation.HasAirConditioning,
+		HasFreeParking:     request.Accommodation.HasFreeParking,
+		HasKitchen:         request.Accommodation.HasKitchen,
+		HasWashingMachine:  request.Accommodation.HasWashingMachine,
+		HasBathtub:         request.Accommodation.HasBathtub,
+		HasBalcony:         request.Accommodation.HasBalcony,
+		Photos:             request.Accommodation.Photos,
+		MinNumberOfGuests:  int(request.Accommodation.MinNumberOfGuests),
+		MaxNumberOfGuests:  int(request.Accommodation.MaxNumberOfGuests),
+	}
+	accommodation, err := handler.service.Create(ctx, accommodationInfo)
 	if err != nil {
 		return nil, err
 	}

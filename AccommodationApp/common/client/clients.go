@@ -2,6 +2,7 @@ package client
 
 import (
 	pbAccommodation "accommodation_booking/common/proto/accommodation_service"
+	pbProfile "accommodation_booking/common/proto/profile_service"
 	pbUser "accommodation_booking/common/proto/user_service"
 	"context"
 	"google.golang.org/grpc/credentials/insecure"
@@ -31,5 +32,17 @@ func NewAccommodationClient(address string) (pbAccommodation.AccommodationServic
 		return nil, err
 	}
 	client := pbAccommodation.NewAccommodationServiceClient(conn)
+	return client, nil
+}
+
+func NewProfileClient(address string) (pbProfile.ProfileServiceClient, error) {
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*30)
+	defer cancel()
+	conn, err := grpc.DialContext(ctx, address, opts...)
+	if err != nil {
+		return nil, err
+	}
+	client := pbProfile.NewProfileServiceClient(conn)
 	return client, nil
 }
