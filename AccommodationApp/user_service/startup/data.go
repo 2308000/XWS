@@ -25,6 +25,12 @@ var users = []*auth.User{
 		Role:     "guest",
 	},
 	{
+		Id:       getObjectId("55306d1b615b3da748f63fa1"),
+		Username: "peasant",
+		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
+		Role:     "guest",
+	},
+	{
 		Id:       getObjectId("62706d1b623b4da748f63bc3"),
 		Username: "sega",
 		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",

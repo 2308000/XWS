@@ -1,6 +1,8 @@
 package main
 
 import (
+	"accommodation_booking/reservation_service/startup"
+	cfg "accommodation_booking/reservation_service/startup/config"
 	"fmt"
 	"os"
 	"os/signal"
@@ -19,9 +21,9 @@ func main() {
 		done <- true
 		os.Exit(0)
 	}()
-	//config := cfg.NewConfig()
-	//server := startup.NewServer(config)
+	config := cfg.NewConfig()
+	server := startup.NewServer(config)
 	fmt.Println("Reservation service has started!")
-	//server.Start()
+	server.Start()
 	<-done
 }
