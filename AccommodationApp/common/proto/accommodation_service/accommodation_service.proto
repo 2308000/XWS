@@ -26,6 +26,13 @@ service AccommodationService{
       get: "/accommodation"
     };
   }
+
+  rpc GetAllFiltered(GetAllFilterRequest) returns(GetAllAccommodationsResponse) {
+    option (google.api.http) = {
+      post: "/accommodation/filtered"
+      body: "*"
+    };
+  }
   rpc Create(CreateAccommodationRequest) returns(CreateAccommodationResponse) {
     option (google.api.http) = {
       post: "/accommodation"
@@ -56,6 +63,23 @@ message GetAccommodationResponse {
 message GetAllAccommodationsRequest {
 }
 
+message GetAllFilterRequest {
+  float priceRangeLowerBound = 1;
+  float priceRangeUpperBound = 2;
+  Benefits benefits = 3;
+  bool isOutstandingHost = 4;
+}
+
+message Benefits {
+  bool hasWifi = 1;
+  bool hasAirConditioning = 2;
+  bool hasFreeParking = 3;
+  bool hasKitchen = 4;
+  bool hasWashingMachine = 5;
+  bool hasBathtub = 6;
+  bool hasBalcony = 7;
+}
+
 message GetAllAccommodationsResponse {
   repeated Accommodation accommodations = 1;
 }
@@ -69,7 +93,8 @@ message CreateAccommodationResponse {
 }
 
 message UpdateAccommodationRequest {
-  Accommodation accommodation = 1;
+  string id = 1;
+  Accommodation accommodation = 2;
 }
 
 message UpdateAccommodationResponse {
@@ -85,7 +110,7 @@ message DeleteAccommodationResponse {
 
 message Accommodation {
   string id = 1;
-  Host host = 2;
+  HostRes host = 2;
   string name = 3;
   Location location = 4;
   bool hasWifi = 5;
@@ -100,10 +125,11 @@ message Accommodation {
   int32 maxNumberOfGuests = 14;
 }
 
-message Host {
+message HostRes {
   string hostId = 1;
   string username = 2;
   string phoneNumber = 3;
+  bool isOutstanding = 4;
 }
 
 message Location {

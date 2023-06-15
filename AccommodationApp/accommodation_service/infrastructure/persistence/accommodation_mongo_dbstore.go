@@ -44,6 +44,44 @@ func (store *AccommodationMongoDBStore) GetAll(ctx context.Context) ([]*domain.A
 	return store.filter(filter)
 }
 
+func (store *AccommodationMongoDBStore) GetAllFiltered(ctx context.Context, lowerBound float32, upperBound float32, benefits domain.Benefits, isOutstanding bool) ([]*domain.Accommodation, error) {
+	filter := bson.D{}
+
+	if isOutstanding {
+		filter = append(filter, bson.E{"host.isOutstanding", true})
+	}
+	if benefits.HasWifi {
+		filter = append(filter, bson.E{"hasWifi", true})
+	}
+	if benefits.HasAirConditioning {
+		filter = append(filter, bson.E{"hasAirConditioning", true})
+	}
+	if benefits.HasFreeParking {
+		filter = append(filter, bson.E{"hasFreeParking", true})
+	}
+	if benefits.HasKitchen {
+		filter = append(filter, bson.E{"hasKitchen", true})
+	}
+	if benefits.HasWashingMachine {
+		filter = append(filter, bson.E{"hasWashingMachine", true})
+	}
+	if benefits.HasBathtub {
+		filter = append(filter, bson.E{"hasBathtub", true})
+	}
+	if benefits.HasBalcony {
+		filter = append(filter, bson.E{"hasBalcony", true})
+	}
+	fmt.Println(filter)
+	/*HasWifi            bool               `bson:"hasWifi"`
+	HasAirConditioning bool               `bson:"hasAirConditioning"`
+	HasFreeParking     bool               `bson:"hasFreeParking"`
+	HasKitchen         bool               `bson:"hasKitchen"`
+	HasWashingMachine  bool               `bson:"hasWashingMachine"`
+	HasBathtub         bool               `bson:"hasBathtub"`
+	HasBalcony         bool               `bson:"hasBalcony"`*/
+	return store.filter(filter)
+}
+
 func (store *AccommodationMongoDBStore) Create(ctx context.Context, accommodation *domain.Accommodation) (*domain.Accommodation, error) {
 	result, err := store.accommodations.InsertOne(ctx, accommodation)
 	if err != nil {

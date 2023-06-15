@@ -20,13 +20,24 @@ type Accommodation struct {
 }
 
 type Host struct {
-	HostId      primitive.ObjectID `bson:"hostId"`
-	Username    string             `bson:"username"`
-	PhoneNumber string             `bson:"phoneNumber"`
+	HostId        primitive.ObjectID `bson:"hostId"`
+	Username      string             `bson:"username"`
+	PhoneNumber   string             `bson:"phoneNumber"`
+	IsOutstanding bool               `bson:"isOutstanding"`
 }
 
 type Location struct {
 	Country string `bson:"country"`
 	City    string `bson:"city"`
 	Street  string `bson:"street"`
+}
+
+type Benefits struct {
+	HasWifi            bool
+	HasAirConditioning bool
+	HasFreeParking     bool
+	HasKitchen         bool
+	HasWashingMachine  bool
+	HasBathtub         bool
+	HasBalcony         bool
 }
