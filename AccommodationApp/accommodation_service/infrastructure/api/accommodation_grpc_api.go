@@ -2,6 +2,7 @@ package api
 
 import (
 	"accommodation_booking/accommodation_service/application"
+	"accommodation_booking/accommodation_service/domain"
 	pb "accommodation_booking/common/proto/accommodation_service"
 	"context"
 )
@@ -47,6 +48,30 @@ func (handler *AccommodationHandler) GetByHost(ctx context.Context, request *pb.
 
 func (handler *AccommodationHandler) GetAll(ctx context.Context, request *pb.GetAllAccommodationsRequest) (*pb.GetAllAccommodationsResponse, error) {
 	Accommodations, err := handler.service.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.GetAllAccommodationsResponse{
+		Accommodations: []*pb.Accommodation{},
+	}
+	for _, Accommodation := range Accommodations {
+		current := mapAccommodationToPb(Accommodation)
+		response.Accommodations = append(response.Accommodations, current)
+	}
+	return response, nil
+}
+
+func (handler *AccommodationHandler) GetAllFiltered(ctx context.Context, request *pb.GetAllFilterRequest) (*pb.GetAllAccommodationsResponse, error) {
+	benefits := &domain.Benefits{
+		HasWifi:            request.Benefits.HasWifi,
+		HasAirConditioning: request.Benefits.HasAirConditioning,
+		HasWashingMachine:  request.Benefits.HasWashingMachine,
+		HasBalcony:         request.Benefits.HasBalcony,
+		HasKitchen:         request.Benefits.HasKitchen,
+		HasBathtub:         request.Benefits.HasBathtub,
+		HasFreeParking:     request.Benefits.HasFreeParking,
+	}
+	Accommodations, err := handler.service.GetAllFiltered(ctx, request.PriceRangeLowerBound, request.PriceRangeUpperBound, *benefits, request.IsOutstandingHost)
 	if err != nil {
 		return nil, err
 	}

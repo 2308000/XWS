@@ -41,14 +41,14 @@ var profiles = []*domain.Profile{
 		Gender:      "male",
 	},
 	{
-		Id:          getObjectId("62706d1b623b4da748f63fa1"),
-		Username:    "guest",
+		Id:          getObjectId("62706d1b623b4da748f63bc3"),
+		Username:    "host",
 		FirstName:   "Sergej",
 		LastName:    "Madic",
 		FullName:    "SergejMadic",
 		DateOfBirth: time.Time{},
 		PhoneNumber: "063111111",
-		Email:       "guest2@gmail.com",
+		Email:       "host2@gmail.com",
 		Gender:      "male",
 	},
 }
