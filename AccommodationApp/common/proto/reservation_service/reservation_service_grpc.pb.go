@@ -19,6 +19,8 @@ const _ = grpc.SupportPackageIsVersion6
 type ReservationServiceClient interface {
 	Get(ctx context.Context, in *GetReservationRequest, opts ...grpc.CallOption) (*GetReservationResponse, error)
 	GetAll(ctx context.Context, in *GetAllReservationsRequest, opts ...grpc.CallOption) (*GetAllReservationsResponse, error)
+	GetUsersReservations(ctx context.Context, in *GetUsersReservationsRequest, opts ...grpc.CallOption) (*GetUsersReservationsResponse, error)
+	GetMyReservations(ctx context.Context, in *GetMyReservationsRequest, opts ...grpc.CallOption) (*GetMyReservationsResponse, error)
 	Create(ctx context.Context, in *CreateReservationRequest, opts ...grpc.CallOption) (*CreateReservationResponse, error)
 	Update(ctx context.Context, in *UpdateReservationRequest, opts ...grpc.CallOption) (*UpdateReservationResponse, error)
 	Approve(ctx context.Context, in *ApproveReservationRequest, opts ...grpc.CallOption) (*ApproveReservationResponse, error)
@@ -46,6 +48,24 @@ func (c *reservationServiceClient) Get(ctx context.Context, in *GetReservationRe
 func (c *reservationServiceClient) GetAll(ctx context.Context, in *GetAllReservationsRequest, opts ...grpc.CallOption) (*GetAllReservationsResponse, error) {
 	out := new(GetAllReservationsResponse)
 	err := c.cc.Invoke(ctx, "/reservation.ReservationService/GetAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reservationServiceClient) GetUsersReservations(ctx context.Context, in *GetUsersReservationsRequest, opts ...grpc.CallOption) (*GetUsersReservationsResponse, error) {
+	out := new(GetUsersReservationsResponse)
+	err := c.cc.Invoke(ctx, "/reservation.ReservationService/GetUsersReservations", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reservationServiceClient) GetMyReservations(ctx context.Context, in *GetMyReservationsRequest, opts ...grpc.CallOption) (*GetMyReservationsResponse, error) {
+	out := new(GetMyReservationsResponse)
+	err := c.cc.Invoke(ctx, "/reservation.ReservationService/GetMyReservations", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -103,6 +123,8 @@ func (c *reservationServiceClient) Delete(ctx context.Context, in *DeleteReserva
 type ReservationServiceServer interface {
 	Get(context.Context, *GetReservationRequest) (*GetReservationResponse, error)
 	GetAll(context.Context, *GetAllReservationsRequest) (*GetAllReservationsResponse, error)
+	GetUsersReservations(context.Context, *GetUsersReservationsRequest) (*GetUsersReservationsResponse, error)
+	GetMyReservations(context.Context, *GetMyReservationsRequest) (*GetMyReservationsResponse, error)
 	Create(context.Context, *CreateReservationRequest) (*CreateReservationResponse, error)
 	Update(context.Context, *UpdateReservationRequest) (*UpdateReservationResponse, error)
 	Approve(context.Context, *ApproveReservationRequest) (*ApproveReservationResponse, error)
@@ -120,6 +142,12 @@ func (*UnimplementedReservationServiceServer) Get(context.Context, *GetReservati
 }
 func (*UnimplementedReservationServiceServer) GetAll(context.Context, *GetAllReservationsRequest) (*GetAllReservationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
+}
+func (*UnimplementedReservationServiceServer) GetUsersReservations(context.Context, *GetUsersReservationsRequest) (*GetUsersReservationsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUsersReservations not implemented")
+}
+func (*UnimplementedReservationServiceServer) GetMyReservations(context.Context, *GetMyReservationsRequest) (*GetMyReservationsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMyReservations not implemented")
 }
 func (*UnimplementedReservationServiceServer) Create(context.Context, *CreateReservationRequest) (*CreateReservationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
@@ -174,6 +202,42 @@ func _ReservationService_GetAll_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ReservationServiceServer).GetAll(ctx, req.(*GetAllReservationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReservationService_GetUsersReservations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUsersReservationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).GetUsersReservations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/reservation.ReservationService/GetUsersReservations",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).GetUsersReservations(ctx, req.(*GetUsersReservationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReservationService_GetMyReservations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMyReservationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).GetMyReservations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/reservation.ReservationService/GetMyReservations",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).GetMyReservations(ctx, req.(*GetMyReservationsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -279,6 +343,14 @@ var _ReservationService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAll",
 			Handler:    _ReservationService_GetAll_Handler,
+		},
+		{
+			MethodName: "GetUsersReservations",
+			Handler:    _ReservationService_GetUsersReservations_Handler,
+		},
+		{
+			MethodName: "GetMyReservations",
+			Handler:    _ReservationService_GetMyReservations_Handler,
 		},
 		{
 			MethodName: "Create",

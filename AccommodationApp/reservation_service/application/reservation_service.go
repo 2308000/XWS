@@ -21,8 +21,12 @@ func (service *ReservationService) Get(ctx context.Context, reservationId string
 	return service.store.Get(ctx, reservationId)
 }
 
-func (service *ReservationService) GetAll(ctx context.Context, search string) ([]*domain.Reservation, error) {
-	return service.store.GetAll(ctx, search)
+func (service *ReservationService) GetAll(ctx context.Context) ([]*domain.Reservation, error) {
+	return service.store.GetAll(ctx)
+}
+
+func (service *ReservationService) GetForUser(ctx context.Context, userId string) ([]*domain.Reservation, error) {
+	return service.store.GetForUser(ctx, userId)
 }
 
 func (service *ReservationService) Create(ctx context.Context, reservation *domain.Reservation) error {

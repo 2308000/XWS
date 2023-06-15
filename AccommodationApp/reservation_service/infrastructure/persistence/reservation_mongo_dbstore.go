@@ -34,9 +34,17 @@ func (store *ReservationMongoDBStore) Get(ctx context.Context, reservationId str
 	return store.filterOne(filter)
 }
 
-func (store *ReservationMongoDBStore) GetAll(ctx context.Context, search string) ([]*domain.Reservation, error) {
-	filter := bson.D{{"userId", bson.M{"$regex": "^.*" + search + ".*$"}}}
-	return store.filter(filter, search)
+func (store *ReservationMongoDBStore) GetAll(ctx context.Context) ([]*domain.Reservation, error) {
+	return store.GetAll(ctx)
+}
+
+func (store *ReservationMongoDBStore) GetForUser(ctx context.Context, userId string) ([]*domain.Reservation, error) {
+	id, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		return nil, err
+	}
+	filter := bson.M{"userId": id}
+	return store.filter(filter)
 }
 
 func (store *ReservationMongoDBStore) Create(ctx context.Context, reservation *domain.Reservation) error {
@@ -75,7 +83,7 @@ func (store *ReservationMongoDBStore) DeleteAll(ctx context.Context) error {
 	return nil
 }
 
-func (store *ReservationMongoDBStore) filter(filter interface{}, search string) ([]*domain.Reservation, error) {
+func (store *ReservationMongoDBStore) filter(filter interface{}) ([]*domain.Reservation, error) {
 	cursor, err := store.reservations.Find(context.TODO(), filter)
 	defer func(cursor *mongo.Cursor, ctx context.Context) {
 		err := cursor.Close(ctx)
@@ -85,7 +93,7 @@ func (store *ReservationMongoDBStore) filter(filter interface{}, search string) 
 	}(cursor, context.TODO())
 
 	if err != nil {
-		return nil, errors.New(search)
+		return nil, err
 	}
 	return decode(cursor)
 }

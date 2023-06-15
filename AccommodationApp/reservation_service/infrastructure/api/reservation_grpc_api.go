@@ -9,7 +9,6 @@ import (
 	"context"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"strings"
 )
 
 type ReservationHandler struct {
@@ -66,7 +65,7 @@ func (handler *ReservationHandler) Get(ctx context.Context, request *pb.GetReser
 }
 
 func (handler *ReservationHandler) GetAll(ctx context.Context, request *pb.GetAllReservationsRequest) (*pb.GetAllReservationsResponse, error) {
-	Reservations, err := handler.service.GetAll(ctx, strings.ReplaceAll(request.Search, " ", ""))
+	Reservations, err := handler.service.GetAll(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -74,10 +73,106 @@ func (handler *ReservationHandler) GetAll(ctx context.Context, request *pb.GetAl
 		Reservations: []*pb.ReservationOut{},
 	}
 	for _, Reservation := range Reservations {
+		foundUser, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: Reservation.UserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		userDetails := &pb.UserDetails{
+			Id:       foundUser.User.Id,
+			Username: foundUser.User.Username,
+		}
+		foundAccommodation, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: Reservation.AccommodationId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		accommodationDetails := &pb.AccommodationDetails{
+			Id:   foundAccommodation.Accommodation.Id,
+			Name: foundAccommodation.Accommodation.Name,
+		}
 		current := &pb.ReservationOut{
 			Id:                Reservation.Id.Hex(),
-			Accommodation:     nil,
-			User:              nil,
+			Accommodation:     accommodationDetails,
+			User:              userDetails,
+			Beginning:         timestamppb.New(Reservation.Beginning),
+			Ending:            timestamppb.New(Reservation.Ending),
+			Guests:            Reservation.Guests,
+			ReservationStatus: int32(Reservation.ReservationStatus),
+		}
+		response.Reservations = append(response.Reservations, current)
+	}
+	return response, nil
+}
+
+func (handler *ReservationHandler) GetUsersReservations(ctx context.Context, request *pb.GetUsersReservationsRequest) (*pb.GetUsersReservationsResponse, error) {
+	Reservations, err := handler.service.GetForUser(ctx, request.UserId)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.GetUsersReservationsResponse{
+		Reservations: []*pb.ReservationOut{},
+	}
+	for _, Reservation := range Reservations {
+		foundUser, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: Reservation.UserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		userDetails := &pb.UserDetails{
+			Id:       foundUser.User.Id,
+			Username: foundUser.User.Username,
+		}
+		foundAccommodation, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: Reservation.AccommodationId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		accommodationDetails := &pb.AccommodationDetails{
+			Id:   foundAccommodation.Accommodation.Id,
+			Name: foundAccommodation.Accommodation.Name,
+		}
+		current := &pb.ReservationOut{
+			Id:                Reservation.Id.Hex(),
+			Accommodation:     accommodationDetails,
+			User:              userDetails,
+			Beginning:         timestamppb.New(Reservation.Beginning),
+			Ending:            timestamppb.New(Reservation.Ending),
+			Guests:            Reservation.Guests,
+			ReservationStatus: int32(Reservation.ReservationStatus),
+		}
+		response.Reservations = append(response.Reservations, current)
+
+	}
+	return response, nil
+}
+
+func (handler *ReservationHandler) GetMyReservations(ctx context.Context, request *pb.GetMyReservationsRequest) (*pb.GetMyReservationsResponse, error) {
+	userId := ctx.Value("userId").(string)
+	Reservations, err := handler.service.GetForUser(ctx, userId)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.GetMyReservationsResponse{
+		Reservations: []*pb.ReservationOut{},
+	}
+	for _, Reservation := range Reservations {
+		foundUser, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: Reservation.UserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		userDetails := &pb.UserDetails{
+			Id:       foundUser.User.Id,
+			Username: foundUser.User.Username,
+		}
+		foundAccommodation, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: Reservation.AccommodationId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		accommodationDetails := &pb.AccommodationDetails{
+			Id:   foundAccommodation.Accommodation.Id,
+			Name: foundAccommodation.Accommodation.Name,
+		}
+		current := &pb.ReservationOut{
+			Id:                Reservation.Id.Hex(),
+			Accommodation:     accommodationDetails,
+			User:              userDetails,
 			Beginning:         timestamppb.New(Reservation.Beginning),
 			Ending:            timestamppb.New(Reservation.Ending),
 			Guests:            Reservation.Guests,
