@@ -27,6 +27,10 @@ func (service *AccommodationService) GetAll(ctx context.Context) ([]*domain.Acco
 	return service.store.GetAll(ctx)
 }
 
+func (service *AccommodationService) GetAllFiltered(ctx context.Context, lowerBound float32, upperBound float32, benefits domain.Benefits, isOutstanding bool) ([]*domain.Accommodation, error) {
+	return service.store.GetAllFiltered(ctx, lowerBound, upperBound, benefits, isOutstanding)
+}
+
 func (service *AccommodationService) Create(ctx context.Context, accommodation *domain.Accommodation) (*domain.Accommodation, error) {
 	return service.store.Create(ctx, accommodation)
 }

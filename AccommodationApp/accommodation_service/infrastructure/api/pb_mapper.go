@@ -6,11 +6,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func mapHostToPb(accommodation *domain.Accommodation) *pb.Host {
-	return &pb.Host{
-		HostId:      accommodation.Host.HostId.Hex(),
-		Username:    accommodation.Host.Username,
-		PhoneNumber: accommodation.Host.PhoneNumber,
+func mapHostToPb(accommodation *domain.Accommodation) *pb.HostRes {
+	return &pb.HostRes{
+		HostId:        accommodation.Host.HostId.Hex(),
+		Username:      accommodation.Host.Username,
+		PhoneNumber:   accommodation.Host.PhoneNumber,
+		IsOutstanding: accommodation.Host.IsOutstanding,
 	}
 }
 
