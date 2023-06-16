@@ -50,6 +50,12 @@ func (store *ReservationMongoDBStore) GetForUser(ctx context.Context, userId str
 	return store.filter(filter)
 }
 
+func (store *ReservationMongoDBStore) GetPending(ctx context.Context) ([]*domain.Reservation, error) {
+	filter := bson.D{}
+	filter = append(filter, bson.E{"reservationStatus", bson.D{{"$eq", 0}}})
+	return store.filter(filter)
+}
+
 func (store *ReservationMongoDBStore) GetBetweenDates(ctx context.Context, beginning time.Time, ending time.Time, accommodationId string) ([]*domain.Reservation, error) {
 	filter := bson.D{
 		{"$or", bson.A{

@@ -11,6 +11,7 @@ type ReservationStore interface {
 	GetBetweenDates(ctx context.Context, beginning time.Time, ending time.Time, accommodationId string) ([]*Reservation, error)
 	GetBetweenDatesPending(ctx context.Context, beginning time.Time, ending time.Time, accommodationId string) ([]*Reservation, error)
 	GetAll(ctx context.Context) ([]*Reservation, error)
+	GetPending(ctx context.Context) ([]*Reservation, error)
 	Create(ctx context.Context, reservation *Reservation) error
 	Update(ctx context.Context, reservationId string, reservation *Reservation) error
 	Approve(ctx context.Context, reservationId string) error
