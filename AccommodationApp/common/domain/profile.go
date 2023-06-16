@@ -19,13 +19,15 @@ type Profile struct {
 	Token                 string             `bson:"token"`
 	ReservationsCancelled int                `bson:"reservationsCancelled"`
 	IsOutstanding         bool               `bson:"isOutstanding"`
-	Grades                []Grade            `bson:"grades"`
+	AccommodationGrades   []Grade            `bson:"accommodationGrades"`
+	HostGrades            []Grade            `bson:"hostGrades"`
 }
 
 type Grade struct {
-	AccommodationId primitive.ObjectID `bson:"accommodationId"`
-	Grade           float64            `bson:"grade"`
-	Date            time.Time          `bson:"date"`
+	//ukoliko je ocjena hosta onda id hosta, ukoliko je ocjena accommodationa onda accommodationa
+	Id    primitive.ObjectID `bson:"id"`
+	Grade float64            `bson:"grade"`
+	Date  time.Time          `bson:"date"`
 }
 
 type Address struct {

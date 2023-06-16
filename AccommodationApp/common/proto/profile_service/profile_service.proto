@@ -119,11 +119,12 @@ message Profile {
   string token = 10;
   int32 reservationsCancelled = 11;
   bool isOutstanding = 12;
-  repeated Grade grades = 13;
+  repeated Grade accommodationGrades = 13;
+  repeated Grade hostGrades = 14;
 }
 
 message Grade {
-  string accommodationId = 1;
+  string id = 1;
   float grade = 2;
   google.protobuf.Timestamp date = 3;
 }
