@@ -5,6 +5,7 @@ import (
 	"accommodation_booking/accommodation_service/domain"
 	pb "accommodation_booking/common/proto/accommodation_service"
 	profile "accommodation_booking/common/proto/profile_service"
+	reservation "accommodation_booking/common/proto/reservation_service"
 	"context"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -13,14 +14,16 @@ import (
 
 type AccommodationHandler struct {
 	pb.UnimplementedAccommodationServiceServer
-	service       *application.AccommodationService
-	profileClient profile.ProfileServiceClient
+	service           *application.AccommodationService
+	profileClient     profile.ProfileServiceClient
+	reservationClient reservation.ReservationServiceClient
 }
 
-func NewAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient) *AccommodationHandler {
+func NewAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient, reservationClient reservation.ReservationServiceClient) *AccommodationHandler {
 	return &AccommodationHandler{
-		service:       service,
-		profileClient: profileClient,
+		service:           service,
+		profileClient:     profileClient,
+		reservationClient: reservationClient,
 	}
 }
 
@@ -147,6 +150,7 @@ func (handler AccommodationHandler) Update(ctx context.Context, request *pb.Upda
 
 func (handler *AccommodationHandler) UpdateAvailability(ctx context.Context, request *pb.UpdateAvailabilityRequest) (*pb.UpdateAvailabilityResponse, error) {
 	accommodationId := request.AccommodationId
+	//reservations, err := handler.reservationClient.
 	availableDate := domain.AvailableDate{
 		Beginning:       request.AvailableDate.Beginning.AsTime(),
 		Ending:          request.AvailableDate.Ending.AsTime(),

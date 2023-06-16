@@ -10,6 +10,7 @@ import (
 	"accommodation_booking/common/client"
 	accommodation "accommodation_booking/common/proto/accommodation_service"
 	profile "accommodation_booking/common/proto/profile_service"
+	reservation "accommodation_booking/common/proto/reservation_service"
 	saga "accommodation_booking/common/saga/messaging"
 	"accommodation_booking/common/saga/messaging/nats"
 	"context"
@@ -56,8 +57,13 @@ func (server *Server) Start() {
 		log.Fatalf("PCF: %v", err)
 	}
 
+	reservationClient, err := client.NewReservationClient(fmt.Sprintf("%s:%s", server.config.ReservationHost, server.config.ReservationPort))
+	if err != nil {
+		log.Fatalf("PCF: %v", err)
+	}
+
 	accommodationService := server.initAccommodationService(accommodationStore)
-	accommodationHandler := server.initAccommodationHandler(accommodationService, profileClient)
+	accommodationHandler := server.initAccommodationHandler(accommodationService, profileClient, reservationClient)
 
 	commandSubscriber := server.initSubscriber(server.config.UpdateProfileCommandSubject, QueueGroup)
 	replyPublisher := server.initPublisher(server.config.UpdateProfileReplySubject)
@@ -101,8 +107,8 @@ func (server *Server) initMongoClient() *mongo.Client {
 	return client
 }
 
-func (server *Server) initAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient) *api.AccommodationHandler {
-	return api.NewAccommodationHandler(service, profileClient)
+func (server *Server) initAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient, reservationClient reservation.ReservationServiceClient) *api.AccommodationHandler {
+	return api.NewAccommodationHandler(service, profileClient, reservationClient)
 }
 
 func (server *Server) initAccommodationStore(client *mongo.Client) domain.AccommodationStore {
