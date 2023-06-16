@@ -26,6 +26,10 @@ func (service *ReservationService) GetAll(ctx context.Context) ([]*domain.Reserv
 	return service.store.GetAll(ctx)
 }
 
+func (service *ReservationService) GetBetweenDates(ctx context.Context, beginning time.Time, ending time.Time, accommodationId string) ([]*domain.Reservation, error) {
+	return service.store.GetBetweenDates(ctx, beginning, ending, accommodationId)
+}
+
 func (service *ReservationService) GetForUser(ctx context.Context, userId string) ([]*domain.Reservation, error) {
 	return service.store.GetForUser(ctx, userId)
 }

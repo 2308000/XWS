@@ -104,6 +104,29 @@ func (handler *ReservationHandler) GetAll(ctx context.Context, request *pb.GetAl
 	return response, nil
 }
 
+func (handler *ReservationHandler) GetBetweenDates(ctx context.Context, request *pb.GetBetweenDatesRequest) (*pb.GetBetweenDatesResponse, error) {
+	Reservations, err := handler.service.GetBetweenDates(ctx, request.Informations.Beginning.AsTime(), request.Informations.Ending.AsTime(), request.Informations.AccommodationId)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.GetBetweenDatesResponse{
+		Reservations: []*pb.ReservationOut{},
+	}
+	for _, Reservation := range Reservations {
+		current := &pb.ReservationOut{
+			Id:                Reservation.Id.Hex(),
+			Accommodation:     nil,
+			User:              nil,
+			Beginning:         timestamppb.New(Reservation.Beginning),
+			Ending:            timestamppb.New(Reservation.Ending),
+			Guests:            Reservation.Guests,
+			ReservationStatus: int32(Reservation.ReservationStatus),
+		}
+		response.Reservations = append(response.Reservations, current)
+	}
+	return response, nil
+}
+
 func (handler *ReservationHandler) GetUsersReservations(ctx context.Context, request *pb.GetUsersReservationsRequest) (*pb.GetUsersReservationsResponse, error) {
 	Reservations, err := handler.service.GetForUser(ctx, request.UserId)
 	if err != nil {
@@ -202,7 +225,7 @@ func (handler ReservationHandler) Create(ctx context.Context, request *pb.Create
 		Beginning:         request.Reservation.Beginning.AsTime(),
 		Ending:            request.Reservation.Ending.AsTime(),
 		Guests:            request.Reservation.Guests,
-		ReservationStatus: domain.ReservationStatusType(request.Reservation.ReservationStatus),
+		ReservationStatus: domain.ReservationStatusType(0),
 	}
 	err = handler.service.Create(ctx, reservation)
 	if err != nil {
@@ -258,7 +281,7 @@ func (handler ReservationHandler) Update(ctx context.Context, request *pb.Update
 		Beginning:         request.Reservation.Beginning.AsTime(),
 		Ending:            request.Reservation.Ending.AsTime(),
 		Guests:            request.Reservation.Guests,
-		ReservationStatus: domain.ReservationStatusType(request.Reservation.ReservationStatus),
+		ReservationStatus: domain.ReservationStatusType(1),
 	}
 	err = handler.service.Update(ctx, request.Id, reservation)
 	if err != nil {
