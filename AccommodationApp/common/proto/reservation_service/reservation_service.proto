@@ -59,6 +59,12 @@ service ReservationService{
     };
   }
 
+  rpc Reject(RejectReservationRequest) returns(RejectReservationResponse) {
+    option (google.api.http) = {
+      put: "/reservation/reject/{id}"
+    };
+  }
+
   rpc Cancel(CancelReservationRequest) returns(CancelReservationResponse) {
     option (google.api.http) = {
       put: "/reservation/cancel/{id}"
@@ -143,6 +149,10 @@ message ApproveReservationRequest {
   string id = 1;
 }
 
+message RejectReservationRequest {
+  string id = 1;
+}
+
 message CancelReservationResponse {
 }
 
@@ -151,6 +161,9 @@ message CancelReservationRequest {
 }
 
 message ApproveReservationResponse {
+}
+
+message RejectReservationResponse {
 }
 
 message ReservationOut {

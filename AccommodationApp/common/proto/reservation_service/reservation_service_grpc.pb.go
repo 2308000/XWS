@@ -25,6 +25,7 @@ type ReservationServiceClient interface {
 	Create(ctx context.Context, in *CreateReservationRequest, opts ...grpc.CallOption) (*CreateReservationResponse, error)
 	Update(ctx context.Context, in *UpdateReservationRequest, opts ...grpc.CallOption) (*UpdateReservationResponse, error)
 	Approve(ctx context.Context, in *ApproveReservationRequest, opts ...grpc.CallOption) (*ApproveReservationResponse, error)
+	Reject(ctx context.Context, in *RejectReservationRequest, opts ...grpc.CallOption) (*RejectReservationResponse, error)
 	Cancel(ctx context.Context, in *CancelReservationRequest, opts ...grpc.CallOption) (*CancelReservationResponse, error)
 	Delete(ctx context.Context, in *DeleteReservationRequest, opts ...grpc.CallOption) (*DeleteReservationResponse, error)
 }
@@ -109,6 +110,15 @@ func (c *reservationServiceClient) Approve(ctx context.Context, in *ApproveReser
 	return out, nil
 }
 
+func (c *reservationServiceClient) Reject(ctx context.Context, in *RejectReservationRequest, opts ...grpc.CallOption) (*RejectReservationResponse, error) {
+	out := new(RejectReservationResponse)
+	err := c.cc.Invoke(ctx, "/reservation.ReservationService/Reject", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *reservationServiceClient) Cancel(ctx context.Context, in *CancelReservationRequest, opts ...grpc.CallOption) (*CancelReservationResponse, error) {
 	out := new(CancelReservationResponse)
 	err := c.cc.Invoke(ctx, "/reservation.ReservationService/Cancel", in, out, opts...)
@@ -139,6 +149,7 @@ type ReservationServiceServer interface {
 	Create(context.Context, *CreateReservationRequest) (*CreateReservationResponse, error)
 	Update(context.Context, *UpdateReservationRequest) (*UpdateReservationResponse, error)
 	Approve(context.Context, *ApproveReservationRequest) (*ApproveReservationResponse, error)
+	Reject(context.Context, *RejectReservationRequest) (*RejectReservationResponse, error)
 	Cancel(context.Context, *CancelReservationRequest) (*CancelReservationResponse, error)
 	Delete(context.Context, *DeleteReservationRequest) (*DeleteReservationResponse, error)
 	mustEmbedUnimplementedReservationServiceServer()
@@ -171,6 +182,9 @@ func (*UnimplementedReservationServiceServer) Update(context.Context, *UpdateRes
 }
 func (*UnimplementedReservationServiceServer) Approve(context.Context, *ApproveReservationRequest) (*ApproveReservationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Approve not implemented")
+}
+func (*UnimplementedReservationServiceServer) Reject(context.Context, *RejectReservationRequest) (*RejectReservationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Reject not implemented")
 }
 func (*UnimplementedReservationServiceServer) Cancel(context.Context, *CancelReservationRequest) (*CancelReservationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Cancel not implemented")
@@ -328,6 +342,24 @@ func _ReservationService_Approve_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReservationService_Reject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RejectReservationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).Reject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/reservation.ReservationService/Reject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).Reject(ctx, req.(*RejectReservationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ReservationService_Cancel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CancelReservationRequest)
 	if err := dec(in); err != nil {
@@ -399,6 +431,10 @@ var _ReservationService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Approve",
 			Handler:    _ReservationService_Approve_Handler,
+		},
+		{
+			MethodName: "Reject",
+			Handler:    _ReservationService_Reject_Handler,
 		},
 		{
 			MethodName: "Cancel",

@@ -10,6 +10,7 @@ import (
 	"errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"log"
 )
 
 type ReservationHandler struct {
@@ -352,4 +353,25 @@ func (handler *ReservationHandler) Cancel(ctx context.Context, request *pb.Cance
 		return nil, err
 	}
 	return &pb.CancelReservationResponse{}, nil
+}
+
+func (handler *ReservationHandler) Reject(ctx context.Context, request *pb.RejectReservationRequest) (*pb.RejectReservationResponse, error) {
+	reservation, err := handler.service.Get(ctx, request.Id)
+	if err != nil {
+		return nil, err
+	}
+	foundAccommodation, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: reservation.AccommodationId.Hex()})
+	if err != nil {
+		return nil, err
+	}
+	log.Println(foundAccommodation.Accommodation.Host.HostId)
+	log.Println(ctx.Value("userId").(string))
+	if foundAccommodation.Accommodation.Host.HostId != ctx.Value("userId").(string) {
+		return nil, errors.New("you cannot reject this reservation")
+	}
+	err = handler.service.Reject(ctx, request.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.RejectReservationResponse{}, nil
 }
