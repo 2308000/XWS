@@ -9,6 +9,7 @@ import (
 	"context"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"log"
 )
 
 type AccommodationHandler struct {
@@ -102,7 +103,19 @@ func (handler *AccommodationHandler) GetAllSearched(ctx context.Context, request
 	return response, err
 }
 
-func (handler *AccommodationHandler) GetAllFiltered(ctx context.Context, request *pb.GetAllFilterRequest) (*pb.GetAllAccommodationsResponse, error) {
+func (handler *AccommodationHandler) GetAllFiltered(ctx context.Context, request *pb.GetAllFilterRequest) (*pb.AccommodationSearchResponse, error) {
+	log.Println("Pogodio handler")
+	searchResult, err := handler.GetAllSearched(ctx, request.SearchQuery)
+	log.Println("Vratio ", len(searchResult.Accommodations), " iz searcha")
+	if err != nil {
+		return nil, err
+	}
+	var filterSearchResult []pb.AccommodationSearch
+	for _, accommodationDTO := range searchResult.Accommodations {
+		if accommodationDTO.TotalPrice <= request.PriceRangeUpperBound && accommodationDTO.TotalPrice >= request.PriceRangeLowerBound {
+			filterSearchResult = append(filterSearchResult, *accommodationDTO)
+		}
+	}
 	benefits := &domain.Benefits{
 		HasWifi:            request.Benefits.HasWifi,
 		HasAirConditioning: request.Benefits.HasAirConditioning,
@@ -112,18 +125,31 @@ func (handler *AccommodationHandler) GetAllFiltered(ctx context.Context, request
 		HasBathtub:         request.Benefits.HasBathtub,
 		HasFreeParking:     request.Benefits.HasFreeParking,
 	}
-	Accommodations, err := handler.service.GetAllFiltered(ctx, request.PriceRangeLowerBound, request.PriceRangeUpperBound, *benefits, request.IsOutstandingHost)
-	if err != nil {
-		return nil, err
+	accommodations, err := handler.service.GetAllFiltered(ctx, *benefits, request.IsOutstandingHost)
+	var indicesToKeep []int
+	for _, accommodation := range accommodations {
+		for i, currentDTO := range filterSearchResult {
+			if currentDTO.Accommodation.Id == accommodation.Id.Hex() {
+				indicesToKeep = append(indicesToKeep, i)
+				continue
+			}
+		}
 	}
-	response := &pb.GetAllAccommodationsResponse{
-		Accommodations: []*pb.Accommodation{},
+
+	finalFilter := make([]pb.AccommodationSearch, len(indicesToKeep))
+	for i, index := range indicesToKeep {
+		finalFilter[i] = filterSearchResult[index]
 	}
-	for _, Accommodation := range Accommodations {
-		current := mapAccommodationToPb(Accommodation)
-		response.Accommodations = append(response.Accommodations, current)
+
+	response := pb.AccommodationSearchResponse{
+		Accommodations: []*pb.AccommodationSearch{},
 	}
-	return response, nil
+
+	for i, _ := range finalFilter {
+		response.Accommodations = append(response.Accommodations, &finalFilter[i])
+	}
+
+	return &response, nil
 }
 
 func (handler AccommodationHandler) Create(ctx context.Context, request *pb.CreateAccommodationRequest) (*pb.CreateAccommodationResponse, error) {

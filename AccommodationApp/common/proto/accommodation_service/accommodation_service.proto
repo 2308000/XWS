@@ -27,7 +27,7 @@ service AccommodationService{
     };
   }
 
-  rpc GetAllFiltered(GetAllFilterRequest) returns(GetAllAccommodationsResponse) {
+  rpc GetAllFiltered(GetAllFilterRequest) returns(AccommodationSearchResponse) {
     option (google.api.http) = {
       post: "/accommodation/filter"
       body: "*"
@@ -129,6 +129,7 @@ message GetAllFilterRequest {
   float priceRangeUpperBound = 2;
   Benefits benefits = 3;
   bool isOutstandingHost = 4;
+  AccommodationSearchRequest searchQuery = 5;
 }
 
 message Benefits {

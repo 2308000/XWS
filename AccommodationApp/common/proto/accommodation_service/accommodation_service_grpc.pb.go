@@ -20,7 +20,7 @@ type AccommodationServiceClient interface {
 	Get(ctx context.Context, in *GetAccommodationRequest, opts ...grpc.CallOption) (*GetAccommodationResponse, error)
 	GetByHost(ctx context.Context, in *GetAccommodationRequest, opts ...grpc.CallOption) (*GetAllAccommodationsResponse, error)
 	GetAll(ctx context.Context, in *GetAllAccommodationsRequest, opts ...grpc.CallOption) (*GetAllAccommodationsResponse, error)
-	GetAllFiltered(ctx context.Context, in *GetAllFilterRequest, opts ...grpc.CallOption) (*GetAllAccommodationsResponse, error)
+	GetAllFiltered(ctx context.Context, in *GetAllFilterRequest, opts ...grpc.CallOption) (*AccommodationSearchResponse, error)
 	GetAllSearched(ctx context.Context, in *AccommodationSearchRequest, opts ...grpc.CallOption) (*AccommodationSearchResponse, error)
 	Create(ctx context.Context, in *CreateAccommodationRequest, opts ...grpc.CallOption) (*CreateAccommodationResponse, error)
 	Update(ctx context.Context, in *UpdateAccommodationRequest, opts ...grpc.CallOption) (*UpdateAccommodationResponse, error)
@@ -64,8 +64,8 @@ func (c *accommodationServiceClient) GetAll(ctx context.Context, in *GetAllAccom
 	return out, nil
 }
 
-func (c *accommodationServiceClient) GetAllFiltered(ctx context.Context, in *GetAllFilterRequest, opts ...grpc.CallOption) (*GetAllAccommodationsResponse, error) {
-	out := new(GetAllAccommodationsResponse)
+func (c *accommodationServiceClient) GetAllFiltered(ctx context.Context, in *GetAllFilterRequest, opts ...grpc.CallOption) (*AccommodationSearchResponse, error) {
+	out := new(AccommodationSearchResponse)
 	err := c.cc.Invoke(ctx, "/profile.AccommodationService/GetAllFiltered", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -134,7 +134,7 @@ type AccommodationServiceServer interface {
 	Get(context.Context, *GetAccommodationRequest) (*GetAccommodationResponse, error)
 	GetByHost(context.Context, *GetAccommodationRequest) (*GetAllAccommodationsResponse, error)
 	GetAll(context.Context, *GetAllAccommodationsRequest) (*GetAllAccommodationsResponse, error)
-	GetAllFiltered(context.Context, *GetAllFilterRequest) (*GetAllAccommodationsResponse, error)
+	GetAllFiltered(context.Context, *GetAllFilterRequest) (*AccommodationSearchResponse, error)
 	GetAllSearched(context.Context, *AccommodationSearchRequest) (*AccommodationSearchResponse, error)
 	Create(context.Context, *CreateAccommodationRequest) (*CreateAccommodationResponse, error)
 	Update(context.Context, *UpdateAccommodationRequest) (*UpdateAccommodationResponse, error)
@@ -157,7 +157,7 @@ func (*UnimplementedAccommodationServiceServer) GetByHost(context.Context, *GetA
 func (*UnimplementedAccommodationServiceServer) GetAll(context.Context, *GetAllAccommodationsRequest) (*GetAllAccommodationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
 }
-func (*UnimplementedAccommodationServiceServer) GetAllFiltered(context.Context, *GetAllFilterRequest) (*GetAllAccommodationsResponse, error) {
+func (*UnimplementedAccommodationServiceServer) GetAllFiltered(context.Context, *GetAllFilterRequest) (*AccommodationSearchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllFiltered not implemented")
 }
 func (*UnimplementedAccommodationServiceServer) GetAllSearched(context.Context, *AccommodationSearchRequest) (*AccommodationSearchResponse, error) {
