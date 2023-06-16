@@ -40,6 +40,8 @@ func accessibleRoles() map[string][]string {
 		reservationServicePath + "Approve":           {"host"},
 		reservationServicePath + "Cancel":            {"guest"},
 		reservationServicePath + "GetMyReservations": {"guest"},
+		reservationServicePath + "Create":            {"guest"},
+		reservationServicePath + "Update":            {"guest"},
 	}
 }
 

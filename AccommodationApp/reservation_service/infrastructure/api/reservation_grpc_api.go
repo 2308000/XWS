@@ -185,18 +185,12 @@ func (handler *ReservationHandler) GetMyReservations(ctx context.Context, reques
 }
 
 func (handler ReservationHandler) Create(ctx context.Context, request *pb.CreateReservationRequest) (*pb.CreateReservationResponse, error) {
-	log.Println("Usao u kontroler")
-	log.Println("accommodationId: ", request.Reservation.AccommodationId)
-	log.Println("beginning: ", request.Reservation.Beginning)
-	log.Println("ending: ", request.Reservation.Ending)
-	log.Println("guests: ", request.Reservation.Guests)
-	log.Println("reservationStatus: ", request.Reservation.ReservationStatus)
 	accommodationId, err := primitive.ObjectIDFromHex(request.Reservation.AccommodationId)
 	if err != nil {
 		return nil, err
 	}
-	log.Println("napravio id za smestaj")
 	rawUserId := ctx.Value("userId").(string)
+	log.Println(rawUserId)
 	userId, err := primitive.ObjectIDFromHex(rawUserId)
 	if err != nil {
 		return nil, err
@@ -214,11 +208,27 @@ func (handler ReservationHandler) Create(ctx context.Context, request *pb.Create
 	if err != nil {
 		return nil, err
 	}
+	foundUser, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: userId.Hex()})
+	if err != nil {
+		return nil, err
+	}
+	userDetails := &pb.UserDetails{
+		Id:       foundUser.User.Id,
+		Username: foundUser.User.Username,
+	}
+	foundAccommodation, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: accommodationId.Hex()})
+	if err != nil {
+		return nil, err
+	}
+	accommodationDetails := &pb.AccommodationDetails{
+		Id:   foundAccommodation.Accommodation.Id,
+		Name: foundAccommodation.Accommodation.Name,
+	}
 	return &pb.CreateReservationResponse{
 		Reservation: &pb.ReservationOut{
 			Id:                reservation.Id.Hex(),
-			Accommodation:     nil,
-			User:              nil,
+			Accommodation:     accommodationDetails,
+			User:              userDetails,
 			Beginning:         timestamppb.New(reservation.Beginning),
 			Ending:            timestamppb.New(reservation.Ending),
 			Guests:            reservation.Guests,

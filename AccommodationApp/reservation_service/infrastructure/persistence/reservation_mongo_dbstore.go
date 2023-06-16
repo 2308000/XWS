@@ -67,7 +67,7 @@ func (store *ReservationMongoDBStore) GetBetweenDates(ctx context.Context, begin
 			},
 		}},
 	}
-	filter = append(filter, bson.E{"reservationStatus", bson.D{{"$e", 1}}})
+	filter = append(filter, bson.E{"reservationStatus", bson.D{{"$eq", 1}}})
 	id, err := primitive.ObjectIDFromHex(accommodationId)
 	if err != nil {
 		return nil, err
