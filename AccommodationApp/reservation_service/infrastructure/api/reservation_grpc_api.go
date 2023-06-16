@@ -195,10 +195,16 @@ func (handler *ReservationHandler) GetByHost(ctx context.Context, request *pb.Ge
 		if err != nil {
 			return nil, err
 		}
-		userDetails := &pb.UserDetails{
-			Id:       foundUser.User.Id,
-			Username: foundUser.User.Username,
+		foundProfile, err := handler.profileClient.Get(ctx, &profile.GetRequest{Id: Reservation.UserId.Hex()})
+		if err != nil {
+			return nil, err
 		}
+		userDetails := &pb.UserDetails{
+			Id:                  foundUser.User.Id,
+			Username:            foundUser.User.Username,
+			CancellationCounter: foundProfile.Profile.ReservationsCancelled,
+		}
+
 		foundAccommodation, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: Reservation.AccommodationId.Hex()})
 		if err != nil {
 			return nil, err
