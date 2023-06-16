@@ -6,21 +6,22 @@ import (
 )
 
 type Accommodation struct {
-	Id                 primitive.ObjectID `bson:"_id"`
-	Host               Host               `bson:"host"`
-	Name               string             `bson:"name"`
-	Location           Location           `bson:"location"`
-	HasWifi            bool               `bson:"hasWifi"`
-	HasAirConditioning bool               `bson:"hasAirConditioning"`
-	HasFreeParking     bool               `bson:"hasFreeParking"`
-	HasKitchen         bool               `bson:"hasKitchen"`
-	HasWashingMachine  bool               `bson:"hasWashingMachine"`
-	HasBathtub         bool               `bson:"hasBathtub"`
-	HasBalcony         bool               `bson:"hasBalcony"`
-	Photos             [][]byte           `bson:"photos"`
-	MinNumberOfGuests  int                `bson:"minGuests"`
-	MaxNumberOfGuests  int                `bson:"maxGuests"`
-	Availability       []AvailableDate    `bson:"availability"`
+	Id                            primitive.ObjectID `bson:"_id"`
+	Host                          Host               `bson:"host"`
+	Name                          string             `bson:"name"`
+	Location                      Location           `bson:"location"`
+	HasWifi                       bool               `bson:"hasWifi"`
+	HasAirConditioning            bool               `bson:"hasAirConditioning"`
+	HasFreeParking                bool               `bson:"hasFreeParking"`
+	HasKitchen                    bool               `bson:"hasKitchen"`
+	HasWashingMachine             bool               `bson:"hasWashingMachine"`
+	HasBathtub                    bool               `bson:"hasBathtub"`
+	HasBalcony                    bool               `bson:"hasBalcony"`
+	Photos                        [][]byte           `bson:"photos"`
+	MinNumberOfGuests             int                `bson:"minGuests"`
+	MaxNumberOfGuests             int                `bson:"maxGuests"`
+	Availability                  []AvailableDate    `bson:"availability"`
+	IsReservationAcceptenceManual bool               `bson:"isReservationAcceptenceManual"`
 }
 
 type AvailableDate struct {

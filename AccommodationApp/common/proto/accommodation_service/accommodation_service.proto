@@ -185,6 +185,7 @@ message Accommodation {
   int32 minNumberOfGuests = 13;
   int32 maxNumberOfGuests = 14;
   repeated AvailableDate availability = 15;
+  bool isReservationAcceptenceManual = 16;
 }
 
 message AvailableDate {
@@ -208,6 +209,7 @@ message NewAccommodation {
   repeated bytes photos = 12;
   int32 minNumberOfGuests = 13;
   int32 maxNumberOfGuests = 14;
+  bool isReservationAcceptenceManual = 15;
 }
 
 message HostRes {
