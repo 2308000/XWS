@@ -32,6 +32,13 @@ service ReservationService{
     };
   }
 
+  rpc GetBetweenDates(GetBetweenDatesRequest) returns(GetBetweenDatesResponse) {
+    option (google.api.http) = {
+      post: "/reservation/my"
+      body: "informations"
+    };
+  }
+
   rpc Create(CreateReservationRequest) returns(CreateReservationResponse) {
     option (google.api.http) = {
       post: "/reservation"
@@ -85,6 +92,20 @@ message GetUsersReservationsRequest {
 }
 
 message GetUsersReservationsResponse {
+  repeated ReservationOut reservations = 1;
+}
+
+message Informations{
+  string accommodationId = 1;
+  google.protobuf.Timestamp beginning = 2;
+  google.protobuf.Timestamp ending = 3;
+}
+
+message GetBetweenDatesRequest {
+  Informations informations = 1;
+}
+
+message GetBetweenDatesResponse {
   repeated ReservationOut reservations = 1;
 }
 message GetMyReservationsRequest {
@@ -148,7 +169,6 @@ message ReservationIn {
   google.protobuf.Timestamp beginning = 3;
   google.protobuf.Timestamp ending = 4;
   int32 guests = 5;
-  int32 reservationStatus = 6;
 }
 
 message ReservationNew {
@@ -156,7 +176,6 @@ message ReservationNew {
   google.protobuf.Timestamp beginning = 2;
   google.protobuf.Timestamp ending = 3;
   int32 guests = 4;
-  int32 reservationStatus = 5;
 }
 
 message AccommodationDetails{
