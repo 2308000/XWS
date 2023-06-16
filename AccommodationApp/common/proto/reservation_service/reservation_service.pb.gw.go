@@ -572,7 +572,7 @@ func RegisterReservationServiceHandlerServer(ctx context.Context, mux *runtime.S
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/reservation.ReservationService/GetBetweenDates", runtime.WithHTTPPathPattern("/reservation/my"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/reservation.ReservationService/GetBetweenDates", runtime.WithHTTPPathPattern("/reservation/dates"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -839,7 +839,7 @@ func RegisterReservationServiceHandlerClient(ctx context.Context, mux *runtime.S
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/reservation.ReservationService/GetBetweenDates", runtime.WithHTTPPathPattern("/reservation/my"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/reservation.ReservationService/GetBetweenDates", runtime.WithHTTPPathPattern("/reservation/dates"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -972,7 +972,7 @@ var (
 
 	pattern_ReservationService_GetMyReservations_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"reservation", "my"}, ""))
 
-	pattern_ReservationService_GetBetweenDates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"reservation", "my"}, ""))
+	pattern_ReservationService_GetBetweenDates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"reservation", "dates"}, ""))
 
 	pattern_ReservationService_Create_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"reservation"}, ""))
 

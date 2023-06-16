@@ -42,6 +42,7 @@ var accommodations = []*domain.Accommodation{
 				IsPricePerGuest: true,
 			},
 		},
+		IsReservationAcceptenceManual: false,
 	},
 	{
 		Id:                 getObjectId("77706d1b724b3da748f63fe3"),
@@ -80,6 +81,7 @@ var accommodations = []*domain.Accommodation{
 				IsPricePerGuest: false,
 			},
 		},
+		IsReservationAcceptenceManual: true,
 	},
 	{
 		Id:                getObjectId("88806d1b724b3da748f63fe3"),
@@ -117,6 +119,7 @@ var accommodations = []*domain.Accommodation{
 				IsPricePerGuest: false,
 			},
 		},
+		IsReservationAcceptenceManual: false,
 	},
 	{
 		Id:                getObjectId("99906d1b724b3da748f63fe3"),
@@ -154,6 +157,7 @@ var accommodations = []*domain.Accommodation{
 				IsPricePerGuest: true,
 			},
 		},
+		IsReservationAcceptenceManual: true,
 	},
 }
 
