@@ -9,6 +9,7 @@ import (
 	"context"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"log"
 )
 
 type ReservationHandler struct {
@@ -184,16 +185,24 @@ func (handler *ReservationHandler) GetMyReservations(ctx context.Context, reques
 }
 
 func (handler ReservationHandler) Create(ctx context.Context, request *pb.CreateReservationRequest) (*pb.CreateReservationResponse, error) {
+	log.Println("Usao u kontroler")
+	log.Println("accommodationId: ", request.Reservation.AccommodationId)
+	log.Println("beginning: ", request.Reservation.Beginning)
+	log.Println("ending: ", request.Reservation.Ending)
+	log.Println("guests: ", request.Reservation.Guests)
+	log.Println("reservationStatus: ", request.Reservation.ReservationStatus)
 	accommodationId, err := primitive.ObjectIDFromHex(request.Reservation.AccommodationId)
 	if err != nil {
 		return nil, err
 	}
+	log.Println("napravio id za smestaj")
 	rawUserId := ctx.Value("userId").(string)
 	userId, err := primitive.ObjectIDFromHex(rawUserId)
 	if err != nil {
 		return nil, err
 	}
 	reservation := &domain.Reservation{
+		Id:                primitive.NewObjectID(),
 		AccommodationId:   accommodationId,
 		UserId:            userId,
 		Beginning:         request.Reservation.Beginning.AsTime(),

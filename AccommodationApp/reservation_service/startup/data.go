@@ -34,6 +34,15 @@ var reservations = []*domain.Reservation{
 		Guests:            3,
 		ReservationStatus: 2,
 	},
+	{
+		Id:                getObjectId("62706d1b623ab3d781f63fa1"),
+		AccommodationId:   getObjectId("55506d1b724b3da748f63fe3"),
+		UserId:            getObjectId("55306d1b623b3da748f63fa1"),
+		Beginning:         time.Now(),
+		Ending:            time.Now().Add(3),
+		Guests:            3,
+		ReservationStatus: 0,
+	},
 }
 
 func getObjectId(id string) primitive.ObjectID {

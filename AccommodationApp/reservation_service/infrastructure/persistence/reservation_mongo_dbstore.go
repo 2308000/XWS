@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 const (
@@ -43,7 +44,35 @@ func (store *ReservationMongoDBStore) GetForUser(ctx context.Context, userId str
 	if err != nil {
 		return nil, err
 	}
-	filter := bson.M{"userId": id}
+	filter := bson.D{}
+	filter = append(filter, bson.E{"userId", id})
+	filter = append(filter, bson.E{"reservationStatus", bson.D{{"$ne", 2}}})
+	return store.filter(filter)
+}
+
+func (store *ReservationMongoDBStore) GetBetweenDates(ctx context.Context, beginning time.Time, ending time.Time, accommodationId string) ([]*domain.Reservation, error) {
+	filter := bson.D{
+		{"$or", bson.A{
+			bson.D{
+				{"beginning", bson.D{{"$gte", beginning}}},
+				{"beginning", bson.D{{"$lte", ending}}},
+			},
+			bson.D{
+				{"ending", bson.D{{"$gte", beginning}}},
+				{"ending", bson.D{{"$lte", ending}}},
+			},
+			bson.D{
+				{"beginning", bson.D{{"$lte", beginning}}},
+				{"ending", bson.D{{"$gte", ending}}},
+			},
+		}},
+	}
+	filter = append(filter, bson.E{"reservationStatus", bson.D{{"$e", 1}}})
+	id, err := primitive.ObjectIDFromHex(accommodationId)
+	if err != nil {
+		return nil, err
+	}
+	filter = append(filter, bson.E{"accommodationId", id})
 	return store.filter(filter)
 }
 
