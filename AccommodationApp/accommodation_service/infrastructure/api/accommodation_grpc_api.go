@@ -143,6 +143,21 @@ func (handler AccommodationHandler) Update(ctx context.Context, request *pb.Upda
 	}, nil
 }
 
+func (handler *AccommodationHandler) UpdateAvailability(ctx context.Context, request *pb.UpdateAvailabilityRequest) (*pb.UpdateAvailabilityResponse, error) {
+	accommodationId := request.AccommodationId
+	availableDate := domain.AvailableDate{
+		Beginning:       request.AvailableDate.Beginning.AsTime(),
+		Ending:          request.AvailableDate.Ending.AsTime(),
+		Price:           request.AvailableDate.Price,
+		IsPricePerGuest: request.AvailableDate.IsPricePerGuest,
+	}
+	accommodation, err := handler.service.UpdateAvailability(ctx, accommodationId, availableDate)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.UpdateAvailabilityResponse{Accommodation: mapAccommodationToPb(accommodation)}, err
+}
+
 func (handler *AccommodationHandler) Delete(ctx context.Context, request *pb.DeleteAccommodationRequest) (*pb.DeleteAccommodationResponse, error) {
 	err := handler.service.Delete(ctx, request.Id)
 	if err != nil {

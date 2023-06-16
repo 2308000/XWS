@@ -1,6 +1,9 @@
 package domain
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
+)
 
 type Accommodation struct {
 	Id                 primitive.ObjectID `bson:"_id"`
@@ -17,6 +20,14 @@ type Accommodation struct {
 	Photos             [][]byte           `bson:"photos"`
 	MinNumberOfGuests  int                `bson:"minGuests"`
 	MaxNumberOfGuests  int                `bson:"maxGuests"`
+	Availability       []AvailableDate    `bson:"availability"`
+}
+
+type AvailableDate struct {
+	Beginning       time.Time `bson:"beginning"`
+	Ending          time.Time `bson:"ending"`
+	Price           float32   `bson:"price"`
+	IsPricePerGuest bool      `bson:"isPricePerGuest"`
 }
 
 type Host struct {

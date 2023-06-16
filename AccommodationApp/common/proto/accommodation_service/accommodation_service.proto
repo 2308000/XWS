@@ -45,11 +45,47 @@ service AccommodationService{
       body: "accommodation"
     };
   }
+
+  rpc UpdateAvailability(UpdateAvailabilityRequest) returns(UpdateAvailabilityResponse) {
+    option (google.api.http) = {
+      put: "/accommodation/availability"
+      body: "*"
+    };
+  }
+
+  rpc GetAccommodationAvailableDates(AccommodationTimePeriodRequest) returns(AccommodationTimePeriodResponse) {
+    option (google.api.http) = {
+      post: "/accommodation/availability"
+      body: "*"
+    };
+  }
+
   rpc Delete(DeleteAccommodationRequest) returns(DeleteAccommodationResponse) {
     option (google.api.http) = {
       delete: "/accommodation/{id}"
     };
   }
+}
+
+message AccommodationTimePeriodRequest {
+  string accommodationId = 1;
+  google.protobuf.Timestamp beginning = 2;
+  google.protobuf.Timestamp ending = 3;
+}
+
+message AccommodationTimePeriodResponse {
+  string accommodationId = 1;
+  string accommodationName = 2;
+  repeated AvailableDate availableDates = 3;
+}
+
+message UpdateAvailabilityRequest {
+  string accommodationId = 1;
+  AvailableDate availableDate = 2;
+}
+
+message UpdateAvailabilityResponse {
+  Accommodation accommodation = 1;
 }
 
 message GetAccommodationRequest {
@@ -123,6 +159,14 @@ message Accommodation {
   repeated bytes photos = 12;
   int32 minNumberOfGuests = 13;
   int32 maxNumberOfGuests = 14;
+  repeated AvailableDate availability = 15;
+}
+
+message AvailableDate {
+  google.protobuf.Timestamp beginning = 1;
+  google.protobuf.Timestamp ending = 2;
+  float price = 3;
+  bool isPricePerGuest = 4;
 }
 
 message NewAccommodation {
