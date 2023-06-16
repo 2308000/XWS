@@ -5,6 +5,7 @@ import (
 	"accommodation_booking/reservation_service/domain"
 	"context"
 	"errors"
+	"time"
 )
 
 type ReservationService struct {
@@ -21,11 +22,22 @@ func (service *ReservationService) Get(ctx context.Context, reservationId string
 	return service.store.Get(ctx, reservationId)
 }
 
-func (service *ReservationService) GetAll(ctx context.Context, search string) ([]*domain.Reservation, error) {
-	return service.store.GetAll(ctx, search)
+func (service *ReservationService) GetAll(ctx context.Context) ([]*domain.Reservation, error) {
+	return service.store.GetAll(ctx)
+}
+
+func (service *ReservationService) GetForUser(ctx context.Context, userId string) ([]*domain.Reservation, error) {
+	return service.store.GetForUser(ctx, userId)
 }
 
 func (service *ReservationService) Create(ctx context.Context, reservation *domain.Reservation) error {
+	reservations, err := service.store.GetBetweenDates(ctx, reservation.Beginning, reservation.Ending, reservation.AccommodationId.Hex())
+	if err != nil {
+		return err
+	}
+	if len(reservations) != 0 {
+		return errors.New("there is reservation overlapping selected time interval")
+	}
 	return service.store.Create(ctx, reservation)
 }
 
@@ -57,7 +69,15 @@ func (service *ReservationService) Cancel(ctx context.Context, reservationId str
 	if reservation.UserId.Hex() != ctx.Value("userId").(string) {
 		return errors.New("you are not allowed cancel this reservation")
 	}
-	err = service.store.Cancel(ctx, reservationId)
+	tomorrow := time.Now().Add(1)
+	if reservation.Beginning.Before(tomorrow) {
+		return errors.New("you cannot cancel a reservation if there is less than a day left until it starts")
+	}
+	if reservation.ReservationStatus == 0 {
+		err = service.Delete(ctx, reservationId)
+	} else {
+		err = service.store.Cancel(ctx, reservationId)
+	}
 	if err != nil {
 		return err
 	}

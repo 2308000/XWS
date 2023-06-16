@@ -20,6 +20,18 @@ service ReservationService{
     };
   }
 
+  rpc GetUsersReservations(GetUsersReservationsRequest) returns(GetUsersReservationsResponse) {
+    option (google.api.http) = {
+      get: "/reservation/user/{userId}"
+    };
+  }
+
+  rpc GetMyReservations(GetMyReservationsRequest) returns(GetMyReservationsResponse) {
+    option (google.api.http) = {
+      get: "/reservation/my"
+    };
+  }
+
   rpc Create(CreateReservationRequest) returns(CreateReservationResponse) {
     option (google.api.http) = {
       post: "/reservation"
@@ -62,10 +74,23 @@ message GetReservationResponse {
 }
 
 message GetAllReservationsRequest {
-  string search = 1;
 }
 
 message GetAllReservationsResponse {
+  repeated ReservationOut reservations = 1;
+}
+
+message GetUsersReservationsRequest {
+  string userId = 1;
+}
+
+message GetUsersReservationsResponse {
+  repeated ReservationOut reservations = 1;
+}
+message GetMyReservationsRequest {
+}
+
+message GetMyReservationsResponse {
   repeated ReservationOut reservations = 1;
 }
 
