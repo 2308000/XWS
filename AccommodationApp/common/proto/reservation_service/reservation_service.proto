@@ -34,7 +34,7 @@ service ReservationService{
 
   rpc GetBetweenDates(GetBetweenDatesRequest) returns(GetBetweenDatesResponse) {
     option (google.api.http) = {
-      post: "/reservation/my"
+      post: "/reservation/dates"
       body: "informations"
     };
   }
