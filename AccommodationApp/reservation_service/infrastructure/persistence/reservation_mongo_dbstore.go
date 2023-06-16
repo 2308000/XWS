@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 const (
@@ -34,9 +35,45 @@ func (store *ReservationMongoDBStore) Get(ctx context.Context, reservationId str
 	return store.filterOne(filter)
 }
 
-func (store *ReservationMongoDBStore) GetAll(ctx context.Context, search string) ([]*domain.Reservation, error) {
-	filter := bson.D{{"userId", bson.M{"$regex": "^.*" + search + ".*$"}}}
-	return store.filter(filter, search)
+func (store *ReservationMongoDBStore) GetAll(ctx context.Context) ([]*domain.Reservation, error) {
+	return store.GetAll(ctx)
+}
+
+func (store *ReservationMongoDBStore) GetForUser(ctx context.Context, userId string) ([]*domain.Reservation, error) {
+	id, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		return nil, err
+	}
+	filter := bson.D{}
+	filter = append(filter, bson.E{"userId", id})
+	filter = append(filter, bson.E{"reservationStatus", bson.D{{"$ne", 2}}})
+	return store.filter(filter)
+}
+
+func (store *ReservationMongoDBStore) GetBetweenDates(ctx context.Context, beginning time.Time, ending time.Time, accommodationId string) ([]*domain.Reservation, error) {
+	filter := bson.D{
+		{"$or", bson.A{
+			bson.D{
+				{"beginning", bson.D{{"$gte", beginning}}},
+				{"beginning", bson.D{{"$lte", ending}}},
+			},
+			bson.D{
+				{"ending", bson.D{{"$gte", beginning}}},
+				{"ending", bson.D{{"$lte", ending}}},
+			},
+			bson.D{
+				{"beginning", bson.D{{"$lte", beginning}}},
+				{"ending", bson.D{{"$gte", ending}}},
+			},
+		}},
+	}
+	filter = append(filter, bson.E{"reservationStatus", bson.D{{"$eq", 1}}})
+	id, err := primitive.ObjectIDFromHex(accommodationId)
+	if err != nil {
+		return nil, err
+	}
+	filter = append(filter, bson.E{"accommodationId", id})
+	return store.filter(filter)
 }
 
 func (store *ReservationMongoDBStore) Create(ctx context.Context, reservation *domain.Reservation) error {
@@ -75,7 +112,7 @@ func (store *ReservationMongoDBStore) DeleteAll(ctx context.Context) error {
 	return nil
 }
 
-func (store *ReservationMongoDBStore) filter(filter interface{}, search string) ([]*domain.Reservation, error) {
+func (store *ReservationMongoDBStore) filter(filter interface{}) ([]*domain.Reservation, error) {
 	cursor, err := store.reservations.Find(context.TODO(), filter)
 	defer func(cursor *mongo.Cursor, ctx context.Context) {
 		err := cursor.Close(ctx)
@@ -85,7 +122,7 @@ func (store *ReservationMongoDBStore) filter(filter interface{}, search string) 
 	}(cursor, context.TODO())
 
 	if err != nil {
-		return nil, errors.New(search)
+		return nil, err
 	}
 	return decode(cursor)
 }

@@ -35,10 +35,13 @@ func accessibleRoles() map[string][]string {
 	const reservationServicePath = "/reservation.ReservationService/"
 
 	return map[string][]string{
-		reservationServicePath + "GetAll":  {"guest", "host"},
-		reservationServicePath + "Get":     {"guest", "host"},
-		reservationServicePath + "Approve": {"host"},
-		reservationServicePath + "Cancel":  {"guest"},
+		reservationServicePath + "GetAll":            {"guest", "host"},
+		reservationServicePath + "Get":               {"guest", "host"},
+		reservationServicePath + "Approve":           {"host"},
+		reservationServicePath + "Cancel":            {"guest"},
+		reservationServicePath + "GetMyReservations": {"guest"},
+		reservationServicePath + "Create":            {"guest"},
+		reservationServicePath + "Update":            {"guest"},
 	}
 }
 
