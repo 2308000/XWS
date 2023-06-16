@@ -11,6 +11,7 @@ const (
 	Pending = iota
 	Approved
 	Canceled
+	Rejected
 )
 
 type Reservation struct {
