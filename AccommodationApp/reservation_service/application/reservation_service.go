@@ -34,6 +34,10 @@ func (service *ReservationService) GetForUser(ctx context.Context, userId string
 	return service.store.GetForUser(ctx, userId)
 }
 
+func (service *ReservationService) GetPending(ctx context.Context) ([]*domain.Reservation, error) {
+	return service.store.GetPending(ctx)
+}
+
 func (service *ReservationService) Create(ctx context.Context, reservation *domain.Reservation) error {
 	reservations, err := service.store.GetBetweenDates(ctx, reservation.Beginning, reservation.Ending, reservation.AccommodationId.Hex())
 	if err != nil {
@@ -87,26 +91,7 @@ func (service *ReservationService) Reject(ctx context.Context, reservationId str
 }
 
 func (service *ReservationService) Cancel(ctx context.Context, reservationId string) error {
-	reservation, err := service.store.Get(ctx, reservationId)
-	if err != nil {
-		return err
-	}
-	if reservation.UserId.Hex() != ctx.Value("userId").(string) {
-		return errors.New("you are not allowed cancel this reservation")
-	}
-	tomorrow := time.Now().Add(1)
-	if reservation.Beginning.Before(tomorrow) {
-		return errors.New("you cannot cancel a reservation if there is less than a day left until it starts")
-	}
-	if reservation.ReservationStatus == 0 {
-		err = service.Delete(ctx, reservationId)
-	} else {
-		err = service.store.Cancel(ctx, reservationId)
-	}
-	if err != nil {
-		return err
-	}
-	return nil
+	return service.store.Cancel(ctx, reservationId)
 }
 
 func (service *ReservationService) Delete(ctx context.Context, id string) error {

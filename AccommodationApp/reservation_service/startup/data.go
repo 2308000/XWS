@@ -38,10 +38,10 @@ var reservations = []*domain.Reservation{
 		Id:                getObjectId("62706d1b623ab3d781f63fa1"),
 		AccommodationId:   getObjectId("55506d1b724b3da748f63fe3"),
 		UserId:            getObjectId("55306d1b623b3da748f63fa1"),
-		Beginning:         time.Now(),
+		Beginning:         time.Now().Add(2),
 		Ending:            time.Now().Add(3),
 		Guests:            3,
-		ReservationStatus: 0,
+		ReservationStatus: 1,
 	},
 }
 

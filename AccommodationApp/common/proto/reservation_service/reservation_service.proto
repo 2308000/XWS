@@ -26,6 +26,12 @@ service ReservationService{
     };
   }
 
+  rpc GetByHost(GetByHostRequest) returns(GetByHostResponse) {
+    option (google.api.http) = {
+      get: "/reservation/host"
+    };
+  }
+
   rpc GetMyReservations(GetMyReservationsRequest) returns(GetMyReservationsResponse) {
     option (google.api.http) = {
       get: "/reservation/my"
@@ -56,6 +62,12 @@ service ReservationService{
   rpc Approve(ApproveReservationRequest) returns(ApproveReservationResponse) {
     option (google.api.http) = {
       put: "/reservation/approve/{id}"
+    };
+  }
+
+  rpc Reject(RejectReservationRequest) returns(RejectReservationResponse) {
+    option (google.api.http) = {
+      put: "/reservation/reject/{id}"
     };
   }
 
@@ -92,6 +104,13 @@ message GetUsersReservationsRequest {
 }
 
 message GetUsersReservationsResponse {
+  repeated ReservationOut reservations = 1;
+}
+
+message GetByHostRequest {
+}
+
+message GetByHostResponse {
   repeated ReservationOut reservations = 1;
 }
 
@@ -143,6 +162,10 @@ message ApproveReservationRequest {
   string id = 1;
 }
 
+message RejectReservationRequest {
+  string id = 1;
+}
+
 message CancelReservationResponse {
 }
 
@@ -151,6 +174,9 @@ message CancelReservationRequest {
 }
 
 message ApproveReservationResponse {
+}
+
+message RejectReservationResponse {
 }
 
 message ReservationOut {
@@ -186,4 +212,5 @@ message AccommodationDetails{
 message UserDetails{
   string id = 1;
   string username = 2;
+  string cancellationCounter = 3;
 }

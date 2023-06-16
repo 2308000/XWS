@@ -4,6 +4,7 @@ import (
 	"accommodation_booking/common/auth"
 	"accommodation_booking/common/client"
 	accommodation "accommodation_booking/common/proto/accommodation_service"
+	profile "accommodation_booking/common/proto/profile_service"
 	reservation "accommodation_booking/common/proto/reservation_service"
 	user "accommodation_booking/common/proto/user_service"
 	"accommodation_booking/reservation_service/application"
@@ -38,6 +39,8 @@ func accessibleRoles() map[string][]string {
 		reservationServicePath + "GetAll":            {"guest", "host"},
 		reservationServicePath + "Get":               {"guest", "host"},
 		reservationServicePath + "Approve":           {"host"},
+		reservationServicePath + "Reject":            {"host"},
+		reservationServicePath + "GetByHost":         {"host"},
 		reservationServicePath + "Cancel":            {"guest"},
 		reservationServicePath + "GetMyReservations": {"guest"},
 		reservationServicePath + "Create":            {"guest"},
@@ -63,7 +66,12 @@ func (server *Server) Start() {
 		log.Fatalf("PCF: %v", err)
 	}
 
-	reservationHandler := server.initReservationHandler(reservationService, userClient, accommodationClient)
+	profileClient, err := client.NewProfileClient(fmt.Sprintf("%s:%s", server.config.ProfileHost, server.config.ProfilePort))
+	if err != nil {
+		log.Fatalf("PCF: %v", err)
+	}
+
+	reservationHandler := server.initReservationHandler(reservationService, userClient, accommodationClient, profileClient)
 
 	server.startGrpcServer(reservationHandler, jwtManager)
 }
@@ -77,8 +85,8 @@ func (server *Server) initMongoClient() *mongo.Client {
 }
 
 func (server *Server) initReservationHandler(service *application.ReservationService, userClient user.UserServiceClient,
-	accommodationClient accommodation.AccommodationServiceClient) *api.ReservationHandler {
-	return api.NewReservationHandler(service, userClient, accommodationClient)
+	accommodationClient accommodation.AccommodationServiceClient, profileClient profile.ProfileServiceClient) *api.ReservationHandler {
+	return api.NewReservationHandler(service, userClient, accommodationClient, profileClient)
 }
 
 func (server *Server) initReservationStore(client *mongo.Client) domain.ReservationStore {

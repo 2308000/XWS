@@ -2,6 +2,7 @@ package api
 
 import (
 	accommodation "accommodation_booking/common/proto/accommodation_service"
+	profile "accommodation_booking/common/proto/profile_service"
 	pb "accommodation_booking/common/proto/reservation_service"
 	user "accommodation_booking/common/proto/user_service"
 	"accommodation_booking/reservation_service/application"
@@ -10,6 +11,8 @@ import (
 	"errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"log"
+	"time"
 )
 
 type ReservationHandler struct {
@@ -17,14 +20,16 @@ type ReservationHandler struct {
 	service             *application.ReservationService
 	userClient          user.UserServiceClient
 	accommodationClient accommodation.AccommodationServiceClient
+	profileClient       profile.ProfileServiceClient
 }
 
 func NewReservationHandler(service *application.ReservationService, userClient user.UserServiceClient,
-	accommodationClient accommodation.AccommodationServiceClient) *ReservationHandler {
+	accommodationClient accommodation.AccommodationServiceClient, profileClient profile.ProfileServiceClient) *ReservationHandler {
 	return &ReservationHandler{
 		service:             service,
 		userClient:          userClient,
 		accommodationClient: accommodationClient,
+		profileClient:       profileClient,
 	}
 }
 
@@ -133,6 +138,56 @@ func (handler *ReservationHandler) GetUsersReservations(ctx context.Context, req
 		return nil, err
 	}
 	response := &pb.GetUsersReservationsResponse{
+		Reservations: []*pb.ReservationOut{},
+	}
+	for _, Reservation := range Reservations {
+		foundUser, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: Reservation.UserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		userDetails := &pb.UserDetails{
+			Id:       foundUser.User.Id,
+			Username: foundUser.User.Username,
+		}
+		foundAccommodation, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: Reservation.AccommodationId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		accommodationDetails := &pb.AccommodationDetails{
+			Id:   foundAccommodation.Accommodation.Id,
+			Name: foundAccommodation.Accommodation.Name,
+		}
+		current := &pb.ReservationOut{
+			Id:                Reservation.Id.Hex(),
+			Accommodation:     accommodationDetails,
+			User:              userDetails,
+			Beginning:         timestamppb.New(Reservation.Beginning),
+			Ending:            timestamppb.New(Reservation.Ending),
+			Guests:            Reservation.Guests,
+			ReservationStatus: int32(Reservation.ReservationStatus),
+		}
+		response.Reservations = append(response.Reservations, current)
+
+	}
+	return response, nil
+}
+
+func (handler *ReservationHandler) GetByHost(ctx context.Context, request *pb.GetByHostRequest) (*pb.GetByHostResponse, error) {
+	allReservations, err := handler.service.GetPending(ctx)
+	if err != nil {
+		return nil, err
+	}
+	Reservations := []*domain.Reservation{}
+	for _, res := range allReservations {
+		acc, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: res.AccommodationId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		if acc.Accommodation.Host.HostId == ctx.Value("userId").(string) {
+			Reservations = append(Reservations, res)
+		}
+	}
+	response := &pb.GetByHostResponse{
 		Reservations: []*pb.ReservationOut{},
 	}
 	for _, Reservation := range Reservations {
@@ -347,9 +402,74 @@ func (handler *ReservationHandler) Approve(ctx context.Context, request *pb.Appr
 }
 
 func (handler *ReservationHandler) Cancel(ctx context.Context, request *pb.CancelReservationRequest) (*pb.CancelReservationResponse, error) {
-	err := handler.service.Cancel(ctx, request.Id)
+	reservation, err := handler.service.Get(ctx, request.Id)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.CancelReservationResponse{}, nil
+	if reservation.UserId.Hex() != ctx.Value("userId").(string) {
+		return nil, errors.New("you are not allowed cancel this reservation")
+	}
+	tomorrow := time.Now().Add(1)
+	if reservation.Beginning.Before(tomorrow) {
+		return nil, errors.New("you cannot cancel a reservation if there is less than a day left until it starts")
+	}
+	if reservation.ReservationStatus == 0 {
+		err = handler.service.Delete(ctx, request.Id)
+		if err != nil {
+			return nil, err
+		}
+		return &pb.CancelReservationResponse{}, nil
+	} else {
+		err = handler.service.Cancel(ctx, request.Id)
+		if err != nil {
+			return nil, err
+		}
+		response, err := handler.profileClient.Get(ctx, &profile.GetRequest{Id: ctx.Value("userId").(string)})
+		if err != nil {
+			return nil, err
+		}
+		_, err = handler.profileClient.Update(ctx, &profile.UpdateRequest{
+			Id: response.Profile.Id,
+			Profile: &profile.Profile{
+				Id:                    response.Profile.Id,
+				Username:              response.Profile.Username,
+				FirstName:             response.Profile.FirstName,
+				LastName:              response.Profile.LastName,
+				Email:                 response.Profile.Email,
+				Address:               response.Profile.Address,
+				DateOfBirth:           response.Profile.DateOfBirth,
+				PhoneNumber:           response.Profile.PhoneNumber,
+				Gender:                response.Profile.Gender,
+				Token:                 response.Profile.Token,
+				ReservationsCancelled: response.Profile.ReservationsCancelled + 1,
+				IsOutstanding:         response.Profile.IsOutstanding,
+				Grades:                response.Profile.Grades,
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+		return &pb.CancelReservationResponse{}, nil
+	}
+}
+
+func (handler *ReservationHandler) Reject(ctx context.Context, request *pb.RejectReservationRequest) (*pb.RejectReservationResponse, error) {
+	reservation, err := handler.service.Get(ctx, request.Id)
+	if err != nil {
+		return nil, err
+	}
+	foundAccommodation, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: reservation.AccommodationId.Hex()})
+	if err != nil {
+		return nil, err
+	}
+	log.Println(foundAccommodation.Accommodation.Host.HostId)
+	log.Println(ctx.Value("userId").(string))
+	if foundAccommodation.Accommodation.Host.HostId != ctx.Value("userId").(string) {
+		return nil, errors.New("you cannot reject this reservation")
+	}
+	err = handler.service.Reject(ctx, request.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.RejectReservationResponse{}, nil
 }
