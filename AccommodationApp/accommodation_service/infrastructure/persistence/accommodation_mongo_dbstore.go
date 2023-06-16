@@ -68,7 +68,7 @@ func (store *AccommodationMongoDBStore) GetAllSearched(ctx context.Context, loca
 	if location.Street != "" {
 		filter = append(filter, bson.E{"location.street", location.Street})
 	}
-	log.Println(filter)
+
 	accommodations, err := store.filter(filter)
 	if err != nil {
 		return nil, nil, err
@@ -88,7 +88,7 @@ func (store *AccommodationMongoDBStore) GetAllSearched(ctx context.Context, loca
 	return result, indices, err
 }
 
-func (store *AccommodationMongoDBStore) GetAllFiltered(ctx context.Context, lowerBound float32, upperBound float32, benefits domain.Benefits, isOutstanding bool) ([]*domain.Accommodation, error) {
+func (store *AccommodationMongoDBStore) GetAllFiltered(ctx context.Context, benefits domain.Benefits, isOutstanding bool) ([]*domain.Accommodation, error) {
 	filter := bson.D{}
 
 	if isOutstanding {

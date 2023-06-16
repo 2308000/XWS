@@ -35,13 +35,17 @@ func (handler *CreateProfileCommandHandler) handle(command *events.CreateProfile
 	switch command.Type {
 	case events.CreateProfile:
 		profile := &domain.Profile{
-			Id:          command.Profile.Id,
-			Username:    command.Profile.Username,
-			FirstName:   command.Profile.FirstName,
-			LastName:    command.Profile.LastName,
-			FullName:    command.Profile.FullName,
-			Email:       command.Profile.Email,
-			Address:     domain.Address{"", "", ""},
+			Id:        command.Profile.Id,
+			Username:  command.Profile.Username,
+			FirstName: command.Profile.FirstName,
+			LastName:  command.Profile.LastName,
+			FullName:  command.Profile.FullName,
+			Email:     command.Profile.Email,
+			Address: domain.Address{
+				Country: command.Profile.Address.Country,
+				City:    command.Profile.Address.City,
+				Street:  command.Profile.Address.Street,
+			},
 			DateOfBirth: time.Time{},
 			PhoneNumber: "",
 			Gender:      "",

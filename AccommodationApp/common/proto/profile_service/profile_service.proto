@@ -117,6 +117,15 @@ message Profile {
   string phoneNumber = 8;
   string gender = 9;
   string token = 10;
+  int32 reservationsCancelled = 11;
+  bool isOutstanding = 12;
+  repeated Grade grades = 13;
+}
+
+message Grade {
+  string accommodationId = 1;
+  float grade = 2;
+  google.protobuf.Timestamp date = 3;
 }
 
 message Address {
