@@ -3,6 +3,7 @@ package startup
 import (
 	"accommodation_booking/accommodation_service/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 )
 
 var accommodations = []*domain.Accommodation{
@@ -15,6 +16,32 @@ var accommodations = []*domain.Accommodation{
 		HasFreeParking:    true,
 		MinNumberOfGuests: 2,
 		MaxNumberOfGuests: 7,
+		Availability: []domain.AvailableDate{
+			{
+				Beginning:       time.Date(2023, time.June, 1, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.June, 15, 23, 59, 59, 999, time.Local),
+				Price:           40,
+				IsPricePerGuest: true,
+			},
+			{
+				Beginning:       time.Date(2023, time.June, 16, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.June, 25, 23, 59, 59, 999, time.Local),
+				Price:           50,
+				IsPricePerGuest: true,
+			},
+			{
+				Beginning:       time.Date(2023, time.June, 29, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.July, 05, 23, 59, 59, 999, time.Local),
+				Price:           60,
+				IsPricePerGuest: true,
+			},
+			{
+				Beginning:       time.Date(2023, time.July, 10, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.July, 31, 23, 59, 59, 999, time.Local),
+				Price:           60,
+				IsPricePerGuest: true,
+			},
+		},
 	},
 	{
 		Id:                 getObjectId("77706d1b724b3da748f63fe3"),
@@ -27,6 +54,32 @@ var accommodations = []*domain.Accommodation{
 		HasAirConditioning: true,
 		MinNumberOfGuests:  2,
 		MaxNumberOfGuests:  7,
+		Availability: []domain.AvailableDate{
+			{
+				Beginning:       time.Date(2023, time.June, 10, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.June, 15, 23, 59, 59, 999, time.Local),
+				Price:           20,
+				IsPricePerGuest: false,
+			},
+			{
+				Beginning:       time.Date(2023, time.June, 16, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.June, 20, 23, 59, 59, 999, time.Local),
+				Price:           45,
+				IsPricePerGuest: false,
+			},
+			{
+				Beginning:       time.Date(2023, time.June, 29, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.July, 9, 23, 59, 59, 999, time.Local),
+				Price:           60,
+				IsPricePerGuest: false,
+			},
+			{
+				Beginning:       time.Date(2023, time.July, 10, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.July, 31, 23, 59, 59, 999, time.Local),
+				Price:           80,
+				IsPricePerGuest: false,
+			},
+		},
 	},
 	{
 		Id:                getObjectId("88806d1b724b3da748f63fe3"),
@@ -38,6 +91,32 @@ var accommodations = []*domain.Accommodation{
 		HasBalcony:        true,
 		MinNumberOfGuests: 2,
 		MaxNumberOfGuests: 7,
+		Availability: []domain.AvailableDate{
+			{
+				Beginning:       time.Date(2023, time.June, 20, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.June, 25, 23, 59, 59, 999, time.Local),
+				Price:           20,
+				IsPricePerGuest: false,
+			},
+			{
+				Beginning:       time.Date(2023, time.July, 1, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.July, 31, 23, 59, 59, 999, time.Local),
+				Price:           45,
+				IsPricePerGuest: false,
+			},
+			{
+				Beginning:       time.Date(2023, time.August, 1, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.August, 9, 23, 59, 59, 999, time.Local),
+				Price:           60,
+				IsPricePerGuest: false,
+			},
+			{
+				Beginning:       time.Date(2023, time.August, 15, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.August, 31, 23, 59, 59, 999, time.Local),
+				Price:           55,
+				IsPricePerGuest: false,
+			},
+		},
 	},
 	{
 		Id:                getObjectId("99906d1b724b3da748f63fe3"),
@@ -49,6 +128,32 @@ var accommodations = []*domain.Accommodation{
 		HasWashingMachine: true,
 		MinNumberOfGuests: 2,
 		MaxNumberOfGuests: 7,
+		Availability: []domain.AvailableDate{
+			{
+				Beginning:       time.Date(2023, time.June, 20, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.June, 25, 23, 59, 59, 999, time.Local),
+				Price:           20,
+				IsPricePerGuest: true,
+			},
+			{
+				Beginning:       time.Date(2023, time.August, 1, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.August, 9, 23, 59, 59, 999, time.Local),
+				Price:           60,
+				IsPricePerGuest: true,
+			},
+			{
+				Beginning:       time.Date(2023, time.August, 15, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.August, 31, 23, 59, 59, 999, time.Local),
+				Price:           55,
+				IsPricePerGuest: true,
+			},
+			{
+				Beginning:       time.Date(2023, time.September, 1, 0, 0, 0, 0, time.Local),
+				Ending:          time.Date(2023, time.September, 31, 23, 59, 59, 999, time.Local),
+				Price:           40,
+				IsPricePerGuest: true,
+			},
+		},
 	},
 }
 
