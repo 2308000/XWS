@@ -76,6 +76,32 @@ func (store *ReservationMongoDBStore) GetBetweenDates(ctx context.Context, begin
 	return store.filter(filter)
 }
 
+func (store *ReservationMongoDBStore) GetBetweenDatesPending(ctx context.Context, beginning time.Time, ending time.Time, accommodationId string) ([]*domain.Reservation, error) {
+	filter := bson.D{
+		{"$or", bson.A{
+			bson.D{
+				{"beginning", bson.D{{"$gte", beginning}}},
+				{"beginning", bson.D{{"$lte", ending}}},
+			},
+			bson.D{
+				{"ending", bson.D{{"$gte", beginning}}},
+				{"ending", bson.D{{"$lte", ending}}},
+			},
+			bson.D{
+				{"beginning", bson.D{{"$lte", beginning}}},
+				{"ending", bson.D{{"$gte", ending}}},
+			},
+		}},
+	}
+	filter = append(filter, bson.E{"reservationStatus", bson.D{{"$eq", 0}}})
+	id, err := primitive.ObjectIDFromHex(accommodationId)
+	if err != nil {
+		return nil, err
+	}
+	filter = append(filter, bson.E{"accommodationId", id})
+	return store.filter(filter)
+}
+
 func (store *ReservationMongoDBStore) Create(ctx context.Context, reservation *domain.Reservation) error {
 	result, err := store.reservations.InsertOne(ctx, reservation)
 	if err != nil {
@@ -152,6 +178,17 @@ func (store *ReservationMongoDBStore) Approve(ctx context.Context, reservationId
 	}
 	filter := bson.M{"_id": id}
 	update := bson.M{"$set": bson.M{"reservationStatus": domain.ReservationStatusType(1)}}
+	_, err = store.reservations.UpdateOne(ctx, filter, update)
+	return err
+}
+
+func (store *ReservationMongoDBStore) Reject(ctx context.Context, reservationId string) error {
+	id, err := primitive.ObjectIDFromHex(reservationId)
+	if err != nil {
+		return err
+	}
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{"reservationStatus": domain.ReservationStatusType(3)}}
 	_, err = store.reservations.UpdateOne(ctx, filter, update)
 	return err
 }

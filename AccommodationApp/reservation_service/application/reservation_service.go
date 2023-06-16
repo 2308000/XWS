@@ -58,7 +58,28 @@ func (service *ReservationService) Update(ctx context.Context, reservationId str
 }
 
 func (service *ReservationService) Approve(ctx context.Context, reservationId string) error {
-	err := service.store.Approve(ctx, reservationId)
+	reservation, err := service.store.Get(ctx, reservationId)
+	if err != nil {
+		return err
+	}
+	reservations, err := service.store.GetBetweenDatesPending(ctx, reservation.Beginning, reservation.Ending, reservation.AccommodationId.Hex())
+	err = service.store.Approve(ctx, reservationId)
+	if err != nil {
+		return err
+	}
+	for _, res := range reservations {
+		if res.Id.Hex() != reservationId {
+			err = service.store.Reject(ctx, res.Id.Hex())
+		}
+		if err != nil {
+			return nil
+		}
+	}
+	return nil
+}
+
+func (service *ReservationService) Reject(ctx context.Context, reservationId string) error {
+	err := service.store.Reject(ctx, reservationId)
 	if err != nil {
 		return err
 	}
