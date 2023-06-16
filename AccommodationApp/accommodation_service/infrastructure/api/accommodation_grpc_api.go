@@ -7,6 +7,7 @@ import (
 	profile "accommodation_booking/common/proto/profile_service"
 	reservation "accommodation_booking/common/proto/reservation_service"
 	"context"
+	"log"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -56,18 +57,51 @@ func (handler *AccommodationHandler) GetByHost(ctx context.Context, request *pb.
 }
 
 func (handler *AccommodationHandler) GetAll(ctx context.Context, request *pb.GetAllAccommodationsRequest) (*pb.GetAllAccommodationsResponse, error) {
-	Accommodations, err := handler.service.GetAll(ctx)
+	accommodations, err := handler.service.GetAll(ctx)
 	if err != nil {
 		return nil, err
 	}
 	response := &pb.GetAllAccommodationsResponse{
 		Accommodations: []*pb.Accommodation{},
 	}
-	for _, Accommodation := range Accommodations {
-		current := mapAccommodationToPb(Accommodation)
+	for _, accommodation := range accommodations {
+		current := mapAccommodationToPb(accommodation)
 		response.Accommodations = append(response.Accommodations, current)
 	}
 	return response, nil
+}
+
+func (handler *AccommodationHandler) GetAllSearched(ctx context.Context, request *pb.AccommodationSearchRequest) (*pb.AccommodationSearchResponse, error) {
+	location := &domain.Location{
+		Country: request.Location.Country,
+		City:    request.Location.City,
+		Street:  request.Location.Street,
+	}
+	numberOfNights := int((request.Ending.AsTime().Sub(request.Beginning.AsTime()).Hours() / 24) - 1)
+	accommodations, indices, err := handler.service.GetAllSearched(ctx, *location, request.Beginning.AsTime(), request.Ending.AsTime(), int(request.NumberOfGuests))
+	log.Println("Vratio ", len(accommodations))
+	if err != nil {
+		return nil, err
+	}
+
+	response := &pb.AccommodationSearchResponse{
+		Accommodations: []*pb.AccommodationSearch{},
+	}
+	for i, accommodation := range accommodations {
+		accommodation.Availability = []domain.AvailableDate{accommodation.Availability[indices[i]]}
+		accommodationPb := mapAccommodationToPb(accommodation)
+		pricePerNight := float64(accommodation.Availability[0].Price)
+		totalPrice := float64(numberOfNights) * pricePerNight
+		if accommodation.Availability[0].IsPricePerGuest {
+			totalPrice = totalPrice * float64(request.NumberOfGuests)
+		}
+		response.Accommodations = append(response.Accommodations, &pb.AccommodationSearch{
+			Accommodation: accommodationPb,
+			TotalPrice:    float32(totalPrice),
+			PricePerNight: float32(pricePerNight),
+		})
+	}
+	return response, err
 }
 
 func (handler *AccommodationHandler) GetAllFiltered(ctx context.Context, request *pb.GetAllFilterRequest) (*pb.GetAllAccommodationsResponse, error) {

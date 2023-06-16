@@ -21,6 +21,7 @@ type AccommodationServiceClient interface {
 	GetByHost(ctx context.Context, in *GetAccommodationRequest, opts ...grpc.CallOption) (*GetAllAccommodationsResponse, error)
 	GetAll(ctx context.Context, in *GetAllAccommodationsRequest, opts ...grpc.CallOption) (*GetAllAccommodationsResponse, error)
 	GetAllFiltered(ctx context.Context, in *GetAllFilterRequest, opts ...grpc.CallOption) (*GetAllAccommodationsResponse, error)
+	GetAllSearched(ctx context.Context, in *AccommodationSearchRequest, opts ...grpc.CallOption) (*AccommodationSearchResponse, error)
 	Create(ctx context.Context, in *CreateAccommodationRequest, opts ...grpc.CallOption) (*CreateAccommodationResponse, error)
 	Update(ctx context.Context, in *UpdateAccommodationRequest, opts ...grpc.CallOption) (*UpdateAccommodationResponse, error)
 	UpdateAvailability(ctx context.Context, in *UpdateAvailabilityRequest, opts ...grpc.CallOption) (*UpdateAvailabilityResponse, error)
@@ -66,6 +67,15 @@ func (c *accommodationServiceClient) GetAll(ctx context.Context, in *GetAllAccom
 func (c *accommodationServiceClient) GetAllFiltered(ctx context.Context, in *GetAllFilterRequest, opts ...grpc.CallOption) (*GetAllAccommodationsResponse, error) {
 	out := new(GetAllAccommodationsResponse)
 	err := c.cc.Invoke(ctx, "/profile.AccommodationService/GetAllFiltered", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accommodationServiceClient) GetAllSearched(ctx context.Context, in *AccommodationSearchRequest, opts ...grpc.CallOption) (*AccommodationSearchResponse, error) {
+	out := new(AccommodationSearchResponse)
+	err := c.cc.Invoke(ctx, "/profile.AccommodationService/GetAllSearched", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -125,6 +135,7 @@ type AccommodationServiceServer interface {
 	GetByHost(context.Context, *GetAccommodationRequest) (*GetAllAccommodationsResponse, error)
 	GetAll(context.Context, *GetAllAccommodationsRequest) (*GetAllAccommodationsResponse, error)
 	GetAllFiltered(context.Context, *GetAllFilterRequest) (*GetAllAccommodationsResponse, error)
+	GetAllSearched(context.Context, *AccommodationSearchRequest) (*AccommodationSearchResponse, error)
 	Create(context.Context, *CreateAccommodationRequest) (*CreateAccommodationResponse, error)
 	Update(context.Context, *UpdateAccommodationRequest) (*UpdateAccommodationResponse, error)
 	UpdateAvailability(context.Context, *UpdateAvailabilityRequest) (*UpdateAvailabilityResponse, error)
@@ -148,6 +159,9 @@ func (*UnimplementedAccommodationServiceServer) GetAll(context.Context, *GetAllA
 }
 func (*UnimplementedAccommodationServiceServer) GetAllFiltered(context.Context, *GetAllFilterRequest) (*GetAllAccommodationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllFiltered not implemented")
+}
+func (*UnimplementedAccommodationServiceServer) GetAllSearched(context.Context, *AccommodationSearchRequest) (*AccommodationSearchResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllSearched not implemented")
 }
 func (*UnimplementedAccommodationServiceServer) Create(context.Context, *CreateAccommodationRequest) (*CreateAccommodationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
@@ -238,6 +252,24 @@ func _AccommodationService_GetAllFiltered_Handler(srv interface{}, ctx context.C
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AccommodationServiceServer).GetAllFiltered(ctx, req.(*GetAllFilterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccommodationService_GetAllSearched_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AccommodationSearchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccommodationServiceServer).GetAllSearched(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/profile.AccommodationService/GetAllSearched",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccommodationServiceServer).GetAllSearched(ctx, req.(*AccommodationSearchRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -351,6 +383,10 @@ var _AccommodationService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllFiltered",
 			Handler:    _AccommodationService_GetAllFiltered_Handler,
+		},
+		{
+			MethodName: "GetAllSearched",
+			Handler:    _AccommodationService_GetAllSearched_Handler,
 		},
 		{
 			MethodName: "Create",

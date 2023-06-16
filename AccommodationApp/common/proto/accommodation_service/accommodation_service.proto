@@ -29,10 +29,18 @@ service AccommodationService{
 
   rpc GetAllFiltered(GetAllFilterRequest) returns(GetAllAccommodationsResponse) {
     option (google.api.http) = {
-      post: "/accommodation/filtered"
+      post: "/accommodation/filter"
       body: "*"
     };
   }
+
+  rpc GetAllSearched(AccommodationSearchRequest) returns(AccommodationSearchResponse) {
+    option (google.api.http) = {
+      post: "/accommodation/search"
+      body: "*"
+    };
+  }
+
   rpc Create(CreateAccommodationRequest) returns(CreateAccommodationResponse) {
     option (google.api.http) = {
       post: "/accommodation"
@@ -65,6 +73,23 @@ service AccommodationService{
       delete: "/accommodation/{id}"
     };
   }
+}
+
+message AccommodationSearchRequest {
+  Location location = 1;
+  google.protobuf.Timestamp beginning = 2;
+  google.protobuf.Timestamp ending = 3;
+  int32 numberOfGuests = 4;
+}
+
+message AccommodationSearchResponse {
+  repeated AccommodationSearch accommodations = 1;
+}
+
+message AccommodationSearch {
+  Accommodation accommodation = 1;
+  float totalPrice = 2;
+  float pricePerNight = 3;
 }
 
 message AccommodationTimePeriodRequest {
