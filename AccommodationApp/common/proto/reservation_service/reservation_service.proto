@@ -212,5 +212,5 @@ message AccommodationDetails{
 message UserDetails{
   string id = 1;
   string username = 2;
-  string cancellationCounter = 3;
+  int32 cancellationCounter = 3;
 }

@@ -36,15 +36,18 @@ func accessibleRoles() map[string][]string {
 	const reservationServicePath = "/reservation.ReservationService/"
 
 	return map[string][]string{
-		reservationServicePath + "GetAll":            {"guest", "host"},
-		reservationServicePath + "Get":               {"guest", "host"},
-		reservationServicePath + "Approve":           {"host"},
-		reservationServicePath + "Reject":            {"host"},
-		reservationServicePath + "GetByHost":         {"host"},
-		reservationServicePath + "Cancel":            {"guest"},
-		reservationServicePath + "GetMyReservations": {"guest"},
-		reservationServicePath + "Create":            {"guest"},
-		reservationServicePath + "Update":            {"guest"},
+		reservationServicePath + "Approve":              {"host"},
+		reservationServicePath + "Cancel":               {"guest"},
+		reservationServicePath + "Create":               {"guest"},
+		reservationServicePath + "Delete":               {"unexposed"},
+		reservationServicePath + "Get":                  {"guest", "host"},
+		reservationServicePath + "GetAll":               {"unexposed"},
+		reservationServicePath + "GetBetweenDates":      {"unexposed"},
+		reservationServicePath + "GetByHost":            {"host"},
+		reservationServicePath + "GetMyReservations":    {"guest"},
+		reservationServicePath + "GetUsersReservations": {"host"},
+		reservationServicePath + "Reject":               {"host"},
+		reservationServicePath + "Update":               {"unexposed"},
 	}
 }
 
