@@ -29,11 +29,18 @@ var profiles = []*domain.Profile{
 		Email:         "host@gmail.com",
 		Gender:        "male",
 		IsOutstanding: true,
-		Grades: []domain.Grade{
+		AccommodationGrades: []domain.Grade{
 			{
-				AccommodationId: getObjectId("55506d1b724b3da748f63fe3"),
-				Grade:           4.8,
-				Date:            time.Date(2023, time.June, 10, 0, 0, 0, 0, time.Local),
+				Id:    getObjectId("55506d1b724b3da748f63fe3"),
+				Grade: 4.8,
+				Date:  time.Date(2023, time.June, 10, 0, 0, 0, 0, time.Local),
+			},
+		},
+		HostGrades: []domain.Grade{
+			{
+				Id:    getObjectId("62706d1b623b3da748f63fa1"),
+				Grade: 4.9,
+				Date:  time.Date(2023, time.June, 11, 0, 0, 0, 0, time.Local),
 			},
 		},
 	},
@@ -48,16 +55,28 @@ var profiles = []*domain.Profile{
 		Email:                 "guest@gmail.com",
 		Gender:                "male",
 		ReservationsCancelled: 2,
-		Grades: []domain.Grade{
+		AccommodationGrades: []domain.Grade{
 			{
-				AccommodationId: getObjectId("55506d1b724b3da748f63fe3"),
-				Grade:           4.8,
-				Date:            time.Date(2023, time.June, 10, 0, 0, 0, 0, time.Local),
+				Id:    getObjectId("55506d1b724b3da748f63fe3"),
+				Grade: 4.8,
+				Date:  time.Date(2023, time.June, 10, 0, 0, 0, 0, time.Local),
 			},
 			{
-				AccommodationId: getObjectId("99906d1b724b3da748f63fe3"),
-				Grade:           4.5,
-				Date:            time.Date(2023, time.May, 10, 0, 0, 0, 0, time.Local),
+				Id:    getObjectId("99906d1b724b3da748f63fe3"),
+				Grade: 4.5,
+				Date:  time.Date(2023, time.May, 10, 0, 0, 0, 0, time.Local),
+			},
+		},
+		HostGrades: []domain.Grade{
+			{
+				Id:    getObjectId("62706d1b623b3da748f63fa1"),
+				Grade: 4.9,
+				Date:  time.Date(2023, time.June, 11, 0, 0, 0, 0, time.Local),
+			},
+			{
+				Id:    getObjectId("62706d1b623b4da748f63bc3"),
+				Grade: 4.3,
+				Date:  time.Date(2023, time.May, 11, 0, 0, 0, 0, time.Local),
 			},
 		},
 	},
@@ -72,11 +91,18 @@ var profiles = []*domain.Profile{
 		Email:         "host2@gmail.com",
 		Gender:        "male",
 		IsOutstanding: false,
-		Grades: []domain.Grade{
+		AccommodationGrades: []domain.Grade{
 			{
-				AccommodationId: getObjectId("99906d1b724b3da748f63fe3"),
-				Grade:           4.5,
-				Date:            time.Date(2023, time.May, 10, 0, 0, 0, 0, time.Local),
+				Id:    getObjectId("99906d1b724b3da748f63fe3"),
+				Grade: 4.5,
+				Date:  time.Date(2023, time.May, 10, 0, 0, 0, 0, time.Local),
+			},
+		},
+		HostGrades: []domain.Grade{
+			{
+				Id:    getObjectId("62706d1b623b4da748f63bc3"),
+				Grade: 4.3,
+				Date:  time.Date(2023, time.May, 11, 0, 0, 0, 0, time.Local),
 			},
 		},
 	},

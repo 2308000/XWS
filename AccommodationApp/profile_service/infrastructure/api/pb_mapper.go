@@ -35,16 +35,26 @@ func mapProfileToPb(profile *domain.Profile) *pb.Profile {
 		Token:                 profile.Token,
 		ReservationsCancelled: int32(profile.ReservationsCancelled),
 		IsOutstanding:         profile.IsOutstanding,
-		Grades:                []*pb.Grade{},
+		AccommodationGrades:   []*pb.Grade{},
+		HostGrades:            []*pb.Grade{},
 	}
 
-	for _, grade := range profile.Grades {
+	for _, grade := range profile.AccommodationGrades {
 		pbGrade := &pb.Grade{
-			AccommodationId: grade.AccommodationId.Hex(),
-			Grade:           float32(grade.Grade),
-			Date:            timestamppb.New(grade.Date),
+			Id:    grade.Id.Hex(),
+			Grade: float32(grade.Grade),
+			Date:  timestamppb.New(grade.Date),
 		}
-		pbProfile.Grades = append(pbProfile.Grades, pbGrade)
+		pbProfile.AccommodationGrades = append(pbProfile.AccommodationGrades, pbGrade)
+	}
+
+	for _, grade := range profile.HostGrades {
+		pbGrade := &pb.Grade{
+			Id:    grade.Id.Hex(),
+			Grade: float32(grade.Grade),
+			Date:  timestamppb.New(grade.Date),
+		}
+		pbProfile.HostGrades = append(pbProfile.HostGrades, pbGrade)
 	}
 
 	return pbProfile
@@ -65,16 +75,26 @@ func mapPbToProfile(pbProfile *pb.Profile) *domain.Profile {
 		Token:                 pbProfile.Token,
 		ReservationsCancelled: int(pbProfile.ReservationsCancelled),
 		IsOutstanding:         pbProfile.IsOutstanding,
-		Grades:                []domain.Grade{},
+		AccommodationGrades:   []domain.Grade{},
+		HostGrades:            []domain.Grade{},
 	}
 
-	for _, pbGrade := range profile.Grades {
+	for _, pbGrade := range profile.AccommodationGrades {
 		grade := &domain.Grade{
-			AccommodationId: pbGrade.AccommodationId,
-			Grade:           pbGrade.Grade,
-			Date:            pbGrade.Date,
+			Id:    pbGrade.Id,
+			Grade: pbGrade.Grade,
+			Date:  pbGrade.Date,
 		}
-		profile.Grades = append(profile.Grades, *grade)
+		profile.AccommodationGrades = append(profile.AccommodationGrades, *grade)
+	}
+
+	for _, pbGrade := range profile.HostGrades {
+		grade := &domain.Grade{
+			Id:    pbGrade.Id,
+			Grade: pbGrade.Grade,
+			Date:  pbGrade.Date,
+		}
+		profile.HostGrades = append(profile.HostGrades, *grade)
 	}
 
 	return profile
@@ -95,16 +115,26 @@ func mapAuthProfileToProfile(authProfile *auth.Profile) *domain.Profile {
 		Token:                 authProfile.Token,
 		ReservationsCancelled: authProfile.ReservationsCancelled,
 		IsOutstanding:         authProfile.IsOutstanding,
-		Grades:                []domain.Grade{},
+		AccommodationGrades:   []domain.Grade{},
+		HostGrades:            []domain.Grade{},
 	}
 
-	for _, authGrade := range profile.Grades {
+	for _, authGrade := range profile.AccommodationGrades {
 		grade := &domain.Grade{
-			AccommodationId: authGrade.AccommodationId,
-			Grade:           authGrade.Grade,
-			Date:            authGrade.Date,
+			Id:    authGrade.Id,
+			Grade: authGrade.Grade,
+			Date:  authGrade.Date,
 		}
-		profile.Grades = append(profile.Grades, *grade)
+		profile.AccommodationGrades = append(profile.AccommodationGrades, *grade)
+	}
+
+	for _, authGrade := range profile.HostGrades {
+		grade := &domain.Grade{
+			Id:    authGrade.Id,
+			Grade: authGrade.Grade,
+			Date:  authGrade.Date,
+		}
+		profile.HostGrades = append(profile.HostGrades, *grade)
 	}
 
 	return profile
