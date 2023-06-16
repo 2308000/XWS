@@ -185,22 +185,6 @@ message NewAccommodation {
   int32 maxNumberOfGuests = 14;
 }
 
-message NewAccommodation {
-  string hostId = 2;
-  string name = 3;
-  Location location = 4;
-  bool hasWifi = 5;
-  bool hasAirConditioning = 6;
-  bool hasFreeParking = 7;
-  bool hasKitchen = 8;
-  bool hasWashingMachine = 9;
-  bool hasBathtub = 10;
-  bool hasBalcony = 11;
-  repeated bytes photos = 12;
-  int32 minNumberOfGuests = 13;
-  int32 maxNumberOfGuests = 14;
-}
-
 message HostRes {
   string hostId = 1;
   string username = 2;
