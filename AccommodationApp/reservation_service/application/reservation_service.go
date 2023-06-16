@@ -87,26 +87,7 @@ func (service *ReservationService) Reject(ctx context.Context, reservationId str
 }
 
 func (service *ReservationService) Cancel(ctx context.Context, reservationId string) error {
-	reservation, err := service.store.Get(ctx, reservationId)
-	if err != nil {
-		return err
-	}
-	if reservation.UserId.Hex() != ctx.Value("userId").(string) {
-		return errors.New("you are not allowed cancel this reservation")
-	}
-	tomorrow := time.Now().Add(1)
-	if reservation.Beginning.Before(tomorrow) {
-		return errors.New("you cannot cancel a reservation if there is less than a day left until it starts")
-	}
-	if reservation.ReservationStatus == 0 {
-		err = service.Delete(ctx, reservationId)
-	} else {
-		err = service.store.Cancel(ctx, reservationId)
-	}
-	if err != nil {
-		return err
-	}
-	return nil
+	return service.store.Cancel(ctx, reservationId)
 }
 
 func (service *ReservationService) Delete(ctx context.Context, id string) error {
