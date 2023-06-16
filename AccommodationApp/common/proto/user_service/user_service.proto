@@ -76,6 +76,13 @@ message RegisterRequest {
   string firstName = 2;
   string lastName = 3;
   string email = 4;
+  Address address = 5;
+}
+
+message Address {
+  string country = 1;
+  string city = 2;
+  string street = 3;
 }
 
 message RegisterResponse {

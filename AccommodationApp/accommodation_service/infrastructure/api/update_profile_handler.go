@@ -41,6 +41,7 @@ func (handler *UpdateProfileCommandHandler) handle(command *events.UpdateProfile
 		for _, accommodation := range accommodations {
 			accommodation.Host.Username = command.NewProfile.Username
 			accommodation.Host.PhoneNumber = command.NewProfile.PhoneNumber
+			accommodation.Host.IsOutstanding = command.NewProfile.IsOutstanding
 			_, err = handler.accommodationService.Update(context.TODO(), accommodation.Id.Hex(), accommodation)
 			if err != nil {
 				return
@@ -56,6 +57,7 @@ func (handler *UpdateProfileCommandHandler) handle(command *events.UpdateProfile
 		for _, accommodation := range accommodations {
 			accommodation.Host.Username = command.OldProfile.Username
 			accommodation.Host.PhoneNumber = command.OldProfile.PhoneNumber
+			accommodation.Host.IsOutstanding = command.OldProfile.IsOutstanding
 			_, err = handler.accommodationService.Update(context.TODO(), accommodation.Id.Hex(), accommodation)
 			if err != nil {
 				return

@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"log"
 )
 
 type UserHandler struct {
@@ -73,13 +74,18 @@ func (handler *UserHandler) GetAll(ctx context.Context, request *pb.GetAllReques
 }
 
 func (handler UserHandler) Register(ctx context.Context, request *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-	request.User.Role = "user"
+	log.Println("role: ", request.User.Role)
 	mappedUser := mapPbToUser(request.User)
 	if err := handler.validate.Struct(mappedUser); err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "validation failed: %v", err)
 	}
 	mappedUser.Password = HashPassword(mappedUser.Password)
-	registeredUser, err := handler.service.Register(ctx, mappedUser, request.FirstName, request.LastName, request.Email)
+	address := domain.Address{
+		Country: request.Address.Country,
+		City:    request.Address.City,
+		Street:  request.Address.Street,
+	}
+	registeredUser, err := handler.service.Register(ctx, mappedUser, request.FirstName, request.LastName, request.Email, address)
 	if err != nil {
 		return nil, err
 	}

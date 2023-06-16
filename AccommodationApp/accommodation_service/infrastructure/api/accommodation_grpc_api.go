@@ -7,8 +7,6 @@ import (
 	profile "accommodation_booking/common/proto/profile_service"
 	reservation "accommodation_booking/common/proto/reservation_service"
 	"context"
-	"log"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -77,9 +75,9 @@ func (handler *AccommodationHandler) GetAllSearched(ctx context.Context, request
 		City:    request.Location.City,
 		Street:  request.Location.Street,
 	}
-	numberOfNights := int((request.Ending.AsTime().Sub(request.Beginning.AsTime()).Hours() / 24) - 1)
+	numberOfNights := int(request.Ending.AsTime().Sub(request.Beginning.AsTime()).Hours() / 24)
 	accommodations, indices, err := handler.service.GetAllSearched(ctx, *location, request.Beginning.AsTime(), request.Ending.AsTime(), int(request.NumberOfGuests))
-	log.Println("Vratio ", len(accommodations))
+
 	if err != nil {
 		return nil, err
 	}

@@ -31,7 +31,7 @@ func (service *UserService) GetAll(ctx context.Context) ([]*auth.User, error) {
 	return service.store.GetAll(ctx)
 }
 
-func (service *UserService) Register(ctx context.Context, user *auth.User, firstName string, lastName string, email string) (*auth.User, error) {
+func (service *UserService) Register(ctx context.Context, user *auth.User, firstName string, lastName string, email string, address auth.Address) (*auth.User, error) {
 	registeredUser, err := service.store.Register(ctx, user)
 	if err != nil {
 		return nil, err
@@ -43,6 +43,11 @@ func (service *UserService) Register(ctx context.Context, user *auth.User, first
 		LastName:  lastName,
 		FullName:  firstName + lastName,
 		Email:     email,
+		Address: auth.Address{
+			Country: address.Country,
+			City:    address.City,
+			Street:  address.Street,
+		},
 	}
 	service.orchestrator.Start(profile)
 	return registeredUser, nil
