@@ -7,9 +7,9 @@ import (
 	"accommodation_booking/reservation_service/application"
 	"accommodation_booking/reservation_service/domain"
 	"context"
+	"errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"log"
 )
 
 type ReservationHandler struct {
@@ -208,15 +208,34 @@ func (handler *ReservationHandler) GetMyReservations(ctx context.Context, reques
 }
 
 func (handler ReservationHandler) Create(ctx context.Context, request *pb.CreateReservationRequest) (*pb.CreateReservationResponse, error) {
+	checkAvailability, err := handler.accommodationClient.GetAccommodationAvailableDatesForTimePeriod(ctx, &accommodation.AccommodationTimePeriodRequest{
+		AccommodationId: request.Reservation.AccommodationId,
+		Beginning:       request.Reservation.Beginning,
+		Ending:          request.Reservation.Ending,
+	})
+	if len(checkAvailability.AvailableDates) == 0 {
+		return nil, errors.New("host set accommodation as not available during selected period")
+	}
 	accommodationId, err := primitive.ObjectIDFromHex(request.Reservation.AccommodationId)
 	if err != nil {
 		return nil, err
 	}
 	rawUserId := ctx.Value("userId").(string)
-	log.Println(rawUserId)
 	userId, err := primitive.ObjectIDFromHex(rawUserId)
 	if err != nil {
 		return nil, err
+	}
+	selectedAccommodation, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: accommodationId.Hex()})
+	if err != nil {
+		return nil, err
+	}
+	//log.Println(request.Reservation.Guests, selectedAccommodation.Accommodation.MinNumberOfGuests, request.Reservation.Guests, selectedAccommodation.Accommodation.MaxNumberOfGuests)
+	if request.Reservation.Guests < selectedAccommodation.Accommodation.MinNumberOfGuests || request.Reservation.Guests > selectedAccommodation.Accommodation.MaxNumberOfGuests {
+		return nil, errors.New("guest number restriction violation")
+	}
+	status := 0
+	if selectedAccommodation.Accommodation.IsReservationAcceptenceManual {
+		status = 1
 	}
 	reservation := &domain.Reservation{
 		Id:                primitive.NewObjectID(),
@@ -225,7 +244,7 @@ func (handler ReservationHandler) Create(ctx context.Context, request *pb.Create
 		Beginning:         request.Reservation.Beginning.AsTime(),
 		Ending:            request.Reservation.Ending.AsTime(),
 		Guests:            request.Reservation.Guests,
-		ReservationStatus: domain.ReservationStatusType(0),
+		ReservationStatus: domain.ReservationStatusType(status),
 	}
 	err = handler.service.Create(ctx, reservation)
 	if err != nil {
@@ -309,7 +328,18 @@ func (handler *ReservationHandler) Delete(ctx context.Context, request *pb.Delet
 }
 
 func (handler *ReservationHandler) Approve(ctx context.Context, request *pb.ApproveReservationRequest) (*pb.ApproveReservationResponse, error) {
-	err := handler.service.Approve(ctx, request.Id)
+	reservation, err := handler.service.Get(ctx, request.Id)
+	if err != nil {
+		return nil, err
+	}
+	foundAccommodation, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: reservation.AccommodationId.Hex()})
+	if err != nil {
+		return nil, err
+	}
+	if foundAccommodation.Accommodation.Host.HostId != ctx.Value("userId").(string) {
+		return nil, errors.New("you cannot approve this reservation")
+	}
+	err = handler.service.Approve(ctx, request.Id)
 	if err != nil {
 		return nil, err
 	}
