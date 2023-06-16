@@ -47,7 +47,7 @@ var accommodations = []*domain.Accommodation{
 		Id:                 getObjectId("77706d1b724b3da748f63fe3"),
 		Host:               domain.Host{HostId: getObjectId("62706d1b623b3da748f63fa1"), Username: "host", PhoneNumber: "0667762600", IsOutstanding: true},
 		Name:               "stan na dan LUX LUX LUX TOP TOP",
-		Location:           domain.Location{Country: "Srbija", City: "Novi Sad", Street: "Bulevar Oslobodjenja 43"},
+		Location:           domain.Location{Country: "Srbija", City: "Beograd", Street: "Bulevar Oslobodjenja 43"},
 		HasWifi:            true,
 		HasFreeParking:     true,
 		HasBalcony:         true,
@@ -93,7 +93,7 @@ var accommodations = []*domain.Accommodation{
 		MaxNumberOfGuests: 7,
 		Availability: []domain.AvailableDate{
 			{
-				Beginning:       time.Date(2023, time.June, 20, 0, 0, 0, 0, time.Local),
+				Beginning:       time.Date(2023, time.June, 15, 0, 0, 0, 0, time.Local),
 				Ending:          time.Date(2023, time.June, 25, 23, 59, 59, 999, time.Local),
 				Price:           20,
 				IsPricePerGuest: false,

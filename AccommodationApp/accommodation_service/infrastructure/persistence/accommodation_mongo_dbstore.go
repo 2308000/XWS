@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"log"
+	"time"
 )
 
 const (
@@ -49,6 +50,44 @@ func (store *AccommodationMongoDBStore) GetAll(ctx context.Context) ([]*domain.A
 	return store.filter(filter)
 }
 
+func (store *AccommodationMongoDBStore) GetAllSearched(ctx context.Context, location domain.Location, beginning time.Time, ending time.Time, numberOfGuests int) ([]*domain.Accommodation, []int, error) {
+	filter := bson.D{
+		{"$and", bson.A{
+			bson.D{
+				{"minGuests", bson.D{{"$lte", numberOfGuests}}},
+				{"maxGuests", bson.D{{"$gte", numberOfGuests}}},
+			},
+		}},
+	}
+	if location.Country != "" {
+		filter = append(filter, bson.E{"location.country", location.Country})
+	}
+	if location.City != "" {
+		filter = append(filter, bson.E{"location.city", location.City})
+	}
+	if location.Street != "" {
+		filter = append(filter, bson.E{"location.street", location.Street})
+	}
+	log.Println(filter)
+	accommodations, err := store.filter(filter)
+	if err != nil {
+		return nil, nil, err
+	}
+	var result []*domain.Accommodation
+	var indices []int
+	for _, accommodation := range accommodations {
+		for i, availableDate := range accommodation.Availability {
+			beginningChecksOut := availableDate.Beginning.Before(beginning) || availableDate.Beginning.Equal(beginning)
+			endingChecksOut := availableDate.Ending.After(ending) || availableDate.Ending.Equal(ending)
+			if beginningChecksOut && endingChecksOut {
+				result = append(result, accommodation)
+				indices = append(indices, i)
+			}
+		}
+	}
+	return result, indices, err
+}
+
 func (store *AccommodationMongoDBStore) GetAllFiltered(ctx context.Context, lowerBound float32, upperBound float32, benefits domain.Benefits, isOutstanding bool) ([]*domain.Accommodation, error) {
 	filter := bson.D{}
 
@@ -76,14 +115,7 @@ func (store *AccommodationMongoDBStore) GetAllFiltered(ctx context.Context, lowe
 	if benefits.HasBalcony {
 		filter = append(filter, bson.E{"hasBalcony", true})
 	}
-	fmt.Println(filter)
-	/*HasWifi            bool               `bson:"hasWifi"`
-	HasAirConditioning bool               `bson:"hasAirConditioning"`
-	HasFreeParking     bool               `bson:"hasFreeParking"`
-	HasKitchen         bool               `bson:"hasKitchen"`
-	HasWashingMachine  bool               `bson:"hasWashingMachine"`
-	HasBathtub         bool               `bson:"hasBathtub"`
-	HasBalcony         bool               `bson:"hasBalcony"`*/
+
 	return store.filter(filter)
 }
 
