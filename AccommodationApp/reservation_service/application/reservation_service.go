@@ -31,7 +31,7 @@ func (service *ReservationService) GetForUser(ctx context.Context, userId string
 }
 
 func (service *ReservationService) Create(ctx context.Context, reservation *domain.Reservation) error {
-	reservations, err := service.store.GetBetweenDates(ctx, reservation.Beginning, reservation.Ending)
+	reservations, err := service.store.GetBetweenDates(ctx, reservation.Beginning, reservation.Ending, reservation.AccommodationId.Hex())
 	if err != nil {
 		return err
 	}
