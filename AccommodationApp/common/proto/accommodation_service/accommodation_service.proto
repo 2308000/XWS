@@ -53,7 +53,7 @@ service AccommodationService{
     };
   }
 
-  rpc GetAccommodationAvailableDates(AccommodationTimePeriodRequest) returns(AccommodationTimePeriodResponse) {
+  rpc GetAccommodationAvailableDatesForTimePeriod(AccommodationTimePeriodRequest) returns(AccommodationAvailableDatesForTimePeriodResponse) {
     option (google.api.http) = {
       post: "/accommodation/availability"
       body: "*"
@@ -73,7 +73,7 @@ message AccommodationTimePeriodRequest {
   google.protobuf.Timestamp ending = 3;
 }
 
-message AccommodationTimePeriodResponse {
+message AccommodationAvailableDatesForTimePeriodResponse {
   string accommodationId = 1;
   string accommodationName = 2;
   repeated AvailableDate availableDates = 3;

@@ -24,7 +24,7 @@ type AccommodationServiceClient interface {
 	Create(ctx context.Context, in *CreateAccommodationRequest, opts ...grpc.CallOption) (*CreateAccommodationResponse, error)
 	Update(ctx context.Context, in *UpdateAccommodationRequest, opts ...grpc.CallOption) (*UpdateAccommodationResponse, error)
 	UpdateAvailability(ctx context.Context, in *UpdateAvailabilityRequest, opts ...grpc.CallOption) (*UpdateAvailabilityResponse, error)
-	GetAccommodationAvailableDates(ctx context.Context, in *AccommodationTimePeriodRequest, opts ...grpc.CallOption) (*AccommodationTimePeriodResponse, error)
+	GetAccommodationAvailableDatesForTimePeriod(ctx context.Context, in *AccommodationTimePeriodRequest, opts ...grpc.CallOption) (*AccommodationAvailableDatesForTimePeriodResponse, error)
 	Delete(ctx context.Context, in *DeleteAccommodationRequest, opts ...grpc.CallOption) (*DeleteAccommodationResponse, error)
 }
 
@@ -99,9 +99,9 @@ func (c *accommodationServiceClient) UpdateAvailability(ctx context.Context, in 
 	return out, nil
 }
 
-func (c *accommodationServiceClient) GetAccommodationAvailableDates(ctx context.Context, in *AccommodationTimePeriodRequest, opts ...grpc.CallOption) (*AccommodationTimePeriodResponse, error) {
-	out := new(AccommodationTimePeriodResponse)
-	err := c.cc.Invoke(ctx, "/profile.AccommodationService/GetAccommodationAvailableDates", in, out, opts...)
+func (c *accommodationServiceClient) GetAccommodationAvailableDatesForTimePeriod(ctx context.Context, in *AccommodationTimePeriodRequest, opts ...grpc.CallOption) (*AccommodationAvailableDatesForTimePeriodResponse, error) {
+	out := new(AccommodationAvailableDatesForTimePeriodResponse)
+	err := c.cc.Invoke(ctx, "/profile.AccommodationService/GetAccommodationAvailableDatesForTimePeriod", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +128,7 @@ type AccommodationServiceServer interface {
 	Create(context.Context, *CreateAccommodationRequest) (*CreateAccommodationResponse, error)
 	Update(context.Context, *UpdateAccommodationRequest) (*UpdateAccommodationResponse, error)
 	UpdateAvailability(context.Context, *UpdateAvailabilityRequest) (*UpdateAvailabilityResponse, error)
-	GetAccommodationAvailableDates(context.Context, *AccommodationTimePeriodRequest) (*AccommodationTimePeriodResponse, error)
+	GetAccommodationAvailableDatesForTimePeriod(context.Context, *AccommodationTimePeriodRequest) (*AccommodationAvailableDatesForTimePeriodResponse, error)
 	Delete(context.Context, *DeleteAccommodationRequest) (*DeleteAccommodationResponse, error)
 	mustEmbedUnimplementedAccommodationServiceServer()
 }
@@ -158,8 +158,8 @@ func (*UnimplementedAccommodationServiceServer) Update(context.Context, *UpdateA
 func (*UnimplementedAccommodationServiceServer) UpdateAvailability(context.Context, *UpdateAvailabilityRequest) (*UpdateAvailabilityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAvailability not implemented")
 }
-func (*UnimplementedAccommodationServiceServer) GetAccommodationAvailableDates(context.Context, *AccommodationTimePeriodRequest) (*AccommodationTimePeriodResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAccommodationAvailableDates not implemented")
+func (*UnimplementedAccommodationServiceServer) GetAccommodationAvailableDatesForTimePeriod(context.Context, *AccommodationTimePeriodRequest) (*AccommodationAvailableDatesForTimePeriodResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccommodationAvailableDatesForTimePeriod not implemented")
 }
 func (*UnimplementedAccommodationServiceServer) Delete(context.Context, *DeleteAccommodationRequest) (*DeleteAccommodationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
@@ -296,20 +296,20 @@ func _AccommodationService_UpdateAvailability_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AccommodationService_GetAccommodationAvailableDates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AccommodationService_GetAccommodationAvailableDatesForTimePeriod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AccommodationTimePeriodRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccommodationServiceServer).GetAccommodationAvailableDates(ctx, in)
+		return srv.(AccommodationServiceServer).GetAccommodationAvailableDatesForTimePeriod(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/profile.AccommodationService/GetAccommodationAvailableDates",
+		FullMethod: "/profile.AccommodationService/GetAccommodationAvailableDatesForTimePeriod",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccommodationServiceServer).GetAccommodationAvailableDates(ctx, req.(*AccommodationTimePeriodRequest))
+		return srv.(AccommodationServiceServer).GetAccommodationAvailableDatesForTimePeriod(ctx, req.(*AccommodationTimePeriodRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -365,8 +365,8 @@ var _AccommodationService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _AccommodationService_UpdateAvailability_Handler,
 		},
 		{
-			MethodName: "GetAccommodationAvailableDates",
-			Handler:    _AccommodationService_GetAccommodationAvailableDates_Handler,
+			MethodName: "GetAccommodationAvailableDatesForTimePeriod",
+			Handler:    _AccommodationService_GetAccommodationAvailableDatesForTimePeriod_Handler,
 		},
 		{
 			MethodName: "Delete",

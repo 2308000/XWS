@@ -4,6 +4,7 @@ import (
 	"accommodation_booking/accommodation_service/domain"
 	"context"
 	"sort"
+	"time"
 )
 
 type AccommodationService struct {
@@ -136,6 +137,21 @@ func (service *AccommodationService) UpdateAvailability(ctx context.Context, acc
 	return accommodation, err
 }
 
+func (service *AccommodationService) GetAccommodationAvailableDatesForTimePeriod(ctx context.Context, accommodationId string, beginning time.Time, ending time.Time) ([]domain.AvailableDate, error) {
+	accommodation, err := service.store.Get(ctx, accommodationId)
+	if err != nil {
+		return nil, err
+	}
+	var result []domain.AvailableDate
+	for _, currDate := range accommodation.Availability {
+		beginningChecksOut := currDate.Beginning.Before(beginning) || currDate.Beginning.Equal(beginning)
+		endingChecksOut := currDate.Ending.After(ending) || currDate.Ending.Equal(ending)
+		if beginningChecksOut && endingChecksOut {
+			result = append(result, currDate)
+		}
+	}
+	return result, nil
+}
 func (service *AccommodationService) Delete(ctx context.Context, id string) error {
 	return service.store.Delete(ctx, id)
 }

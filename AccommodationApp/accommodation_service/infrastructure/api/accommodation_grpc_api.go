@@ -7,6 +7,7 @@ import (
 	profile "accommodation_booking/common/proto/profile_service"
 	"context"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type AccommodationHandler struct {
@@ -156,6 +157,31 @@ func (handler *AccommodationHandler) UpdateAvailability(ctx context.Context, req
 		return nil, err
 	}
 	return &pb.UpdateAvailabilityResponse{Accommodation: mapAccommodationToPb(accommodation)}, err
+}
+
+func (handler *AccommodationHandler) GetAccommodationAvailableDatesForTimePeriod(ctx context.Context, request *pb.AccommodationTimePeriodRequest) (*pb.AccommodationAvailableDatesForTimePeriodResponse, error) {
+	accommodation, err := handler.service.Get(ctx, request.AccommodationId)
+	if err != nil {
+		return nil, err
+	}
+
+	availableDates, err := handler.service.GetAccommodationAvailableDatesForTimePeriod(ctx, request.AccommodationId, request.Beginning.AsTime(), request.Ending.AsTime())
+	response := &pb.AccommodationAvailableDatesForTimePeriodResponse{
+		AccommodationId:   request.AccommodationId,
+		AccommodationName: accommodation.Name,
+	}
+
+	for _, availableDate := range availableDates {
+		availableDatePb := pb.AvailableDate{
+			Beginning:       timestamppb.New(availableDate.Beginning),
+			Ending:          timestamppb.New(availableDate.Ending),
+			Price:           availableDate.Price,
+			IsPricePerGuest: availableDate.IsPricePerGuest,
+		}
+		response.AvailableDates = append(response.AvailableDates, &availableDatePb)
+	}
+
+	return response, err
 }
 
 func (handler *AccommodationHandler) Delete(ctx context.Context, request *pb.DeleteAccommodationRequest) (*pb.DeleteAccommodationResponse, error) {
