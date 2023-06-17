@@ -9,8 +9,10 @@ import (
 	"accommodation_booking/common/auth"
 	"accommodation_booking/common/client"
 	accommodation "accommodation_booking/common/proto/accommodation_service"
+	grade "accommodation_booking/common/proto/grade_service"
 	profile "accommodation_booking/common/proto/profile_service"
 	reservation "accommodation_booking/common/proto/reservation_service"
+	user "accommodation_booking/common/proto/user_service"
 	saga "accommodation_booking/common/saga/messaging"
 	"accommodation_booking/common/saga/messaging/nats"
 	"context"
@@ -62,8 +64,18 @@ func (server *Server) Start() {
 		log.Fatalf("PCF: %v", err)
 	}
 
+	gradeClient, err := client.NewGradeClient(fmt.Sprintf("%s:%s", server.config.GradeHost, server.config.GradePort))
+	if err != nil {
+		log.Fatalf("PCF: %v", err)
+	}
+
+	userClient, err := client.NewUserClient(fmt.Sprintf("%s:%s", server.config.UserHost, server.config.UserPort))
+	if err != nil {
+		log.Fatalf("PCF: %v", err)
+	}
+
 	accommodationService := server.initAccommodationService(accommodationStore)
-	accommodationHandler := server.initAccommodationHandler(accommodationService, profileClient, reservationClient)
+	accommodationHandler := server.initAccommodationHandler(accommodationService, profileClient, reservationClient, gradeClient, userClient)
 
 	commandSubscriber := server.initSubscriber(server.config.UpdateProfileCommandSubject, QueueGroup)
 	replyPublisher := server.initPublisher(server.config.UpdateProfileReplySubject)
@@ -107,8 +119,8 @@ func (server *Server) initMongoClient() *mongo.Client {
 	return client
 }
 
-func (server *Server) initAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient, reservationClient reservation.ReservationServiceClient) *api.AccommodationHandler {
-	return api.NewAccommodationHandler(service, profileClient, reservationClient)
+func (server *Server) initAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient, reservationClient reservation.ReservationServiceClient, gradeClient grade.GradeServiceClient, userClient user.UserServiceClient) *api.AccommodationHandler {
+	return api.NewAccommodationHandler(service, profileClient, reservationClient, gradeClient, userClient)
 }
 
 func (server *Server) initAccommodationStore(client *mongo.Client) domain.AccommodationStore {

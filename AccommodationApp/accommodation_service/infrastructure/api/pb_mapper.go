@@ -41,6 +41,7 @@ func mapAccommodationToPb(accommodation *domain.Accommodation) *pb.Accommodation
 		MinNumberOfGuests:             int32(accommodation.MinNumberOfGuests),
 		MaxNumberOfGuests:             int32(accommodation.MaxNumberOfGuests),
 		IsReservationAcceptenceManual: accommodation.IsReservationAcceptenceManual,
+		Grades:                        []*pb.AccommodationGrade2{},
 	}
 
 	for _, availableDate := range accommodation.Availability {
