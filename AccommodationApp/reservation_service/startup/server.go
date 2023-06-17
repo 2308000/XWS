@@ -36,22 +36,22 @@ func accessibleRoles() map[string][]string {
 	const reservationServicePath = "/reservation.ReservationService/"
 
 	return map[string][]string{
-		reservationServicePath + "Approve":              {"host"},
-		reservationServicePath + "Cancel":               {"guest"},
-		reservationServicePath + "Create":               {"guest"},
-		reservationServicePath + "Delete":               {"unexposed"},
-		reservationServicePath + "Get":                  {"guest", "host"},
-		reservationServicePath + "GetAll":               {"unexposed"},
-		reservationServicePath + "GetBetweenDates":      {"unexposed"},
-		reservationServicePath + "GetByHost":            {"host"},
-		reservationServicePath + "GetByHostPending":     {"unexposed"},
-		reservationServicePath + "GetByHostApproved":    {"unexposed"},
-		reservationServicePath + "GetByHostCanceled":    {"unexposed"},
-		reservationServicePath + "GetByHostRejected":    {"unexposed"},
-		reservationServicePath + "GetMyReservations":    {"guest"},
-		reservationServicePath + "GetUsersReservations": {"host"},
-		reservationServicePath + "Reject":               {"host"},
-		reservationServicePath + "Update":               {"unexposed"},
+		reservationServicePath + "Approve": {"host"},
+		reservationServicePath + "Cancel":  {"guest"},
+		reservationServicePath + "Create":  {"guest"},
+		reservationServicePath + "Delete":  {"unexposed"},
+		reservationServicePath + "Get":     {"guest", "host"},
+		reservationServicePath + "GetAll":  {"unexposed"},
+		//reservationServicePath + "GetBetweenDates":      {"unexposed"},
+		reservationServicePath + "GetByHost": {"host"},
+		//reservationServicePath + "GetByHostPending":     {"unexposed"},
+		//reservationServicePath + "GetByHostApproved":    {"unexposed"},
+		//reservationServicePath + "GetByHostCanceled":    {"unexposed"},
+		//reservationServicePath + "GetByHostRejected":    {"unexposed"},
+		reservationServicePath + "GetMyReservations": {"guest"},
+		//reservationServicePath + "GetUsersReservations": {"host"},
+		reservationServicePath + "Reject": {"host"},
+		reservationServicePath + "Update": {"unexposed"},
 	}
 }
 
