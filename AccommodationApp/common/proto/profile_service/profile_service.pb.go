@@ -869,8 +869,6 @@ func (x *HostGrade) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HostGrade.ProtoReflect.Descriptor instead.
 func (*HostGrade) Descriptor() ([]byte, []int) {
-// Deprecated: Use HostGrade.ProtoReflect.Descriptor instead.
-func (*HostGrade) Descriptor() ([]byte, []int) {
 	return file_proto_profile_service_profile_service_proto_rawDescGZIP(), []int{15}
 }
 
