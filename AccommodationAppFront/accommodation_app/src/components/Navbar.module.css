@@ -1,0 +1,53 @@
+.navbar {
+  background-color: rgb(33, 41, 135);
+  color: white;
+  padding: 1rem;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+.list {
+  list-style: none;
+  text-decoration: none;
+  list-style-type: none;
+  display: flex;
+  gap: 1rem;
+  color: white;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 400;
+  font-weight: 500;
+}
+.list > li {
+  cursor: pointer;
+}
+.loginButton {
+  background-color: transparent;
+  border-radius: 1rem;
+  padding: 1rem;
+  border: 1px solid white;
+  color: white;
+  cursor: pointer;
+}
+.registerButton {
+  background-color: transparent;
+  border-radius: 1rem;
+  padding: 1rem;
+  border: 1px solid white;
+  color: white;
+  cursor: pointer;
+}
+
+.NavLink {
+  text-decoration: none;
+}
+.navListItem > a {
+  text-decoration: none;
+  color: white;
+}
+
+.navListItem > a:hover {
+  text-decoration: none;
+  color: var(--selectedGreen);
+}
