@@ -9,6 +9,7 @@ import "google/protobuf/timestamp.proto";
 
 
 service GradeService{
+
   rpc Get(GetGradeRequest) returns(GetGradeResponse) {
     option (google.api.http) = {
       get: "/grade/{id}"

@@ -7,7 +7,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log"
 )
 
 const (
@@ -64,7 +63,6 @@ func (store *GradeMongoDBStore) Create(ctx context.Context, grade *domain.Grade)
 		return nil, err
 	}
 	grade.Id = result.InsertedID.(primitive.ObjectID)
-	log.Println(grade.Id)
 	return grade, nil
 }
 
