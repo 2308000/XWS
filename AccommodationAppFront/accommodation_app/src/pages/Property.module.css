@@ -1,0 +1,34 @@
+.body {
+  background-color: rgb(244, 242, 242);
+  height: calc(100vh - 80px);
+}
+
+.home {
+  width: 70%;
+  margin: auto;
+  background-color: white;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.image {
+  min-width: 300px;
+  height: 300px;
+  background-color: rgb(53, 40, 90);
+}
+.container {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.imgTitle {
+  display: flex;
+  gap: 2rem;
+}
+.priceDate {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+}

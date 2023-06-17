@@ -61,7 +61,9 @@ func (server *Server) initHandlers() {
 }
 
 func (server *Server) Start() {
+
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), cors(server.mux)))
+
 }
 
 func cors(next http.Handler) http.Handler {

@@ -11,8 +11,6 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 
-const user = { name: "petar" };
-
 const MyProfile = () => {
   const style = {
     position: "absolute",
@@ -32,6 +30,7 @@ const MyProfile = () => {
     boxShadow: 24,
     borderRadius: 3,
   };
+  const [user, setUser] = useState();
   const authCtx = useContext(AuthContext);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -54,7 +53,7 @@ const MyProfile = () => {
   const [validation, setValidation] = useState(true);
 
   const [value, setValue] = useState(dayjs("2023-05-14"));
-  const genders = ["Female", "Male"];
+  const genders = ["female", "male"];
   const [newPw, setNewPw] = useState();
   const [newRePw, setNewRePw] = useState();
   const handleToggleEdit = () => {
@@ -64,23 +63,76 @@ const MyProfile = () => {
     setSaved(false);
     setToggleEdit(false);
   };
+
+  useEffect(() => {
+    console.log(authCtx.token);
+    fetch("http://localhost:8000/profile/" + authCtx.id, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authCtx.token,
+      },
+    })
+      .then((response) => response.json())
+      .then((actualData) => {
+        console.log(actualData);
+        setUser(actualData);
+      });
+  }, [saved]);
+
   const handleSaveChanges = () => {
     event?.preventDefault();
+    console.log("asd");
     const enteredName = nameInputRef.current.value;
     const enteredSurname = surnameInputRef.current.value;
-    const enteredGender = genderRef.current.value;
+    const enteredGender = genderInputRef.current.value;
 
-    fetch("http://localhost:5041/api/profiles/update/own", {
+    fetch("http://localhost:8000/profile/" + authCtx.id, {
       method: "PUT",
       body: JSON.stringify({
-        name: enteredName,
-        gender: enteredGender,
-        surname: enteredSurname,
-        birthDate: "2023-04-12T21:01:31.611Z",
+        id: authCtx.id,
+        username: usernameInputRef.current.value,
+        firstName: enteredName,
+        lastName: enteredSurname,
+        email: emailInputRef.current.value,
+        phoneNumber: phoneNumberInputRef.current.value,
+        dateOfBirth: value,
+        gender: genderInputRef.current.value,
+        token: "",
+        address: {
+          city: cityInputRef.current.value,
+          country: countryInputRef.current.value,
+          street: addressInputRef.current.value,
+        },
       }),
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + authCtx.token,
+        Authorization: authCtx.token,
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          console.log(res);
+          return res;
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        setSaved(true);
+      });
+  };
+
+  const handleChangePW = () => {
+    event?.preventDefault();
+    fetch("http://localhost:8000/user/updatePassword", {
+      method: "PATCH",
+      body: JSON.stringify({
+        username: user?.profile.username,
+        password: newPw,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authCtx.token,
       },
     })
       .then((res) => {
@@ -120,47 +172,49 @@ const MyProfile = () => {
               <div>
                 <div className={classes.span}>
                   <span>Name: </span>
-                  <span>{user.name}</span>
+                  <span>{user?.profile.firstName}</span>
                 </div>
                 <div className={classes.span}>
                   <span>Surname: </span>
-                  <span>{user.surname}</span>
+                  <span>{user?.profile.lastName}</span>
                 </div>
                 <div className={classes.span}>
                   <span>Email: </span>
-                  <span>{user.email}</span>
+                  <span>{user?.profile.email}</span>
                 </div>
                 <div className={classes.span}>
                   <span>Gender: </span>
-                  <span>{user.gender}</span>
+                  <span>{user?.profile.gender}</span>
                 </div>
                 <div className={classes.span}>
                   <span>Birthdate: </span>
-                  <span>{user.birthDate}</span>
+                  <span>
+                    {dayjs(user?.profile.dateOfBirth).format("DD-MM-YYYY")}
+                  </span>
                 </div>
               </div>
               <div>
                 <div className={classes.span}>
                   <span>Username: </span>
-                  <span>{user.birthDate}</span>
+                  <span>{user?.profile.username}</span>
                 </div>
 
                 <div className={classes.span}>
                   <span>Country: </span>
-                  <span>{user.birthDate}</span>
+                  <span>{user?.profile.address.country}</span>
                 </div>
 
                 <div className={classes.span}>
                   <span>City: </span>
-                  <span>{user.birthDate}</span>
+                  <span>{user?.profile.address.city}</span>
                 </div>
                 <div className={classes.span}>
                   <span>Address: </span>
-                  <span>{user.birthDate}</span>
+                  <span>{user?.profile.address.street}</span>
                 </div>
                 <div className={classes.span}>
                   <span>Phone number: </span>
-                  <span>{user.birthDate}</span>
+                  <span>{user?.profile.phoneNumber}</span>
                 </div>
               </div>
             </div>
@@ -191,6 +245,7 @@ const MyProfile = () => {
                     <input
                       className={classes.inputChangePW}
                       value={newPw}
+                      type="password"
                       onChange={changePwHandler}
                     ></input>
                   </div>
@@ -199,15 +254,21 @@ const MyProfile = () => {
                     <input
                       className={classes.inputChangePW}
                       value={newRePw}
+                      type="password"
                       onChange={changeRePwHandler}
                     ></input>
                   </div>
 
                   <div className={classes.buttonContainerCenter}>
                     {validation ? (
-                      <button className={utils.greenButton}>Save</button>
+                      <button
+                        className={utils.greenButton}
+                        onClick={handleChangePW}
+                      >
+                        Save
+                      </button>
                     ) : (
-                      <button className={utils.greenButton} disabled>
+                      <button className={utils.greenButtonDisabled} disabled>
                         Save
                       </button>
                     )}
@@ -247,7 +308,7 @@ const MyProfile = () => {
                 <span>Name: </span>
                 <input
                   ref={nameInputRef}
-                  defaultValue={user.name}
+                  defaultValue={user?.profile.firstName}
                   className={classes.input}
                 ></input>
               </div>
@@ -255,7 +316,7 @@ const MyProfile = () => {
                 <span>Surname: </span>
                 <input
                   ref={surnameInputRef}
-                  defaultValue={user.surname}
+                  defaultValue={user?.profile.lastName}
                   className={classes.input}
                 ></input>
               </div>
@@ -263,7 +324,7 @@ const MyProfile = () => {
                 <span>Email: </span>
                 <input
                   ref={emailInputRef}
-                  defaultValue={user.surname}
+                  defaultValue={user?.profile.email}
                   className={classes.input}
                 ></input>
               </div>
@@ -272,7 +333,7 @@ const MyProfile = () => {
                 <span>Username: </span>
                 <input
                   ref={usernameInputRef}
-                  defaultValue={user.surname}
+                  defaultValue={user?.profile.username}
                   className={classes.input}
                 ></input>
               </div>
@@ -297,7 +358,7 @@ const MyProfile = () => {
                 <span>Country: </span>
                 <input
                   ref={countryInputRef}
-                  defaultValue={user.surname}
+                  defaultValue={user?.profile.address.country}
                   className={classes.input}
                 ></input>
               </div>
@@ -305,7 +366,7 @@ const MyProfile = () => {
                 <span>City: </span>
                 <input
                   ref={cityInputRef}
-                  defaultValue={user.surname}
+                  defaultValue={user?.profile.address.city}
                   className={classes.input}
                 ></input>
               </div>
@@ -313,7 +374,7 @@ const MyProfile = () => {
                 <span>Address: </span>
                 <input
                   ref={addressInputRef}
-                  defaultValue={user.surname}
+                  defaultValue={user?.profile.address.street}
                   className={classes.input}
                 ></input>
               </div>
@@ -321,14 +382,14 @@ const MyProfile = () => {
                 <span>Phone number: </span>
                 <input
                   ref={phoneNumberInputRef}
-                  defaultValue={user.surname}
+                  defaultValue={user?.profile.phoneNumber}
                   className={classes.input}
                 ></input>
               </div>
               <div className={classes.spanEdit}>
                 <span>Gender: </span>
                 <select
-                  defaultValue={user.gender}
+                  defaultValue={user?.profile.gender}
                   ref={genderInputRef}
                   className={classes.select}
                 >

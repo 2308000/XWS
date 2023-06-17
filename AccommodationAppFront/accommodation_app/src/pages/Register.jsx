@@ -2,7 +2,7 @@ import classes from "./Login.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
 
-const roles = ["User", "Host"];
+const roles = ["guest", "host"];
 
 const Register = () => {
   const nameRef = useRef();
@@ -36,24 +36,30 @@ const Register = () => {
   const registerHandler = () => {
     event.preventDefault();
 
-    fetch("https://localhost:5000/api/User/registration", {
+    fetch("http://localhost:8000/user", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer ",
       },
       body: JSON.stringify({
-        email: emailRef.current.value,
-        password: pw,
+        user: {
+          username: usernameRef.current.value,
+          password: pw,
+          role: roleRef.current.value,
+        },
         firstName: nameRef.current.value,
         lastName: lastNameRef.current.value,
+        email: emailRef.current.value,
+        address: {
+          city: cityRef.current.value,
+          country: countryRef.current.value,
+          street: addressRef.current.value,
+        },
       }),
     })
       .then((res) => {
         if (res.ok) {
-          return res;
-        } else if (res.status == 400) {
-          throw new Error("Error");
+          return res.json();
         }
       })
       .then((data) => {
@@ -115,6 +121,7 @@ const Register = () => {
                   className={classes.input}
                   value={pw}
                   onChange={changePwHandler}
+                  type="password"
                 ></input>
               </div>
               <div className={classes.span}>
@@ -123,6 +130,7 @@ const Register = () => {
                   className={classes.input}
                   value={rePw}
                   onChange={changeRePwHandler}
+                  type="password"
                 ></input>
               </div>
             </div>

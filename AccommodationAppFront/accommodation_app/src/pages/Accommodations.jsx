@@ -7,246 +7,135 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useState, useRef, useEffect, useContext } from "react";
 import Property from "../components/Property";
-
-const properties = [
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 55,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-];
+import { useNavigate } from "react-router-dom";
 
 const prop = [{ Id: 0 }, { Id: 1 }];
 
 const Accommodations = () => {
+  const [properties, setProperties] = useState();
   const today = new Date();
   const tomorrow = new Date(today);
+  const start = new Date(today);
+  const end = new Date(today);
+  start.setDate(tomorrow.getDate() - 2);
+  end.setDate(tomorrow.getDate() + 3);
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const [value, setValue] = useState(dayjs(tomorrow));
-  const startRef = useRef();
-  const destRef = useRef();
-  const reqTicketRef = useRef();
+  const [valueStart, setValueStart] = useState(dayjs(start));
+  const [valueEnd, setValueEnd] = useState(dayjs(end));
+  const cityRef = useRef();
+  const minPriceRef = useRef();
+  const maxPriceRef = useRef();
+  const countryRef = useRef();
+  const wifiRef = useRef();
+  const parkingRef = useRef();
+  const ACRef = useRef();
+  const KFRef = useRef();
+  const WMRef = useRef();
+  const balconyRef = useRef();
+  const bathtubRef = useRef();
+  const OHRef = useRef();
+  const numberOfGuestsRef = useRef();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch("http://localhost:8000/accommodation/search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        numberOfGuests: 2,
+        location: {
+          city: "",
+          country: "",
+          street: "",
+        },
+        beginning: start,
+        ending: end,
+      }),
+    })
+      .then((response) => response.json())
+      .then((actualData) => {
+        console.log(actualData);
+        setProperties(actualData.accommodations);
+      });
+  }, []);
+
+  const searchHandler = () => {
+    if (!numberOfGuestsRef.current.value) {
+      alert("Please enter number of guests!");
+      return;
+    }
+
+    fetch("http://localhost:8000/accommodation/search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        numberOfGuests: numberOfGuestsRef.current.value,
+        location: {
+          city: cityRef.current.value,
+          country: countryRef.current.value,
+          street: "",
+        },
+        beginning: valueStart,
+        ending: valueEnd,
+      }),
+    })
+      .then((response) => response.json())
+      .then((actualData) => {
+        console.log(actualData);
+        setProperties(actualData.accommodations);
+      });
+  };
+
+  const checkHandler = (id) => {
+    navigate("/accommodations/" + id);
+  };
+
+  const filterHandler = () => {
+    if (!minPriceRef.current.value || !maxPriceRef.current.value) {
+      alert("Please enter price range!");
+      return;
+    }
+
+    fetch("http://localhost:8000/accommodation/filter", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        searchQuery: {
+          numberOfGuests: numberOfGuestsRef.current.value,
+          location: {
+            city: cityRef.current.value,
+            country: countryRef.current.value,
+            street: "",
+          },
+          beginning: valueStart,
+          ending: valueEnd,
+        },
+        priceRangeLowerBound: minPriceRef.current.value,
+        priceRangeUpperBound: maxPriceRef.current.value,
+        benefits: {
+          hasWifi: wifiRef.current.checked,
+          hasAirConditioning: ACRef.current.checked,
+          hasFreeParking: parkingRef.current.checked,
+          hasKitchen: KFRef.current.checked,
+          hasWashingMachine: WMRef.current.checked,
+          hasBathtub: bathtubRef.current.checked,
+          hasBalcony: balconyRef.current.checked,
+        },
+        isOutstandingHost: OHRef.current.checked,
+      }),
+    })
+      .then((response) => response.json())
+      .then((actualData) => {
+        console.log(actualData);
+        setProperties(actualData.accommodations);
+      });
+  };
 
   return (
     <div className={classes.body}>
@@ -254,16 +143,20 @@ const Accommodations = () => {
       <div className={classes.home}>
         <div className={classes.search}>
           <div className={classes.searchItem}>
-            <label>Location</label>
-            <input className={classes.inputLoc} ref={startRef}></input>
+            <label>City</label>
+            <input className={classes.inputLoc} ref={cityRef}></input>
+          </div>
+          <div className={classes.searchItem}>
+            <label>Country</label>
+            <input className={classes.inputLoc} ref={countryRef}></input>
           </div>
           <div className={classes.searchItem}>
             <label>From</label>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                value={value}
+                value={valueStart}
                 onChange={(newValue) => {
-                  setValue(newValue);
+                  setValueStart(newValue);
                 }}
                 className={classes.DatePicker}
               />
@@ -273,9 +166,9 @@ const Accommodations = () => {
             <label>To</label>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                value={value}
+                value={valueEnd}
                 onChange={(newValue) => {
-                  setValue(newValue);
+                  setValueEnd(newValue);
                 }}
                 className={classes.DatePicker}
               />
@@ -283,9 +176,14 @@ const Accommodations = () => {
           </div>
           <div className={classes.searchItem}>
             <label>Number of guests</label>
-            <input className={classes.inputNumber}></input>
+            <input
+              className={classes.inputNumber}
+              ref={numberOfGuestsRef}
+            ></input>
           </div>
-          <button className={classes.searchButton}>Search</button>
+          <button className={classes.searchButton} onClick={searchHandler}>
+            Search
+          </button>
         </div>
         <div className={classes.accomodationsContainer}>
           <div className={classes.filters}>
@@ -293,70 +191,115 @@ const Accommodations = () => {
             <h5>Price range: </h5>
             <div className={classes.filterPrice}>
               <label>From</label>
-              <input className={classes.inputPrice}></input>
+              <input className={classes.inputPrice} ref={minPriceRef}></input>
             </div>
             <div className={classes.filterPrice}>
               <label>To</label>
-              <input className={classes.inputPrice}></input>
+              <input className={classes.inputPrice} ref={maxPriceRef}></input>
             </div>
             <h5>Benefits: </h5>
             <div className={classes.filter}>
-              <input type="checkbox"></input>
+              <input type="checkbox" ref={parkingRef}></input>
               <label>Free Parking</label>
             </div>
             <div className={classes.filter}>
-              <input type="checkbox"></input>
+              <input type="checkbox" ref={wifiRef}></input>
               <label>WiFi</label>
             </div>
             <div className={classes.filter}>
-              <input type="checkbox"></input>
+              <input type="checkbox" ref={ACRef}></input>
               <label>Air Conditioning</label>
             </div>
             <div className={classes.filter}>
-              <input type="checkbox"></input>
+              <input type="checkbox" ref={KFRef}></input>
               <label>Kitchen facilities</label>
             </div>
             <div className={classes.filter}>
-              <input type="checkbox"></input>
+              <input type="checkbox" ref={WMRef}></input>
               <label>Washing Machine</label>
             </div>
             <div className={classes.filter}>
-              <input type="checkbox"></input>
+              <input type="checkbox" ref={balconyRef}></input>
               <label>Balcony</label>
             </div>
             <div className={classes.filter}>
-              <input type="checkbox"></input>
+              <input type="checkbox" ref={bathtubRef}></input>
               <label>Bathtub</label>
             </div>
             <h5>Host: </h5>
             <div className={classes.filter}>
-              <input type="checkbox"></input>
+              <input type="checkbox" ref={OHRef}></input>
               <label>Outstanding host</label>
             </div>
-            <button className={classes.searchButton}>Search</button>
+            <button className={classes.searchButton} onClick={filterHandler}>
+              Filter
+            </button>
           </div>
           <div className={classes.tableContainer}>
-            <h2>Properties in Beograd</h2>
+            {cityRef?.current?.value?.length > 0 ||
+            countryRef?.current?.value?.length > 0 ? (
+              <h2>
+                Properties in {cityRef?.current.value} ,{" "}
+                {countryRef?.current.value}
+              </h2>
+            ) : (
+              <h2>Properties</h2>
+            )}
             {properties?.map((property) => (
-              <div className={classes.propertyContainer}>
+              <div
+                className={classes.propertyContainer}
+                key={property.accommodation.id}
+              >
                 <div className={classes.imgTitle}>
                   <div className={classes.image}></div>
                   <div>
-                    <h2>{property.Name}</h2>
-                    <h4>{property.Name}</h4>
-                    <h4>{property.Name}</h4>
-                    <h4>{property.Name}</h4>
+                    <h2>{property.accommodation.name}</h2>
+                    <h4>
+                      {property.accommodation.location.street},{" "}
+                      {property.accommodation.location.city},{" "}
+                      {property.accommodation.location.country}
+                    </h4>
+                    <br></br>
+                    <h5>{property?.accommodation.hasWifi && "Wifi"}</h5>
+                    <h5>
+                      {property?.accommodation.hasFreeParking && "Free Parking"}
+                    </h5>
+                    <h5>{property.Name}</h5>
                   </div>
                 </div>
                 <div className={classes.property}>
                   <div className={classes.propertyCont}>
                     <div className={classes.checkButtonContainer}>
                       <div className={classes.pricesContainer}>
-                        <h4>{property.Name}</h4>
-                        <h4>{property.Name}</h4>
+                        {numberOfGuestsRef.current.value && (
+                          <h4> {numberOfGuestsRef.current.value} guests </h4>
+                        )}
+                        <h4>Price per night: {property.pricePerNight}</h4>
+                        <h4>Total price: {property.totalPrice}</h4>
                         <h4>{property.Name}</h4>
                       </div>
-                      <button className={utils.greenButton}>Check</button>
+                      <button
+                        className={utils.greenButton}
+                        onClick={() => {
+                          checkHandler(property.accommodation.id);
+                          localStorage.setItem("startDate", valueStart);
+                          localStorage.setItem("endDate", valueEnd);
+                          localStorage.setItem(
+                            "numberOfGuests",
+                            numberOfGuestsRef.current.value
+                          );
+                          localStorage.setItem(
+                            "pricePerNight",
+                            property?.pricePerNight
+                          );
+                          localStorage.setItem(
+                            "totalPrice",
+                            property?.totalPrice
+                          );
+                        }}
+                      >
+                        Check
+                      </button>
                     </div>
                   </div>
                 </div>

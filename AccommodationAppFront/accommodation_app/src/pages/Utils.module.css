@@ -99,7 +99,16 @@
   width: 150px;
   border-radius: 1rem;
 }
+.greenButtonDisabled {
+  background-color: rgb(160, 161, 161);
+  color: white;
+  padding: 0.8rem;
+  border: 1px solid rgb(151, 152, 152);
+  font-weight: 500;
 
+  width: 150px;
+  border-radius: 1rem;
+}
 .redButton {
   background-color: red;
   color: white;

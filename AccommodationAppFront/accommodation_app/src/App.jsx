@@ -20,6 +20,7 @@ import MyAccommodations from "./pages/MyAccommodations";
 import MyAccommodation from "./pages/MyAccommodation";
 import MyReservations from "./pages/MyReservations";
 import ReservationRequests from "./pages/ReservationRequests";
+import Accommodation from "./pages/Accommodation";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -32,6 +33,10 @@ const router = createBrowserRouter(
         <Route
           path="/accommodations"
           element={<Accomodations></Accomodations>}
+        ></Route>
+        <Route
+          path="/accommodations/:id"
+          element={<Accommodation></Accommodation>}
         ></Route>
         <Route
           path="/new-accommodation"
