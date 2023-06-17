@@ -9,10 +9,11 @@ import (
 	"accommodation_booking/reservation_service/domain"
 	"context"
 	"errors"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type ReservationHandler struct {
@@ -449,8 +450,6 @@ func (handler *ReservationHandler) Cancel(ctx context.Context, request *pb.Cance
 				Token:                 response.Profile.Token,
 				ReservationsCancelled: response.Profile.ReservationsCancelled + 1,
 				IsOutstanding:         response.Profile.IsOutstanding,
-				AccommodationGrades:   response.Profile.AccommodationGrades,
-				HostGrades:            response.Profile.HostGrades,
 			},
 		})
 		if err != nil {
