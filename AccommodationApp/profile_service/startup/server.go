@@ -43,7 +43,8 @@ func accessibleRoles() map[string][]string {
 
 	return map[string][]string{
 		profileServicePath + "GetAll": {"guest", "host"},
-		profileServicePath + "Get":    {"guest", "host"},
+		profileServicePath + "Delete": {"guest", "host"},
+		profileServicePath + "Update": {"guest", "host"},
 	}
 }
 

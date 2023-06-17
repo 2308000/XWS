@@ -39,6 +39,8 @@ func accessibleRoles() map[string][]string {
 
 	return map[string][]string{
 		userServicePath + "GetAll": {"user", "admin", "host"},
+		userServicePath + "Update": {"user", "admin", "host"},
+		userServicePath + "Delete": {"user", "admin", "host"},
 	}
 }
 

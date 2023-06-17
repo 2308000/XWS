@@ -34,7 +34,11 @@ func accessibleRoles() map[string][]string {
 	const gradeServicePath = "/grade.GradeService/"
 
 	return map[string][]string{
-		gradeServicePath + "GetAll": {"guest", "host"},
+		gradeServicePath + "GetAll": {"unexposed"},
+		gradeServicePath + "Get":    {"unexposed"},
+		gradeServicePath + "Create": {"guest"},
+		gradeServicePath + "Update": {"guest"},
+		gradeServicePath + "Delete": {"guest"},
 	}
 }
 
