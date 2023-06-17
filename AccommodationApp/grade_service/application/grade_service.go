@@ -19,12 +19,16 @@ func (service *GradeService) Get(ctx context.Context, gradeId string) (*domain.G
 	return service.store.Get(ctx, gradeId)
 }
 
-func (service *GradeService) GetByGuest(ctx context.Context, guestId string) ([]*domain.Grade, error) {
-	return service.store.GetByGuest(ctx, guestId)
+func (service *GradeService) GetHostsGradedByGuest(ctx context.Context, guestId string) ([]*domain.Grade, error) {
+	return service.store.GetHostsGradedByGuest(ctx, guestId)
+}
+
+func (service *GradeService) GetAccommodationsGradedByGuest(ctx context.Context, guestId string) ([]*domain.Grade, error) {
+	return service.store.GetAccommodationsGradedByGuest(ctx, guestId)
 }
 
 func (service *GradeService) GetByGraded(ctx context.Context, gradedId string) ([]*domain.Grade, error) {
-	return service.store.GetByGuest(ctx, gradedId)
+	return service.store.GetByGraded(ctx, gradedId)
 }
 
 func (service *GradeService) GetAll(ctx context.Context) ([]*domain.Grade, error) {

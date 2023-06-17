@@ -18,7 +18,8 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GradeServiceClient interface {
 	Get(ctx context.Context, in *GetGradeRequest, opts ...grpc.CallOption) (*GetGradeResponse, error)
-	GetByGuest(ctx context.Context, in *GetGradeRequest, opts ...grpc.CallOption) (*GetAllGradesResponse, error)
+	GetHostsGradedByGuest(ctx context.Context, in *GetGradeRequest, opts ...grpc.CallOption) (*GetAllGradesResponse, error)
+	GetAccommodationsGradedByGuest(ctx context.Context, in *GetGradeRequest, opts ...grpc.CallOption) (*GetAllGradesResponse, error)
 	GetByGraded(ctx context.Context, in *GetGradeRequest, opts ...grpc.CallOption) (*GetAllGradesResponse, error)
 	GetAll(ctx context.Context, in *GetAllGradesRequest, opts ...grpc.CallOption) (*GetAllGradesResponse, error)
 	Create(ctx context.Context, in *CreateGradeRequest, opts ...grpc.CallOption) (*CreateGradeResponse, error)
@@ -43,9 +44,18 @@ func (c *gradeServiceClient) Get(ctx context.Context, in *GetGradeRequest, opts 
 	return out, nil
 }
 
-func (c *gradeServiceClient) GetByGuest(ctx context.Context, in *GetGradeRequest, opts ...grpc.CallOption) (*GetAllGradesResponse, error) {
+func (c *gradeServiceClient) GetHostsGradedByGuest(ctx context.Context, in *GetGradeRequest, opts ...grpc.CallOption) (*GetAllGradesResponse, error) {
 	out := new(GetAllGradesResponse)
-	err := c.cc.Invoke(ctx, "/profile.GradeService/GetByGuest", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/profile.GradeService/GetHostsGradedByGuest", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gradeServiceClient) GetAccommodationsGradedByGuest(ctx context.Context, in *GetGradeRequest, opts ...grpc.CallOption) (*GetAllGradesResponse, error) {
+	out := new(GetAllGradesResponse)
+	err := c.cc.Invoke(ctx, "/profile.GradeService/GetAccommodationsGradedByGuest", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +112,8 @@ func (c *gradeServiceClient) Delete(ctx context.Context, in *DeleteGradeRequest,
 // for forward compatibility
 type GradeServiceServer interface {
 	Get(context.Context, *GetGradeRequest) (*GetGradeResponse, error)
-	GetByGuest(context.Context, *GetGradeRequest) (*GetAllGradesResponse, error)
+	GetHostsGradedByGuest(context.Context, *GetGradeRequest) (*GetAllGradesResponse, error)
+	GetAccommodationsGradedByGuest(context.Context, *GetGradeRequest) (*GetAllGradesResponse, error)
 	GetByGraded(context.Context, *GetGradeRequest) (*GetAllGradesResponse, error)
 	GetAll(context.Context, *GetAllGradesRequest) (*GetAllGradesResponse, error)
 	Create(context.Context, *CreateGradeRequest) (*CreateGradeResponse, error)
@@ -118,8 +129,11 @@ type UnimplementedGradeServiceServer struct {
 func (*UnimplementedGradeServiceServer) Get(context.Context, *GetGradeRequest) (*GetGradeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (*UnimplementedGradeServiceServer) GetByGuest(context.Context, *GetGradeRequest) (*GetAllGradesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetByGuest not implemented")
+func (*UnimplementedGradeServiceServer) GetHostsGradedByGuest(context.Context, *GetGradeRequest) (*GetAllGradesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetHostsGradedByGuest not implemented")
+}
+func (*UnimplementedGradeServiceServer) GetAccommodationsGradedByGuest(context.Context, *GetGradeRequest) (*GetAllGradesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccommodationsGradedByGuest not implemented")
 }
 func (*UnimplementedGradeServiceServer) GetByGraded(context.Context, *GetGradeRequest) (*GetAllGradesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetByGraded not implemented")
@@ -160,20 +174,38 @@ func _GradeService_Get_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GradeService_GetByGuest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GradeService_GetHostsGradedByGuest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetGradeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GradeServiceServer).GetByGuest(ctx, in)
+		return srv.(GradeServiceServer).GetHostsGradedByGuest(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/profile.GradeService/GetByGuest",
+		FullMethod: "/profile.GradeService/GetHostsGradedByGuest",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GradeServiceServer).GetByGuest(ctx, req.(*GetGradeRequest))
+		return srv.(GradeServiceServer).GetHostsGradedByGuest(ctx, req.(*GetGradeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GradeService_GetAccommodationsGradedByGuest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGradeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GradeServiceServer).GetAccommodationsGradedByGuest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/profile.GradeService/GetAccommodationsGradedByGuest",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GradeServiceServer).GetAccommodationsGradedByGuest(ctx, req.(*GetGradeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -277,8 +309,12 @@ var _GradeService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _GradeService_Get_Handler,
 		},
 		{
-			MethodName: "GetByGuest",
-			Handler:    _GradeService_GetByGuest_Handler,
+			MethodName: "GetHostsGradedByGuest",
+			Handler:    _GradeService_GetHostsGradedByGuest_Handler,
+		},
+		{
+			MethodName: "GetAccommodationsGradedByGuest",
+			Handler:    _GradeService_GetAccommodationsGradedByGuest_Handler,
 		},
 		{
 			MethodName: "GetByGraded",

@@ -16,9 +16,15 @@ service GradeService{
     };
   }
 
-  rpc GetByGuest(GetGradeRequest) returns(GetAllGradesResponse) {
+  rpc GetHostsGradedByGuest(GetGradeRequest) returns(GetAllGradesResponse) {
     option (google.api.http) = {
-      get: "/grade/guest/{id}"
+      get: "/grade/guest/{id}/hosts"
+    };
+  }
+
+  rpc GetAccommodationsGradedByGuest(GetGradeRequest) returns(GetAllGradesResponse) {
+    option (google.api.http) = {
+      get: "/grade/guest/{id}/accommodations"
     };
   }
 
@@ -96,13 +102,15 @@ message DeleteGradeResponse {
 message Grade {
   string id = 1;
   string guestId = 2;
-  string gradedId = 3;
+  string gradedName = 3;
   float grade = 4;
   google.protobuf.Timestamp date = 5;
+  bool isHostGrade = 6;
 }
 
 message NewGrade {
   string guestId = 1;
   string gradedId = 2;
   float value = 3;
+  bool isHostGrade = 4;
 }

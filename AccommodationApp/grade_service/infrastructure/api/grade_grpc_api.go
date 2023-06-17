@@ -33,8 +33,23 @@ func (handler *GradeHandler) Get(ctx context.Context, request *pb.GetGradeReques
 	return response, nil
 }
 
-func (handler *GradeHandler) GetByGuest(ctx context.Context, request *pb.GetGradeRequest) (*pb.GetAllGradesResponse, error) {
-	Grades, err := handler.service.GetByGuest(ctx, request.Id)
+func (handler *GradeHandler) GetHostsGradedByGuest(ctx context.Context, request *pb.GetGradeRequest) (*pb.GetAllGradesResponse, error) {
+	Grades, err := handler.service.GetHostsGradedByGuest(ctx, request.Id)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.GetAllGradesResponse{
+		Grades: []*pb.Grade{},
+	}
+	for _, Grade := range Grades {
+		current := mapGradeToPb(Grade)
+		response.Grades = append(response.Grades, current)
+	}
+	return response, nil
+}
+
+func (handler *GradeHandler) GetAccommodationsGradedByGuest(ctx context.Context, request *pb.GetGradeRequest) (*pb.GetAllGradesResponse, error) {
+	Grades, err := handler.service.GetAccommodationsGradedByGuest(ctx, request.Id)
 	if err != nil {
 		return nil, err
 	}

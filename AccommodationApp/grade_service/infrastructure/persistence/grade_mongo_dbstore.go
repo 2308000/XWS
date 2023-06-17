@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"log"
 )
 
 const (
@@ -34,12 +35,24 @@ func (store *GradeMongoDBStore) Get(ctx context.Context, gradeId string) (*domai
 	return store.filterOne(filter)
 }
 
-func (store *GradeMongoDBStore) GetByGuest(ctx context.Context, guestId string) ([]*domain.Grade, error) {
+func (store *GradeMongoDBStore) GetHostsGradedByGuest(ctx context.Context, guestId string) ([]*domain.Grade, error) {
 	id, err := primitive.ObjectIDFromHex(guestId)
 	if err != nil {
 		fmt.Println("Guest with given Id does not exist!")
 	}
-	filter := bson.M{"guestId": id}
+	filter := bson.D{{"guestId", id}}
+	filter = append(filter, bson.E{"isHostGrade", true})
+	log.Println(filter)
+	return store.filter(filter)
+}
+
+func (store *GradeMongoDBStore) GetAccommodationsGradedByGuest(ctx context.Context, guestId string) ([]*domain.Grade, error) {
+	id, err := primitive.ObjectIDFromHex(guestId)
+	if err != nil {
+		fmt.Println("Guest with given Id does not exist!")
+	}
+	filter := bson.D{{"guestId", id}}
+	filter = append(filter, bson.E{"isHostGrade", false})
 	return store.filter(filter)
 }
 
