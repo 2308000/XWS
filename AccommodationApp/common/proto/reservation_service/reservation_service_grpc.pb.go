@@ -21,6 +21,10 @@ type ReservationServiceClient interface {
 	GetAll(ctx context.Context, in *GetAllReservationsRequest, opts ...grpc.CallOption) (*GetAllReservationsResponse, error)
 	GetUsersReservations(ctx context.Context, in *GetUsersReservationsRequest, opts ...grpc.CallOption) (*GetUsersReservationsResponse, error)
 	GetByHost(ctx context.Context, in *GetByHostRequest, opts ...grpc.CallOption) (*GetByHostResponse, error)
+	GetByHostPending(ctx context.Context, in *GetByHostInternRequest, opts ...grpc.CallOption) (*GetByHostInternResponse, error)
+	GetByHostApproved(ctx context.Context, in *GetByHostInternRequest, opts ...grpc.CallOption) (*GetByHostInternResponse, error)
+	GetByHostCanceled(ctx context.Context, in *GetByHostInternRequest, opts ...grpc.CallOption) (*GetByHostInternResponse, error)
+	GetByHostRejected(ctx context.Context, in *GetByHostInternRequest, opts ...grpc.CallOption) (*GetByHostInternResponse, error)
 	GetMyReservations(ctx context.Context, in *GetMyReservationsRequest, opts ...grpc.CallOption) (*GetMyReservationsResponse, error)
 	GetBetweenDates(ctx context.Context, in *GetBetweenDatesRequest, opts ...grpc.CallOption) (*GetBetweenDatesResponse, error)
 	Create(ctx context.Context, in *CreateReservationRequest, opts ...grpc.CallOption) (*CreateReservationResponse, error)
@@ -69,6 +73,42 @@ func (c *reservationServiceClient) GetUsersReservations(ctx context.Context, in 
 func (c *reservationServiceClient) GetByHost(ctx context.Context, in *GetByHostRequest, opts ...grpc.CallOption) (*GetByHostResponse, error) {
 	out := new(GetByHostResponse)
 	err := c.cc.Invoke(ctx, "/reservation.ReservationService/GetByHost", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reservationServiceClient) GetByHostPending(ctx context.Context, in *GetByHostInternRequest, opts ...grpc.CallOption) (*GetByHostInternResponse, error) {
+	out := new(GetByHostInternResponse)
+	err := c.cc.Invoke(ctx, "/reservation.ReservationService/GetByHostPending", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reservationServiceClient) GetByHostApproved(ctx context.Context, in *GetByHostInternRequest, opts ...grpc.CallOption) (*GetByHostInternResponse, error) {
+	out := new(GetByHostInternResponse)
+	err := c.cc.Invoke(ctx, "/reservation.ReservationService/GetByHostApproved", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reservationServiceClient) GetByHostCanceled(ctx context.Context, in *GetByHostInternRequest, opts ...grpc.CallOption) (*GetByHostInternResponse, error) {
+	out := new(GetByHostInternResponse)
+	err := c.cc.Invoke(ctx, "/reservation.ReservationService/GetByHostCanceled", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reservationServiceClient) GetByHostRejected(ctx context.Context, in *GetByHostInternRequest, opts ...grpc.CallOption) (*GetByHostInternResponse, error) {
+	out := new(GetByHostInternResponse)
+	err := c.cc.Invoke(ctx, "/reservation.ReservationService/GetByHostRejected", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -155,6 +195,10 @@ type ReservationServiceServer interface {
 	GetAll(context.Context, *GetAllReservationsRequest) (*GetAllReservationsResponse, error)
 	GetUsersReservations(context.Context, *GetUsersReservationsRequest) (*GetUsersReservationsResponse, error)
 	GetByHost(context.Context, *GetByHostRequest) (*GetByHostResponse, error)
+	GetByHostPending(context.Context, *GetByHostInternRequest) (*GetByHostInternResponse, error)
+	GetByHostApproved(context.Context, *GetByHostInternRequest) (*GetByHostInternResponse, error)
+	GetByHostCanceled(context.Context, *GetByHostInternRequest) (*GetByHostInternResponse, error)
+	GetByHostRejected(context.Context, *GetByHostInternRequest) (*GetByHostInternResponse, error)
 	GetMyReservations(context.Context, *GetMyReservationsRequest) (*GetMyReservationsResponse, error)
 	GetBetweenDates(context.Context, *GetBetweenDatesRequest) (*GetBetweenDatesResponse, error)
 	Create(context.Context, *CreateReservationRequest) (*CreateReservationResponse, error)
@@ -181,6 +225,18 @@ func (*UnimplementedReservationServiceServer) GetUsersReservations(context.Conte
 }
 func (*UnimplementedReservationServiceServer) GetByHost(context.Context, *GetByHostRequest) (*GetByHostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetByHost not implemented")
+}
+func (*UnimplementedReservationServiceServer) GetByHostPending(context.Context, *GetByHostInternRequest) (*GetByHostInternResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetByHostPending not implemented")
+}
+func (*UnimplementedReservationServiceServer) GetByHostApproved(context.Context, *GetByHostInternRequest) (*GetByHostInternResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetByHostApproved not implemented")
+}
+func (*UnimplementedReservationServiceServer) GetByHostCanceled(context.Context, *GetByHostInternRequest) (*GetByHostInternResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetByHostCanceled not implemented")
+}
+func (*UnimplementedReservationServiceServer) GetByHostRejected(context.Context, *GetByHostInternRequest) (*GetByHostInternResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetByHostRejected not implemented")
 }
 func (*UnimplementedReservationServiceServer) GetMyReservations(context.Context, *GetMyReservationsRequest) (*GetMyReservationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMyReservations not implemented")
@@ -280,6 +336,78 @@ func _ReservationService_GetByHost_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ReservationServiceServer).GetByHost(ctx, req.(*GetByHostRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReservationService_GetByHostPending_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetByHostInternRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).GetByHostPending(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/reservation.ReservationService/GetByHostPending",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).GetByHostPending(ctx, req.(*GetByHostInternRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReservationService_GetByHostApproved_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetByHostInternRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).GetByHostApproved(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/reservation.ReservationService/GetByHostApproved",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).GetByHostApproved(ctx, req.(*GetByHostInternRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReservationService_GetByHostCanceled_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetByHostInternRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).GetByHostCanceled(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/reservation.ReservationService/GetByHostCanceled",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).GetByHostCanceled(ctx, req.(*GetByHostInternRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReservationService_GetByHostRejected_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetByHostInternRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).GetByHostRejected(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/reservation.ReservationService/GetByHostRejected",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).GetByHostRejected(ctx, req.(*GetByHostInternRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -447,6 +575,22 @@ var _ReservationService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetByHost",
 			Handler:    _ReservationService_GetByHost_Handler,
+		},
+		{
+			MethodName: "GetByHostPending",
+			Handler:    _ReservationService_GetByHostPending_Handler,
+		},
+		{
+			MethodName: "GetByHostApproved",
+			Handler:    _ReservationService_GetByHostApproved_Handler,
+		},
+		{
+			MethodName: "GetByHostCanceled",
+			Handler:    _ReservationService_GetByHostCanceled_Handler,
+		},
+		{
+			MethodName: "GetByHostRejected",
+			Handler:    _ReservationService_GetByHostRejected_Handler,
 		},
 		{
 			MethodName: "GetMyReservations",

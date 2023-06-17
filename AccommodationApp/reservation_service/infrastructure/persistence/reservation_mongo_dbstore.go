@@ -56,6 +56,24 @@ func (store *ReservationMongoDBStore) GetPending(ctx context.Context) ([]*domain
 	return store.filter(filter)
 }
 
+func (store *ReservationMongoDBStore) GetApproved(ctx context.Context) ([]*domain.Reservation, error) {
+	filter := bson.D{}
+	filter = append(filter, bson.E{"reservationStatus", bson.D{{"$eq", 1}}})
+	return store.filter(filter)
+}
+
+func (store *ReservationMongoDBStore) GetCanceled(ctx context.Context) ([]*domain.Reservation, error) {
+	filter := bson.D{}
+	filter = append(filter, bson.E{"reservationStatus", bson.D{{"$eq", 2}}})
+	return store.filter(filter)
+}
+
+func (store *ReservationMongoDBStore) GetRejected(ctx context.Context) ([]*domain.Reservation, error) {
+	filter := bson.D{}
+	filter = append(filter, bson.E{"reservationStatus", bson.D{{"$eq", 3}}})
+	return store.filter(filter)
+}
+
 func (store *ReservationMongoDBStore) GetBetweenDates(ctx context.Context, beginning time.Time, ending time.Time, accommodationId string) ([]*domain.Reservation, error) {
 	filter := bson.D{
 		{"$or", bson.A{
