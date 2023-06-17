@@ -9,6 +9,7 @@ import (
 	userGw "accommodation_booking/common/proto/user_service"
 	"context"
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
