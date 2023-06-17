@@ -3,6 +3,7 @@ package startup
 import (
 	cfg "accommodation_booking/api_gateway/startup/config"
 	accommodationGw "accommodation_booking/common/proto/accommodation_service"
+	gradeGw "accommodation_booking/common/proto/grade_service"
 	profileGw "accommodation_booking/common/proto/profile_service"
 	reservationGw "accommodation_booking/common/proto/reservation_service"
 	userGw "accommodation_booking/common/proto/user_service"
@@ -53,18 +54,15 @@ func (server *Server) initHandlers() {
 	if err != nil {
 		panic(err)
 	}
+	gradeEndpoint := fmt.Sprintf("%s:%s", server.config.GradeHost, server.config.GradePort)
+	err = gradeGw.RegisterGradeServiceHandlerFromEndpoint(context.TODO(), server.mux, gradeEndpoint, opts)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (server *Server) Start() {
-	r := mux.NewRouter()
-	//instrumentation := muxprom.NewDefaultInstrumentation()
-	//r.Use(instrumentation.Middleware)
-	r.PathPrefix("/").Handler(cors(muxMiddleware(server)))
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), server.mux))
-}
-
-func muxMiddleware(server *Server) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), cors(server.mux)))
 }
 
 func cors(next http.Handler) http.Handler {
