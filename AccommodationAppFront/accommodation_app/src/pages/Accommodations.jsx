@@ -36,6 +36,7 @@ const Accommodations = () => {
   const OHRef = useRef();
   const numberOfGuestsRef = useRef();
   const navigate = useNavigate();
+  const [nog, setNog] = useState(2);
 
   useEffect(() => {
     fetch("http://localhost:8000/accommodation/search", {
@@ -271,6 +272,10 @@ const Accommodations = () => {
                   <div className={classes.propertyCont}>
                     <div className={classes.checkButtonContainer}>
                       <div className={classes.pricesContainer}>
+                        <h4>
+                          Average grade:
+                          {property?.accommodation?.name}
+                        </h4>
                         {numberOfGuestsRef.current.value && (
                           <h4> {numberOfGuestsRef.current.value} guests </h4>
                         )}

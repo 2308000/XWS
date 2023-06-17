@@ -4,11 +4,13 @@ import utils from "./Utils.module.css";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { useState, useRef, useEffect, useContext } from "react";
+import { useState, useRef, useEffect } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import AuthContext from "../store/auth-context";
+import { useContext } from "react";
 
 const reservations = [
   {
@@ -71,6 +73,29 @@ const reservations = [
 ];
 
 const ReservationRequests = () => {
+  const authCtx = useContext(AuthContext);
+  const [properties, setProperties] = useState();
+
+  useEffect(() => {
+    console.log(authCtx.token);
+
+    fetch("http://localhost:8000/reservation/host", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authCtx.token,
+      },
+    })
+      .then((response) => response.json())
+      .then((actualData) => {
+        console.log(actualData);
+        setProperties(actualData.reservations);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  }, []);
+
   const handleCancel = () => {};
 
   return (

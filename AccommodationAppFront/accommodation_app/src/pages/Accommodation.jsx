@@ -5,10 +5,33 @@ import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useState, useRef, useEffect, useContext } from "react";
+import { useState, useRef, useEffect } from "react";
 import Property from "../components/Property";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import AuthContext from "../store/auth-context";
+import { useContext } from "react";
 const Accommodation = () => {
+  const [accommodation, setAccommodation] = useState();
+
+  let { id } = useParams();
+  const authCtx = useContext(AuthContext);
+  useEffect(() => {
+    console.log(id);
+    fetch("http://localhost:8000/accommodation/" + id, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authCtx.token,
+      },
+    })
+      .then((response) => response.json())
+      .then((actualData) => {
+        console.log(actualData);
+        setAccommodation(actualData);
+      });
+  }, []);
+
   return (
     <div className={classes.body}>
       <br></br>
@@ -17,8 +40,12 @@ const Accommodation = () => {
           <div className={classes.imgTitle}>
             <div className={classes.image}></div>
             <div>
-              <h1>Name</h1>
-              <h3>Street, City, Country</h3>
+              <h1>{accommodation?.accommodation.name}</h1>
+              <h3>
+                {accommodation?.accommodation.location.street},{" "}
+                {accommodation?.accommodation.location.city},{" "}
+                {accommodation?.accommodation.location.country}
+              </h3>
               <h5>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
                 Molestias, nulla? Porro vitae voluptatum rem esse possimus sunt
@@ -49,35 +76,60 @@ const Accommodation = () => {
         <div>
           <div>
             <span>Wifi: </span>
-            <span> Yes</span>
+            <span>{accommodation?.accommodation.hasWifi ? "Yes" : "No"}</span>
           </div>
           <div>
             <span>Parking: </span>
-            <span> Yes</span>
+            <span>
+              {accommodation?.accommodation.hasParking ? "Yes" : "No"}
+            </span>
           </div>
           <div>
             <span>Balcony: </span>
-            <span> Yes</span>
+            <span>
+              {accommodation?.accommodation.hasBalcony ? "Yes" : "No"}
+            </span>
           </div>
           <div>
             <span>Washing machine: </span>
-            <span> Yes</span>
+            <span>
+              {accommodation?.accommodation.hasWashingMachine ? "Yes" : "No"}
+            </span>
           </div>
           <div>
             <span>Kithcen facilities: </span>
-            <span> Yes</span>
+            {accommodation?.accommodation.hasKitchen ? "Yes" : "No"}
           </div>
           <div>
             <span>Bathtub: </span>
-            <span> Yes</span>
+            {accommodation?.accommodation.hasBathtub ? "Yes" : "No"}
+          </div>
+          <div>
+            <span>Air: </span>
+            {accommodation?.accommodation.hasBathtub ? "Yes" : "No"}
           </div>
         </div>
         <h2>Reviews</h2>
+        <h2>
+          Average grade :{" "}
+          {Math.round(
+            accommodation?.accommodation.averageAccommodationGrade,
+            2
+          )}
+        </h2>
         <div>
           <div>
-            <span>ime </span>
-            <span>ocena</span>
+            <span>User </span>
+            <span>Grade </span>
+            <span>Date</span>
           </div>
+          {accommodation?.accommodation.grades.map((grade) => (
+            <div>
+              <span>{grade.guestName} </span>
+              <span>{grade.grade} </span>
+              <span>{dayjs(grade.date).format("DD-MM-YYYY")}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
