@@ -4,6 +4,7 @@ import (
 	auth "accommodation_booking/common/domain"
 	pb "accommodation_booking/common/proto/profile_service"
 	"accommodation_booking/profile_service/domain"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

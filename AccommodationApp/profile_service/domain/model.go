@@ -1,10 +1,11 @@
 package domain
 
 import (
-	"github.com/go-playground/validator"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"regexp"
 	"time"
+
+	"github.com/go-playground/validator"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Profile struct {
