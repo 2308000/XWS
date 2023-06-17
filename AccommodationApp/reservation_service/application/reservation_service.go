@@ -38,6 +38,18 @@ func (service *ReservationService) GetPending(ctx context.Context) ([]*domain.Re
 	return service.store.GetPending(ctx)
 }
 
+func (service *ReservationService) GetCanceled(ctx context.Context) ([]*domain.Reservation, error) {
+	return service.store.GetCanceled(ctx)
+}
+
+func (service *ReservationService) GetApproved(ctx context.Context) ([]*domain.Reservation, error) {
+	return service.store.GetApproved(ctx)
+}
+
+func (service *ReservationService) GetRejected(ctx context.Context) ([]*domain.Reservation, error) {
+	return service.store.GetRejected(ctx)
+}
+
 func (service *ReservationService) Create(ctx context.Context, reservation *domain.Reservation) error {
 	reservations, err := service.store.GetBetweenDates(ctx, reservation.Beginning, reservation.Ending, reservation.AccommodationId.Hex())
 	if err != nil {

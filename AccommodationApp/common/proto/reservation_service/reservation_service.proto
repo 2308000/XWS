@@ -32,6 +32,30 @@ service ReservationService{
     };
   }
 
+  rpc GetByHostPending(GetByHostInternRequest) returns(GetByHostInternResponse) {
+    option (google.api.http) = {
+      get: "/reservation/host/pending/{id}"
+    };
+  }
+
+  rpc GetByHostApproved(GetByHostInternRequest) returns(GetByHostInternResponse) {
+    option (google.api.http) = {
+      get: "/reservation/host/approved/{id}"
+    };
+  }
+
+  rpc GetByHostCanceled(GetByHostInternRequest) returns(GetByHostInternResponse) {
+    option (google.api.http) = {
+      get: "/reservation/host/canceled/{id}"
+    };
+  }
+
+  rpc GetByHostRejected(GetByHostInternRequest) returns(GetByHostInternResponse) {
+    option (google.api.http) = {
+      get: "/reservation/host/rejected/{id}"
+    };
+  }
+
   rpc GetMyReservations(GetMyReservationsRequest) returns(GetMyReservationsResponse) {
     option (google.api.http) = {
       get: "/reservation/my"
@@ -111,6 +135,14 @@ message GetByHostRequest {
 }
 
 message GetByHostResponse {
+  repeated ReservationOut reservations = 1;
+}
+
+message GetByHostInternRequest {
+  string id = 1;
+}
+
+message GetByHostInternResponse {
   repeated ReservationOut reservations = 1;
 }
 
