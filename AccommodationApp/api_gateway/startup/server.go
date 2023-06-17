@@ -8,11 +8,13 @@ import (
 	userGw "accommodation_booking/common/proto/user_service"
 	"context"
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type Server struct {
@@ -54,5 +56,55 @@ func (server *Server) initHandlers() {
 }
 
 func (server *Server) Start() {
+	r := mux.NewRouter()
+	//instrumentation := muxprom.NewDefaultInstrumentation()
+	//r.Use(instrumentation.Middleware)
+	r.PathPrefix("/").Handler(cors(muxMiddleware(server)))
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), server.mux))
+}
+
+func muxMiddleware(server *Server) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
+}
+
+func cors(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		h := w.Header()
+
+		if r.Header.Get("Origin") != "" {
+			h.Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+		}
+		//h.Set("Access-Control-Allow-Origin", "https://localhost:7777")
+
+		if r.Method == http.MethodOptions {
+			h.Set("Access-Control-Allow-Methods", strings.Join(
+				[]string{
+					http.MethodOptions,
+					http.MethodGet,
+					http.MethodPut,
+					http.MethodHead,
+					http.MethodPost,
+					http.MethodDelete,
+					http.MethodPatch,
+					http.MethodTrace,
+				}, ", ",
+			))
+
+			h.Set("Access-Control-Allow-Headers", strings.Join(
+				[]string{
+					"Access-Control-Allow-Headers",
+					"Origin",
+					"X-Requested-With",
+					"Content-Type",
+					"Accept",
+					"Authorization",
+					"Location",
+				}, ", ",
+			))
+
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }
