@@ -60,6 +60,11 @@ const Accommodations = () => {
   }, []);
 
   const searchHandler = () => {
+    if (!numberOfGuestsRef.current.value) {
+      alert("Please enter number of guests!");
+      return;
+    }
+
     fetch("http://localhost:8000/accommodation/search", {
       method: "POST",
       headers: {
@@ -84,6 +89,11 @@ const Accommodations = () => {
   };
 
   const filterHandler = () => {
+    if (!minPriceRef.current.value || !maxPriceRef.current.value) {
+      alert("Please enter price range!");
+      return;
+    }
+
     fetch("http://localhost:8000/accommodation/filter", {
       method: "POST",
       headers: {
@@ -238,6 +248,11 @@ const Accommodations = () => {
                   <div className={classes.image}></div>
                   <div>
                     <h2>{property.accommodation.name}</h2>
+                    <h4>
+                      {property.accommodation.location.street},{" "}
+                      {property.accommodation.location.city},{" "}
+                      {property.accommodation.location.country}
+                    </h4>
                     <br></br>
                     <h5>{property?.accommodation.hasWifi && "Wifi"}</h5>
                     <h5>
@@ -250,6 +265,9 @@ const Accommodations = () => {
                   <div className={classes.propertyCont}>
                     <div className={classes.checkButtonContainer}>
                       <div className={classes.pricesContainer}>
+                        {numberOfGuestsRef.current.value && (
+                          <h4> {numberOfGuestsRef.current.value} guests </h4>
+                        )}
                         <h4>Price per night: {property.pricePerNight}</h4>
                         <h4>Total price: {property.totalPrice}</h4>
                         <h4>{property.Name}</h4>

@@ -121,6 +121,7 @@ const Register = () => {
                   className={classes.input}
                   value={pw}
                   onChange={changePwHandler}
+                  type="password"
                 ></input>
               </div>
               <div className={classes.span}>
@@ -129,6 +130,7 @@ const Register = () => {
                   className={classes.input}
                   value={rePw}
                   onChange={changeRePwHandler}
+                  type="password"
                 ></input>
               </div>
             </div>

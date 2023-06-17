@@ -75,7 +75,11 @@ const Login = () => {
           </div>
           <div className={classes.span}>
             <label>Password</label>
-            <input className={classes.input} ref={pwRef}></input>
+            <input
+              className={classes.input}
+              ref={pwRef}
+              type="password"
+            ></input>
           </div>
           <div className={classes.keepLog}>
             <input type="checkbox" ref={permaRef}></input>
