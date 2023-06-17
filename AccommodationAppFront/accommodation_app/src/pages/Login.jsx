@@ -14,33 +14,37 @@ const Login = () => {
   const loginHandler = () => {
     event.preventDefault();
 
-    fetch("https://localhost:5000/api/User/login", {
+    fetch("http://localhost:8000/user/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: emailRef.current.value,
+        username: emailRef.current.value,
         password: pwRef.current.value,
-        isLoginPermanent: permaRef.current.checked,
       }),
     })
       .then((res) => {
         if (res.ok) {
-          console.log("c");
           return res.json();
         }
       })
       .then((data) => {
         console.log(data);
-        const parsedJWT = parseJwt(data.token);
-        authCtx.login(parsedJWT.role, parsedJWT.email, data.token);
+        const parsedJWT = parseJwt(data.accessToken);
+        console.log(parsedJWT);
+        authCtx.login(
+          parsedJWT.userId,
+          parsedJWT.role,
+          parsedJWT.username,
+          data.accessToken
+        );
         setTimeout(() => {
           navigateLogin(parsedJWT.role);
         }, 100);
       })
       .catch((error) => {
-        alert("Wrong credentials!");
+        alert("Wrong credentials");
       });
   };
 
@@ -54,10 +58,10 @@ const Login = () => {
   }
 
   const navigateLogin = (role) => {
-    if (role == "ADMIN") {
-      navigate("/admin-flights", { replace: true });
+    if (role == "host") {
+      navigate("/my-accommodations", { replace: true });
     } else {
-      navigate("/flights", { replace: true });
+      navigate("/accommodations", { replace: true });
     }
   };
 
