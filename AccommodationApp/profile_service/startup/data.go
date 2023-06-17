@@ -19,30 +19,15 @@ var profiles = []*domain.Profile{
 		Gender:      "male",
 	},
 	{
-		Id:            getObjectId("62706d1b623b3da748f63fa1"),
-		Username:      "host",
-		FirstName:     "Dane",
-		LastName:      "Milisic",
-		FullName:      "DaneMilisic",
-		DateOfBirth:   time.Time{},
-		PhoneNumber:   "063123123",
-		Email:         "host@gmail.com",
-		Gender:        "male",
-		IsOutstanding: true,
-		AccommodationGrades: []domain.Grade{
-			{
-				Id:    getObjectId("55506d1b724b3da748f63fe3"),
-				Grade: 4.8,
-				Date:  time.Date(2023, time.June, 10, 0, 0, 0, 0, time.Local),
-			},
-		},
-		HostGrades: []domain.Grade{
-			{
-				Id:    getObjectId("62706d1b623b3da748f63fa1"),
-				Grade: 4.9,
-				Date:  time.Date(2023, time.June, 11, 0, 0, 0, 0, time.Local),
-			},
-		},
+		Id:          getObjectId("62706d1b623b3da748f63fa1"),
+		Username:    "host",
+		FirstName:   "Dane",
+		LastName:    "Milisic",
+		FullName:    "DaneMilisic",
+		DateOfBirth: time.Time{},
+		PhoneNumber: "063123123",
+		Email:       "host@gmail.com",
+		Gender:      "male",
 	},
 	{
 		Id:                    getObjectId("55306d1b623b3da748f63fa1"),
@@ -55,30 +40,6 @@ var profiles = []*domain.Profile{
 		Email:                 "guest@gmail.com",
 		Gender:                "male",
 		ReservationsCancelled: 2,
-		AccommodationGrades: []domain.Grade{
-			{
-				Id:    getObjectId("55506d1b724b3da748f63fe3"),
-				Grade: 4.8,
-				Date:  time.Date(2023, time.June, 10, 0, 0, 0, 0, time.Local),
-			},
-			{
-				Id:    getObjectId("99906d1b724b3da748f63fe3"),
-				Grade: 4.5,
-				Date:  time.Date(2023, time.May, 10, 0, 0, 0, 0, time.Local),
-			},
-		},
-		HostGrades: []domain.Grade{
-			{
-				Id:    getObjectId("62706d1b623b3da748f63fa1"),
-				Grade: 4.9,
-				Date:  time.Date(2023, time.June, 11, 0, 0, 0, 0, time.Local),
-			},
-			{
-				Id:    getObjectId("62706d1b623b4da748f63bc3"),
-				Grade: 4.3,
-				Date:  time.Date(2023, time.May, 11, 0, 0, 0, 0, time.Local),
-			},
-		},
 	},
 	{
 		Id:            getObjectId("62706d1b623b4da748f63bc3"),
@@ -91,20 +52,6 @@ var profiles = []*domain.Profile{
 		Email:         "host2@gmail.com",
 		Gender:        "male",
 		IsOutstanding: false,
-		AccommodationGrades: []domain.Grade{
-			{
-				Id:    getObjectId("99906d1b724b3da748f63fe3"),
-				Grade: 4.5,
-				Date:  time.Date(2023, time.May, 10, 0, 0, 0, 0, time.Local),
-			},
-		},
-		HostGrades: []domain.Grade{
-			{
-				Id:    getObjectId("62706d1b623b4da748f63bc3"),
-				Grade: 4.3,
-				Date:  time.Date(2023, time.May, 11, 0, 0, 0, 0, time.Local),
-			},
-		},
 	},
 }
 

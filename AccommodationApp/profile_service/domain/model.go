@@ -21,8 +21,6 @@ type Profile struct {
 	Token                 string             `bson:"token"`
 	ReservationsCancelled int                `bson:"reservationsCancelled"`
 	IsOutstanding         bool               `bson:"isOutstanding"`
-	AccommodationGrades   []Grade            `bson:"accommodationGrades"`
-	HostGrades            []Grade            `bson:"hostGrades"`
 }
 
 type Grade struct {

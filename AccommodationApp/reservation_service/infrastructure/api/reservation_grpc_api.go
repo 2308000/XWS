@@ -449,8 +449,6 @@ func (handler *ReservationHandler) Cancel(ctx context.Context, request *pb.Cance
 				Token:                 response.Profile.Token,
 				ReservationsCancelled: response.Profile.ReservationsCancelled + 1,
 				IsOutstanding:         response.Profile.IsOutstanding,
-				AccommodationGrades:   response.Profile.AccommodationGrades,
-				HostGrades:            response.Profile.HostGrades,
 			},
 		})
 		if err != nil {
