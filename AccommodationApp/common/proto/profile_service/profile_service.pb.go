@@ -937,7 +937,7 @@ func (*AccommodationGrade) Descriptor() ([]byte, []int) {
 
 func (x *AccommodationGrade) GetAccommodationId() string {
 	if x != nil {
-		return x.Id
+		return x.AccommodationId
 	}
 	return ""
 }
