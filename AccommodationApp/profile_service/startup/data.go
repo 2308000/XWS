@@ -10,13 +10,13 @@ import (
 var profiles = []*domain.Profile{
 	{
 		Id:          getObjectId("62706d1b624b3da748f63fe3"),
-		Username:    "admin",
+		Username:    "guest2",
 		FirstName:   "Nikola",
 		LastName:    "Vukic",
 		FullName:    "NikolaVukic",
 		DateOfBirth: time.Time{},
 		PhoneNumber: "0665762600",
-		Email:       "admin@gmail.com",
+		Email:       "guest2@gmail.com",
 		Gender:      "male",
 	},
 	{

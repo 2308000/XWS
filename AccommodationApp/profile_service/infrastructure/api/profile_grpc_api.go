@@ -1,41 +1,117 @@
 package api
 
 import (
+	grade "accommodation_booking/common/proto/grade_service"
 	pb "accommodation_booking/common/proto/profile_service"
+	reservation "accommodation_booking/common/proto/reservation_service"
+	user "accommodation_booking/common/proto/user_service"
 	"accommodation_booking/profile_service/application"
 	"accommodation_booking/profile_service/domain"
 	"context"
-	"strings"
-	"time"
-
 	"github.com/go-playground/validator"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"strings"
+	"time"
 )
 
 type ProfileHandler struct {
 	pb.UnimplementedProfileServiceServer
-	service  *application.ProfileService
-	validate *validator.Validate
+	service           *application.ProfileService
+	validate          *validator.Validate
+	gradeClient       grade.GradeServiceClient
+	reservationClient reservation.ReservationServiceClient
+	userClient        user.UserServiceClient
 }
 
-func NewProfileHandler(service *application.ProfileService) *ProfileHandler {
+func NewProfileHandler(service *application.ProfileService, reservationClient reservation.ReservationServiceClient, gradeClient grade.GradeServiceClient, userClient user.UserServiceClient) *ProfileHandler {
 	return &ProfileHandler{
-		service:  service,
-		validate: domain.NewProfileValidator(),
+		service:           service,
+		validate:          domain.NewProfileValidator(),
+		reservationClient: reservationClient,
+		gradeClient:       gradeClient,
+		userClient:        userClient,
 	}
 }
 
 func (handler *ProfileHandler) Get(ctx context.Context, request *pb.GetRequest) (*pb.GetResponse, error) {
 	profileId := request.Id
-	Profile, err := handler.service.Get(ctx, profileId)
+	profile, err := handler.service.Get(ctx, profileId)
+	user, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: request.Id})
 	if err != nil {
 		return nil, err
 	}
-	ProfilePb := mapProfileToPb(Profile)
+	profilePb := &pb.Profile{
+		Id:        request.Id,
+		Username:  profile.Username,
+		FirstName: profile.Email,
+		LastName:  profile.LastName,
+		Email:     profile.Email,
+		Address: &pb.Address{
+			Country: profile.Address.Country,
+			City:    profile.Address.City,
+			Street:  profile.Address.Street,
+		},
+		DateOfBirth:           timestamppb.New(profile.DateOfBirth),
+		PhoneNumber:           profile.PhoneNumber,
+		Gender:                profile.Gender,
+		Token:                 profile.Token,
+		ReservationsCancelled: -1,
+		IsOutstanding:         false,
+		HostGrades:            []*pb.HostGrade{},
+		AccommodationGrades:   []*pb.AccommodationGrade{},
+		AverageHostGrade:      -1,
+	}
+	role := user.User.Role
+	if role == "guest" {
+		profilePb.ReservationsCancelled = int32(profile.ReservationsCancelled)
+		hostGrades, err := handler.gradeClient.GetHostsGradedByGuest(ctx, &grade.GetGradeRequest{Id: request.Id})
+		if err != nil {
+			return nil, err
+		}
+		for _, hostGrade := range hostGrades.Grades {
+			pbGrade := pb.HostGrade{
+				HostName: hostGrade.GradedName,
+				Grade:    hostGrade.Grade,
+				Date:     hostGrade.Date,
+			}
+			profilePb.HostGrades = append(profilePb.HostGrades, &pbGrade)
+		}
+		accommodationGrades, err := handler.gradeClient.GetAccommodationsGradedByGuest(ctx, &grade.GetGradeRequest{Id: request.Id})
+		if err != nil {
+			return nil, err
+		}
+		for _, accommodationGrade := range accommodationGrades.Grades {
+			pbGrade := pb.AccommodationGrade{
+				AccommodationName: accommodationGrade.GradedName,
+				Grade:             accommodationGrade.Grade,
+				Date:              accommodationGrade.Date,
+			}
+			profilePb.AccommodationGrades = append(profilePb.AccommodationGrades, &pbGrade)
+		}
+	} else {
+		hostGrades, err := handler.gradeClient.GetByGraded(ctx, &grade.GetGradeRequest{Id: request.Id})
+		if err != nil {
+			return nil, err
+		}
+		totalSum := 0.0
+		numOfGrades := 0
+		for _, hostGrade := range hostGrades.Grades {
+			totalSum = totalSum + float64(hostGrade.Grade)
+			numOfGrades = numOfGrades + 1
+			pbGrade := pb.HostGrade{
+				HostName: hostGrade.GradedName,
+				Grade:    hostGrade.Grade,
+				Date:     hostGrade.Date,
+			}
+			profilePb.HostGrades = append(profilePb.HostGrades, &pbGrade)
+		}
+		averageGrade := totalSum / float64(numOfGrades)
+		profilePb.AverageHostGrade = float32(averageGrade)
+	}
 	response := &pb.GetResponse{
-		Profile: ProfilePb,
+		Profile: profilePb,
 	}
 	return response, nil
 }

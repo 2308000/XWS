@@ -229,6 +229,230 @@ func (handler *ReservationHandler) GetByHost(ctx context.Context, request *pb.Ge
 	return response, nil
 }
 
+func (handler *ReservationHandler) GetByHostPending(ctx context.Context, request *pb.GetByHostInternRequest) (*pb.GetByHostInternResponse, error) {
+	allReservations, err := handler.service.GetPending(ctx)
+	if err != nil {
+		return nil, err
+	}
+	Reservations := []*domain.Reservation{}
+	for _, res := range allReservations {
+		acc, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: res.AccommodationId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		if acc.Accommodation.Host.HostId == request.Id {
+			Reservations = append(Reservations, res)
+		}
+	}
+	response := &pb.GetByHostInternResponse{
+		Reservations: []*pb.ReservationOut{},
+	}
+	for _, Reservation := range Reservations {
+		foundUser, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: Reservation.UserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		foundProfile, err := handler.profileClient.Get(ctx, &profile.GetRequest{Id: Reservation.UserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		userDetails := &pb.UserDetails{
+			Id:                  foundUser.User.Id,
+			Username:            foundUser.User.Username,
+			CancellationCounter: foundProfile.Profile.ReservationsCancelled,
+		}
+
+		foundAccommodation, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: Reservation.AccommodationId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		accommodationDetails := &pb.AccommodationDetails{
+			Id:   foundAccommodation.Accommodation.Id,
+			Name: foundAccommodation.Accommodation.Name,
+		}
+		current := &pb.ReservationOut{
+			Id:                Reservation.Id.Hex(),
+			Accommodation:     accommodationDetails,
+			User:              userDetails,
+			Beginning:         timestamppb.New(Reservation.Beginning),
+			Ending:            timestamppb.New(Reservation.Ending),
+			Guests:            Reservation.Guests,
+			ReservationStatus: int32(Reservation.ReservationStatus),
+		}
+		response.Reservations = append(response.Reservations, current)
+
+	}
+	return response, nil
+}
+
+func (handler *ReservationHandler) GetByHostCanceled(ctx context.Context, request *pb.GetByHostInternRequest) (*pb.GetByHostInternResponse, error) {
+	allReservations, err := handler.service.GetCanceled(ctx)
+	if err != nil {
+		return nil, err
+	}
+	Reservations := []*domain.Reservation{}
+	for _, res := range allReservations {
+		acc, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: res.AccommodationId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		if acc.Accommodation.Host.HostId == request.Id {
+			Reservations = append(Reservations, res)
+		}
+	}
+	response := &pb.GetByHostInternResponse{
+		Reservations: []*pb.ReservationOut{},
+	}
+	for _, Reservation := range Reservations {
+		foundUser, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: Reservation.UserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		foundProfile, err := handler.profileClient.Get(ctx, &profile.GetRequest{Id: Reservation.UserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		userDetails := &pb.UserDetails{
+			Id:                  foundUser.User.Id,
+			Username:            foundUser.User.Username,
+			CancellationCounter: foundProfile.Profile.ReservationsCancelled,
+		}
+
+		foundAccommodation, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: Reservation.AccommodationId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		accommodationDetails := &pb.AccommodationDetails{
+			Id:   foundAccommodation.Accommodation.Id,
+			Name: foundAccommodation.Accommodation.Name,
+		}
+		current := &pb.ReservationOut{
+			Id:                Reservation.Id.Hex(),
+			Accommodation:     accommodationDetails,
+			User:              userDetails,
+			Beginning:         timestamppb.New(Reservation.Beginning),
+			Ending:            timestamppb.New(Reservation.Ending),
+			Guests:            Reservation.Guests,
+			ReservationStatus: int32(Reservation.ReservationStatus),
+		}
+		response.Reservations = append(response.Reservations, current)
+
+	}
+	return response, nil
+}
+
+func (handler *ReservationHandler) GetByHostApproved(ctx context.Context, request *pb.GetByHostInternRequest) (*pb.GetByHostInternResponse, error) {
+	allReservations, err := handler.service.GetApproved(ctx)
+	if err != nil {
+		return nil, err
+	}
+	Reservations := []*domain.Reservation{}
+	for _, res := range allReservations {
+		acc, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: res.AccommodationId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		if acc.Accommodation.Host.HostId == request.Id {
+			Reservations = append(Reservations, res)
+		}
+	}
+	response := &pb.GetByHostInternResponse{
+		Reservations: []*pb.ReservationOut{},
+	}
+	for _, Reservation := range Reservations {
+		foundUser, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: Reservation.UserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		foundProfile, err := handler.profileClient.Get(ctx, &profile.GetRequest{Id: Reservation.UserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		userDetails := &pb.UserDetails{
+			Id:                  foundUser.User.Id,
+			Username:            foundUser.User.Username,
+			CancellationCounter: foundProfile.Profile.ReservationsCancelled,
+		}
+
+		foundAccommodation, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: Reservation.AccommodationId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		accommodationDetails := &pb.AccommodationDetails{
+			Id:   foundAccommodation.Accommodation.Id,
+			Name: foundAccommodation.Accommodation.Name,
+		}
+		current := &pb.ReservationOut{
+			Id:                Reservation.Id.Hex(),
+			Accommodation:     accommodationDetails,
+			User:              userDetails,
+			Beginning:         timestamppb.New(Reservation.Beginning),
+			Ending:            timestamppb.New(Reservation.Ending),
+			Guests:            Reservation.Guests,
+			ReservationStatus: int32(Reservation.ReservationStatus),
+		}
+		response.Reservations = append(response.Reservations, current)
+
+	}
+	return response, nil
+}
+
+func (handler *ReservationHandler) GetByHostRejected(ctx context.Context, request *pb.GetByHostInternRequest) (*pb.GetByHostInternResponse, error) {
+	allReservations, err := handler.service.GetRejected(ctx)
+	if err != nil {
+		return nil, err
+	}
+	Reservations := []*domain.Reservation{}
+	for _, res := range allReservations {
+		acc, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: res.AccommodationId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		if acc.Accommodation.Host.HostId == request.Id {
+			Reservations = append(Reservations, res)
+		}
+	}
+	response := &pb.GetByHostInternResponse{
+		Reservations: []*pb.ReservationOut{},
+	}
+	for _, Reservation := range Reservations {
+		foundUser, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: Reservation.UserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		foundProfile, err := handler.profileClient.Get(ctx, &profile.GetRequest{Id: Reservation.UserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		userDetails := &pb.UserDetails{
+			Id:                  foundUser.User.Id,
+			Username:            foundUser.User.Username,
+			CancellationCounter: foundProfile.Profile.ReservationsCancelled,
+		}
+
+		foundAccommodation, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: Reservation.AccommodationId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		accommodationDetails := &pb.AccommodationDetails{
+			Id:   foundAccommodation.Accommodation.Id,
+			Name: foundAccommodation.Accommodation.Name,
+		}
+		current := &pb.ReservationOut{
+			Id:                Reservation.Id.Hex(),
+			Accommodation:     accommodationDetails,
+			User:              userDetails,
+			Beginning:         timestamppb.New(Reservation.Beginning),
+			Ending:            timestamppb.New(Reservation.Ending),
+			Guests:            Reservation.Guests,
+			ReservationStatus: int32(Reservation.ReservationStatus),
+		}
+		response.Reservations = append(response.Reservations, current)
+
+	}
+	return response, nil
+}
+
 func (handler *ReservationHandler) GetMyReservations(ctx context.Context, request *pb.GetMyReservationsRequest) (*pb.GetMyReservationsResponse, error) {
 	userId := ctx.Value("userId").(string)
 	Reservations, err := handler.service.GetForUser(ctx, userId)

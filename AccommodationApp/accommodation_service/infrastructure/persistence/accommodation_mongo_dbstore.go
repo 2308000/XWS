@@ -7,7 +7,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log"
 	"time"
 )
 
@@ -125,7 +124,6 @@ func (store *AccommodationMongoDBStore) Create(ctx context.Context, accommodatio
 		return nil, err
 	}
 	accommodation.Id = result.InsertedID.(primitive.ObjectID)
-	log.Println(accommodation.Id)
 	return accommodation, nil
 }
 

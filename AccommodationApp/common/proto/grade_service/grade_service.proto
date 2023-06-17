@@ -1,0 +1,116 @@
+syntax = "proto3";
+
+option go_package = "grade_booking/common/grade";
+
+package profile;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+
+service GradeService{
+
+  rpc Get(GetGradeRequest) returns(GetGradeResponse) {
+    option (google.api.http) = {
+      get: "/grade/{id}"
+    };
+  }
+
+  rpc GetHostsGradedByGuest(GetGradeRequest) returns(GetAllGradesResponse) {
+    option (google.api.http) = {
+      get: "/grade/guest/{id}/hosts"
+    };
+  }
+
+  rpc GetAccommodationsGradedByGuest(GetGradeRequest) returns(GetAllGradesResponse) {
+    option (google.api.http) = {
+      get: "/grade/guest/{id}/accommodations"
+    };
+  }
+
+  rpc GetByGraded(GetGradeRequest) returns(GetAllGradesResponse) {
+    option (google.api.http) = {
+      get: "/grade/graded/{id}"
+    };
+  }
+
+  rpc GetAll(GetAllGradesRequest) returns(GetAllGradesResponse) {
+    option (google.api.http) = {
+      get: "/grade"
+    };
+  }
+
+  rpc Create(CreateGradeRequest) returns(CreateGradeResponse) {
+    option (google.api.http) = {
+      post: "/grade"
+      body: "grade"
+    };
+  }
+  rpc Update(UpdateGradeRequest) returns(UpdateGradeResponse) {
+    option (google.api.http) = {
+      put: "/grade/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete(DeleteGradeRequest) returns(DeleteGradeResponse) {
+    option (google.api.http) = {
+      delete: "/grade/{id}"
+    };
+  }
+}
+
+message GetGradeRequest {
+  string id = 1;
+}
+
+message GetGradeResponse {
+  Grade grade = 1;
+}
+
+message GetAllGradesRequest {
+}
+
+message GetAllGradesResponse {
+  repeated Grade grades = 1;
+}
+
+message CreateGradeRequest {
+  NewGrade grade = 1;
+}
+
+message CreateGradeResponse {
+  Grade grade = 1;
+}
+
+message UpdateGradeRequest {
+  string id = 1;
+  float value = 2;
+}
+
+message UpdateGradeResponse {
+  Grade grade = 1;
+}
+
+message DeleteGradeRequest {
+  string id = 1;
+}
+
+message DeleteGradeResponse {
+}
+
+message Grade {
+  string id = 1;
+  string guestId = 2;
+  string gradedName = 3;
+  float grade = 4;
+  google.protobuf.Timestamp date = 5;
+  bool isHostGrade = 6;
+}
+
+message NewGrade {
+  string guestId = 1;
+  string gradedId = 2;
+  float value = 3;
+  bool isHostGrade = 4;
+}

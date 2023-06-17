@@ -187,6 +187,14 @@ message Accommodation {
   int32 maxNumberOfGuests = 14;
   repeated AvailableDate availability = 15;
   bool isReservationAcceptenceManual = 16;
+  repeated AccommodationGrade2 grades = 17;
+  float averageAccommodationGrade = 18;
+}
+
+message AccommodationGrade2 {
+  string guestName = 2;
+  float grade = 3;
+  google.protobuf.Timestamp date = 4;
 }
 
 message AvailableDate {

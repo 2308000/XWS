@@ -2,7 +2,11 @@ package startup
 
 import (
 	"accommodation_booking/common/auth"
+	"accommodation_booking/common/client"
+	grade "accommodation_booking/common/proto/grade_service"
 	profile "accommodation_booking/common/proto/profile_service"
+	reservation "accommodation_booking/common/proto/reservation_service"
+	user "accommodation_booking/common/proto/user_service"
 	saga "accommodation_booking/common/saga/messaging"
 	"accommodation_booking/common/saga/messaging/nats"
 	"accommodation_booking/profile_service/application"
@@ -38,7 +42,8 @@ func accessibleRoles() map[string][]string {
 	const profileServicePath = "/profile.ProfileService/"
 
 	return map[string][]string{
-		profileServicePath + "GetAll": {"user", "host"},
+		profileServicePath + "GetAll": {"guest", "host"},
+		profileServicePath + "Get":    {"guest", "host"},
 	}
 }
 
@@ -52,8 +57,23 @@ func (server *Server) Start() {
 	replySubscriber := server.initSubscriber(server.config.UpdateProfileReplySubject, QueueGroup)
 	updateProfileOrchestrator := server.initUpdateProfileOrchestrator(commandPublisher, replySubscriber)
 
+	reservationClient, err := client.NewReservationClient(fmt.Sprintf("%s:%s", server.config.ReservationHost, server.config.ReservationPort))
+	if err != nil {
+		log.Fatalf("PCF: %v", err)
+	}
+
+	gradeClient, err := client.NewGradeClient(fmt.Sprintf("%s:%s", server.config.GradeHost, server.config.GradePort))
+	if err != nil {
+		log.Fatalf("PCF: %v", err)
+	}
+
+	userClient, err := client.NewUserClient(fmt.Sprintf("%s:%s", server.config.UserHost, server.config.UserPort))
+	if err != nil {
+		log.Fatalf("PCF: %v", err)
+	}
+
 	profileService := server.initProfileService(profileStore, updateProfileOrchestrator)
-	profileHandler := server.initProfileHandler(profileService)
+	profileHandler := server.initProfileHandler(profileService, reservationClient, gradeClient, userClient)
 
 	commandSubscriber := server.initSubscriber(server.config.CreateProfileCommandSubject, QueueGroup)
 	replyPublisher := server.initPublisher(server.config.CreateProfileReplySubject)
@@ -105,8 +125,8 @@ func (server *Server) initMongoClient() *mongo.Client {
 	return client
 }
 
-func (server *Server) initProfileHandler(service *application.ProfileService) *api.ProfileHandler {
-	return api.NewProfileHandler(service)
+func (server *Server) initProfileHandler(service *application.ProfileService, reservationClient reservation.ReservationServiceClient, gradeClient grade.GradeServiceClient, userClient user.UserServiceClient) *api.ProfileHandler {
+	return api.NewProfileHandler(service, reservationClient, gradeClient, userClient)
 }
 
 func (server *Server) initProfileStore(client *mongo.Client) domain.ProfileStore {
