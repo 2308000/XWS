@@ -8,7 +8,6 @@ import (
 	userGw "accommodation_booking/common/proto/user_service"
 	"context"
 	"fmt"
-	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -56,15 +55,7 @@ func (server *Server) initHandlers() {
 }
 
 func (server *Server) Start() {
-	r := mux.NewRouter()
-	//instrumentation := muxprom.NewDefaultInstrumentation()
-	//r.Use(instrumentation.Middleware)
-	r.PathPrefix("/").Handler(cors(muxMiddleware(server)))
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), server.mux))
-}
-
-func muxMiddleware(server *Server) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), cors(server.mux)))
 }
 
 func cors(next http.Handler) http.Handler {
