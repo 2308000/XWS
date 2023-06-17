@@ -121,18 +121,19 @@ message Profile {
   bool isOutstanding = 12;
   repeated AccommodationGrade accommodationGrades = 13;
   repeated HostGrade hostGrades = 14;
+  float averageHostGrade = 15;
 }
 
 message HostGrade {
-  string hostId = 1;
-  float grade = 2;
-  google.protobuf.Timestamp date = 3;
+  string hostName = 2;
+  float grade = 3;
+  google.protobuf.Timestamp date = 4;
 }
 
 message AccommodationGrade {
-  string accommodationId = 1;
-  float grade = 2;
-  google.protobuf.Timestamp date = 3;
+  string accommodationName = 2;
+  float grade = 3;
+  google.protobuf.Timestamp date = 4;
 }
 
 message Address {

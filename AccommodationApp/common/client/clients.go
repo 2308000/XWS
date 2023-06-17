@@ -2,6 +2,7 @@ package client
 
 import (
 	pbAccommodation "accommodation_booking/common/proto/accommodation_service"
+	pbGrade "accommodation_booking/common/proto/grade_service"
 	pbProfile "accommodation_booking/common/proto/profile_service"
 	pbReservation "accommodation_booking/common/proto/reservation_service"
 	pbUser "accommodation_booking/common/proto/user_service"
@@ -57,5 +58,17 @@ func NewReservationClient(address string) (pbReservation.ReservationServiceClien
 		return nil, err
 	}
 	client := pbReservation.NewReservationServiceClient(conn)
+	return client, nil
+}
+
+func NewGradeClient(address string) (pbGrade.GradeServiceClient, error) {
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*30)
+	defer cancel()
+	conn, err := grpc.DialContext(ctx, address, opts...)
+	if err != nil {
+		return nil, err
+	}
+	client := pbGrade.NewGradeServiceClient(conn)
 	return client, nil
 }

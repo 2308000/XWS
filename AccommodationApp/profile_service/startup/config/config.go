@@ -10,6 +10,12 @@ type Config struct {
 	Port                        string
 	ProfileDBHost               string
 	ProfileDBPort               string
+	ReservationHost             string
+	ReservationPort             string
+	GradeHost                   string
+	GradePort                   string
+	UserHost                    string
+	UserPort                    string
 	NatsHost                    string
 	NatsPort                    string
 	NatsUser                    string
@@ -29,6 +35,12 @@ func NewConfig() *Config {
 		Port:                        os.Getenv("PROFILE_SERVICE_PORT"),
 		ProfileDBHost:               os.Getenv("PROFILE_DB_HOST"),
 		ProfileDBPort:               os.Getenv("PROFILE_DB_PORT"),
+		ReservationHost:             os.Getenv("RESERVATION_SERVICE_HOST"),
+		ReservationPort:             os.Getenv("RESERVATION_SERVICE_PORT"),
+		GradeHost:                   os.Getenv("GRADE_SERVICE_HOST"),
+		GradePort:                   os.Getenv("GRADE_SERVICE_PORT"),
+		UserHost:                    os.Getenv("USER_SERVICE_HOST"),
+		UserPort:                    os.Getenv("USER_SERVICE_PORT"),
 		NatsHost:                    os.Getenv("NATS_HOST"),
 		NatsPort:                    os.Getenv("NATS_PORT"),
 		NatsUser:                    os.Getenv("NATS_USER"),

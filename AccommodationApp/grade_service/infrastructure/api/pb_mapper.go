@@ -13,11 +13,12 @@ func mapGradeToPb(grade *domain.Grade) *pb.Grade {
 	primitive := grade.Id.Hex()
 	id = &primitive
 	pbGrade := &pb.Grade{
-		Id:       *id,
-		GuestId:  grade.GuestId.Hex(),
-		GradedId: grade.GradedId.Hex(),
-		Grade:    grade.Grade,
-		Date:     timestamppb.New(grade.Date),
+		Id:          *id,
+		GuestId:     grade.GuestId.Hex(),
+		GradedName:  grade.GradedName,
+		Grade:       grade.Grade,
+		Date:        timestamppb.New(grade.Date),
+		IsHostGrade: grade.IsHostGrade,
 	}
 
 	return pbGrade
@@ -25,11 +26,12 @@ func mapGradeToPb(grade *domain.Grade) *pb.Grade {
 
 func mapPbToGrade(pbGrade *pb.Grade) *domain.Grade {
 	grade := &domain.Grade{
-		Id:       getObjectId(pbGrade.Id),
-		GuestId:  getObjectId(pbGrade.GuestId),
-		GradedId: getObjectId(pbGrade.GradedId),
-		Grade:    pbGrade.Grade,
-		Date:     pbGrade.Date.AsTime(),
+		Id:          getObjectId(pbGrade.Id),
+		GuestId:     getObjectId(pbGrade.GuestId),
+		GradedName:  pbGrade.GradedName,
+		Grade:       pbGrade.Grade,
+		Date:        pbGrade.Date.AsTime(),
+		IsHostGrade: pbGrade.IsHostGrade,
 	}
 
 	return grade

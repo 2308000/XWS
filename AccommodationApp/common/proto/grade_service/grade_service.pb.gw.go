@@ -83,7 +83,7 @@ func local_request_GradeService_Get_0(ctx context.Context, marshaler runtime.Mar
 
 }
 
-func request_GradeService_GetByGuest_0(ctx context.Context, marshaler runtime.Marshaler, client GradeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_GradeService_GetHostsGradedByGuest_0(ctx context.Context, marshaler runtime.Marshaler, client GradeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetGradeRequest
 	var metadata runtime.ServerMetadata
 
@@ -104,12 +104,12 @@ func request_GradeService_GetByGuest_0(ctx context.Context, marshaler runtime.Ma
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
-	msg, err := client.GetByGuest(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.GetHostsGradedByGuest(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_GradeService_GetByGuest_0(ctx context.Context, marshaler runtime.Marshaler, server GradeServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_GradeService_GetHostsGradedByGuest_0(ctx context.Context, marshaler runtime.Marshaler, server GradeServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetGradeRequest
 	var metadata runtime.ServerMetadata
 
@@ -130,7 +130,59 @@ func local_request_GradeService_GetByGuest_0(ctx context.Context, marshaler runt
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
-	msg, err := server.GetByGuest(ctx, &protoReq)
+	msg, err := server.GetHostsGradedByGuest(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+func request_GradeService_GetAccommodationsGradedByGuest_0(ctx context.Context, marshaler runtime.Marshaler, client GradeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetGradeRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+
+	protoReq.Id, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+
+	msg, err := client.GetAccommodationsGradedByGuest(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_GradeService_GetAccommodationsGradedByGuest_0(ctx context.Context, marshaler runtime.Marshaler, server GradeServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetGradeRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+
+	protoReq.Id, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+
+	msg, err := server.GetAccommodationsGradedByGuest(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -389,19 +441,19 @@ func RegisterGradeServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 
 	})
 
-	mux.Handle("GET", pattern_GradeService_GetByGuest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_GradeService_GetHostsGradedByGuest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.GradeService/GetByGuest", runtime.WithHTTPPathPattern("/grade/guest/{id}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.GradeService/GetHostsGradedByGuest", runtime.WithHTTPPathPattern("/grade/guest/{id}/hosts"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_GradeService_GetByGuest_0(ctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_GradeService_GetHostsGradedByGuest_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -409,7 +461,31 @@ func RegisterGradeServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 			return
 		}
 
-		forward_GradeService_GetByGuest_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_GradeService_GetHostsGradedByGuest_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_GradeService_GetAccommodationsGradedByGuest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.GradeService/GetAccommodationsGradedByGuest", runtime.WithHTTPPathPattern("/grade/guest/{id}/accommodations"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_GradeService_GetAccommodationsGradedByGuest_0(ctx, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_GradeService_GetAccommodationsGradedByGuest_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -595,24 +671,45 @@ func RegisterGradeServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 
 	})
 
-	mux.Handle("GET", pattern_GradeService_GetByGuest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_GradeService_GetHostsGradedByGuest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.GradeService/GetByGuest", runtime.WithHTTPPathPattern("/grade/guest/{id}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.GradeService/GetHostsGradedByGuest", runtime.WithHTTPPathPattern("/grade/guest/{id}/hosts"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_GradeService_GetByGuest_0(ctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_GradeService_GetHostsGradedByGuest_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_GradeService_GetByGuest_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_GradeService_GetHostsGradedByGuest_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_GradeService_GetAccommodationsGradedByGuest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.GradeService/GetAccommodationsGradedByGuest", runtime.WithHTTPPathPattern("/grade/guest/{id}/accommodations"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_GradeService_GetAccommodationsGradedByGuest_0(ctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_GradeService_GetAccommodationsGradedByGuest_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -727,7 +824,9 @@ func RegisterGradeServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 var (
 	pattern_GradeService_Get_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"grade", "id"}, ""))
 
-	pattern_GradeService_GetByGuest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"grade", "guest", "id"}, ""))
+	pattern_GradeService_GetHostsGradedByGuest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"grade", "guest", "id", "hosts"}, ""))
+
+	pattern_GradeService_GetAccommodationsGradedByGuest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"grade", "guest", "id", "accommodations"}, ""))
 
 	pattern_GradeService_GetByGraded_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"grade", "graded", "id"}, ""))
 
@@ -743,7 +842,9 @@ var (
 var (
 	forward_GradeService_Get_0 = runtime.ForwardResponseMessage
 
-	forward_GradeService_GetByGuest_0 = runtime.ForwardResponseMessage
+	forward_GradeService_GetHostsGradedByGuest_0 = runtime.ForwardResponseMessage
+
+	forward_GradeService_GetAccommodationsGradedByGuest_0 = runtime.ForwardResponseMessage
 
 	forward_GradeService_GetByGraded_0 = runtime.ForwardResponseMessage
 
