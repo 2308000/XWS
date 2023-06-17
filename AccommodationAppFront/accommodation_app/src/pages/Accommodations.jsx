@@ -7,6 +7,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useState, useRef, useEffect, useContext } from "react";
 import Property from "../components/Property";
+import { useNavigate } from "react-router-dom";
 
 const prop = [{ Id: 0 }, { Id: 1 }];
 
@@ -34,6 +35,7 @@ const Accommodations = () => {
   const bathtubRef = useRef();
   const OHRef = useRef();
   const numberOfGuestsRef = useRef();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://localhost:8000/accommodation/search", {
@@ -86,6 +88,10 @@ const Accommodations = () => {
         console.log(actualData);
         setProperties(actualData.accommodations);
       });
+  };
+
+  const checkHandler = (id) => {
+    navigate("/accommodations/" + id);
   };
 
   const filterHandler = () => {
@@ -272,7 +278,28 @@ const Accommodations = () => {
                         <h4>Total price: {property.totalPrice}</h4>
                         <h4>{property.Name}</h4>
                       </div>
-                      <button className={utils.greenButton}>Check</button>
+                      <button
+                        className={utils.greenButton}
+                        onClick={() => {
+                          checkHandler(property.accommodation.id);
+                          localStorage.setItem("startDate", valueStart);
+                          localStorage.setItem("endDate", valueEnd);
+                          localStorage.setItem(
+                            "numberOfGuests",
+                            numberOfGuestsRef.current.value
+                          );
+                          localStorage.setItem(
+                            "pricePerNight",
+                            property?.pricePerNight
+                          );
+                          localStorage.setItem(
+                            "totalPrice",
+                            property?.totalPrice
+                          );
+                        }}
+                      >
+                        Check
+                      </button>
                     </div>
                   </div>
                 </div>
