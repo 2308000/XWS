@@ -136,8 +136,32 @@ func (handler *AccommodationHandler) GetAllSearched(ctx context.Context, request
 	for i, accommodation := range accommodations {
 		accommodation.Availability = []domain.AvailableDate{accommodation.Availability[indices[i]]}
 		accommodationPb := mapAccommodationToPb(accommodation)
+
+		accommodationGrades, err := handler.gradeClient.GetByGraded(ctx, &grade.GetGradeRequest{Id: accommodationPb.Id})
+		if err != nil {
+			return nil, err
+		}
+		totalSum := 0.0
+		totalCount := 0
+		for _, accommodationGrade := range accommodationGrades.Grades {
+			totalSum = totalSum + float64(accommodationGrade.Grade)
+			totalCount = totalCount + 1
+			guestProfile, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: accommodationGrade.GuestId})
+			if err != nil {
+				return nil, err
+			}
+			pbGrade := pb.AccommodationGrade2{
+				GuestName: guestProfile.User.Username,
+				Grade:     accommodationGrade.Grade,
+				Date:      accommodationGrade.Date,
+			}
+			accommodationPb.Grades = append(accommodationPb.Grades, &pbGrade)
+		}
+		accommodationPb.AverageAccommodationGrade = float32(totalSum / float64(totalCount))
+
 		pricePerNight := float64(accommodation.Availability[0].Price)
 		totalPrice := float64(numberOfNights) * pricePerNight
+
 		if accommodation.Availability[0].IsPricePerGuest {
 			totalPrice = totalPrice * float64(request.NumberOfGuests)
 		}
@@ -191,6 +215,29 @@ func (handler *AccommodationHandler) GetAllFiltered(ctx context.Context, request
 	}
 
 	for i, _ := range finalFilter {
+		accommodation2 := finalFilter[i].Accommodation
+		finalFilter[i].Accommodation.Grades = []*pb.AccommodationGrade2{}
+		accommodationGrades, err := handler.gradeClient.GetByGraded(ctx, &grade.GetGradeRequest{Id: accommodation2.Id})
+		if err != nil {
+			return nil, err
+		}
+		totalSum := 0.0
+		totalCount := 0
+		for _, accommodationGrade := range accommodationGrades.Grades {
+			totalSum = totalSum + float64(accommodationGrade.Grade)
+			totalCount = totalCount + 1
+			guestProfile, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: accommodationGrade.GuestId})
+			if err != nil {
+				return nil, err
+			}
+			pbGrade := pb.AccommodationGrade2{
+				GuestName: guestProfile.User.Username,
+				Grade:     accommodationGrade.Grade,
+				Date:      accommodationGrade.Date,
+			}
+			finalFilter[i].Accommodation.Grades = append(finalFilter[i].Accommodation.Grades, &pbGrade)
+		}
+		finalFilter[i].Accommodation.AverageAccommodationGrade = float32(totalSum / float64(totalCount))
 		response.Accommodations = append(response.Accommodations, &finalFilter[i])
 	}
 
