@@ -38,7 +38,7 @@ func NewProfileHandler(service *application.ProfileService, reservationClient re
 func (handler *ProfileHandler) Get(ctx context.Context, request *pb.GetRequest) (*pb.GetResponse, error) {
 	profileId := request.Id
 	profile, err := handler.service.Get(ctx, profileId)
-	user, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: request.Id})
+	userInfo, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: request.Id})
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (handler *ProfileHandler) Get(ctx context.Context, request *pb.GetRequest) 
 		AccommodationGrades:   []*pb.AccommodationGrade{},
 		AverageHostGrade:      -1,
 	}
-	role := user.User.Role
+	role := userInfo.User.Role
 	if role == "guest" {
 		profilePb.ReservationsCancelled = int32(profile.ReservationsCancelled)
 		hostGrades, err := handler.gradeClient.GetHostsGradedByGuest(ctx, &grade.GetGradeRequest{Id: request.Id})
@@ -98,10 +98,14 @@ func (handler *ProfileHandler) Get(ctx context.Context, request *pb.GetRequest) 
 		totalSum := 0.0
 		numOfGrades := 0
 		for _, hostGrade := range hostGrades.Grades {
+			guestName, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: hostGrade.GuestId})
+			if err != nil {
+				return nil, err
+			}
 			totalSum = totalSum + float64(hostGrade.Grade)
 			numOfGrades = numOfGrades + 1
 			pbGrade := pb.HostGrade{
-				HostName: hostGrade.GradedName,
+				HostName: guestName.User.Username,
 				Grade:    hostGrade.Grade,
 				Date:     hostGrade.Date,
 			}

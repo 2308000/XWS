@@ -9,6 +9,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	go.mongodb.org/mongo-driver v1.11.7
 	google.golang.org/grpc v1.47.0
+	google.golang.org/protobuf v1.28.0
 )
 
 require (
@@ -40,5 +41,4 @@ require (
 	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/genproto v0.0.0-20220617124728-180714bec0ad // indirect
-	google.golang.org/protobuf v1.28.0 // indirect
 )

@@ -4,8 +4,10 @@ import (
 	"accommodation_booking/accommodation_service/application"
 	"accommodation_booking/accommodation_service/domain"
 	pb "accommodation_booking/common/proto/accommodation_service"
+	grade "accommodation_booking/common/proto/grade_service"
 	profile "accommodation_booking/common/proto/profile_service"
 	reservation "accommodation_booking/common/proto/reservation_service"
+	user "accommodation_booking/common/proto/user_service"
 	"context"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -17,39 +19,84 @@ type AccommodationHandler struct {
 	service           *application.AccommodationService
 	profileClient     profile.ProfileServiceClient
 	reservationClient reservation.ReservationServiceClient
+	gradeClient       grade.GradeServiceClient
+	userClient        user.UserServiceClient
 }
 
-func NewAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient, reservationClient reservation.ReservationServiceClient) *AccommodationHandler {
+func NewAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient, reservationClient reservation.ReservationServiceClient, gradeClient grade.GradeServiceClient, userClient user.UserServiceClient) *AccommodationHandler {
 	return &AccommodationHandler{
 		service:           service,
 		profileClient:     profileClient,
 		reservationClient: reservationClient,
+		gradeClient:       gradeClient,
+		userClient:        userClient,
 	}
 }
 
 func (handler *AccommodationHandler) Get(ctx context.Context, request *pb.GetAccommodationRequest) (*pb.GetAccommodationResponse, error) {
 	accommodationId := request.Id
-	Accommodation, err := handler.service.Get(ctx, accommodationId)
+	accommodation, err := handler.service.Get(ctx, accommodationId)
 	if err != nil {
 		return nil, err
 	}
-	AccommodationPb := mapAccommodationToPb(Accommodation)
+	accommodationPb := mapAccommodationToPb(accommodation)
 	response := &pb.GetAccommodationResponse{
-		Accommodation: AccommodationPb,
+		Accommodation: accommodationPb,
 	}
+	accommodationGrades, err := handler.gradeClient.GetByGraded(ctx, &grade.GetGradeRequest{Id: accommodationId})
+	totalSum := 0.0
+	totalCount := 0
+	for _, accommodationGrade := range accommodationGrades.Grades {
+		totalSum = totalSum + float64(accommodationGrade.Grade)
+		totalCount = totalCount + 1
+		guestProfile, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: accommodationGrade.GuestId})
+		if err != nil {
+			log.Println(accommodationGrade.GuestId)
+			log.Println(guestProfile)
+			return nil, err
+		}
+		pbGrade := pb.AccommodationGrade2{
+			GuestName: guestProfile.User.Username,
+			Grade:     accommodationGrade.Grade,
+			Date:      accommodationGrade.Date,
+		}
+		response.Accommodation.Grades = append(response.Accommodation.Grades, &pbGrade)
+	}
+	response.Accommodation.AverageAccommodationGrade = float32(totalSum / float64(totalCount))
 	return response, nil
 }
 
 func (handler *AccommodationHandler) GetByHost(ctx context.Context, request *pb.GetAccommodationRequest) (*pb.GetAllAccommodationsResponse, error) {
-	Accommodations, err := handler.service.GetByHost(ctx, request.Id)
+	accommodations, err := handler.service.GetByHost(ctx, request.Id)
 	if err != nil {
 		return nil, err
 	}
 	response := &pb.GetAllAccommodationsResponse{
 		Accommodations: []*pb.Accommodation{},
 	}
-	for _, Accommodation := range Accommodations {
-		current := mapAccommodationToPb(Accommodation)
+	for _, accommodation := range accommodations {
+		current := mapAccommodationToPb(accommodation)
+		accommodationGrades, err := handler.gradeClient.GetByGraded(ctx, &grade.GetGradeRequest{Id: accommodation.Id.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		totalSum := 0.0
+		totalCount := 0
+		for _, accommodationGrade := range accommodationGrades.Grades {
+			totalSum = totalSum + float64(accommodationGrade.Grade)
+			totalCount = totalCount + 1
+			guestProfile, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: accommodationGrade.GuestId})
+			if err != nil {
+				return nil, err
+			}
+			pbGrade := pb.AccommodationGrade2{
+				GuestName: guestProfile.User.Username,
+				Grade:     accommodationGrade.Grade,
+				Date:      accommodationGrade.Date,
+			}
+			current.Grades = append(current.Grades, &pbGrade)
+		}
+		current.AverageAccommodationGrade = float32(totalSum / float64(totalCount))
 		response.Accommodations = append(response.Accommodations, current)
 	}
 	return response, nil
@@ -104,9 +151,7 @@ func (handler *AccommodationHandler) GetAllSearched(ctx context.Context, request
 }
 
 func (handler *AccommodationHandler) GetAllFiltered(ctx context.Context, request *pb.GetAllFilterRequest) (*pb.AccommodationSearchResponse, error) {
-	log.Println("Pogodio handler")
 	searchResult, err := handler.GetAllSearched(ctx, request.SearchQuery)
-	log.Println("Vratio ", len(searchResult.Accommodations), " iz searcha")
 	if err != nil {
 		return nil, err
 	}
@@ -155,9 +200,9 @@ func (handler *AccommodationHandler) GetAllFiltered(ctx context.Context, request
 func (handler AccommodationHandler) Create(ctx context.Context, request *pb.CreateAccommodationRequest) (*pb.CreateAccommodationResponse, error) {
 	host, err := handler.profileClient.Get(ctx, &profile.GetRequest{Id: request.Accommodation.HostId})
 	hostId, err := primitive.ObjectIDFromHex(host.Profile.Id)
-	/*log.Println(ctx.Value("userId").(string))
-	log.Println(ctx.Value("username").(string))
-	if ctx.Value("userId").(string) != hostId.Hex() {
+	/*log.Println(ctx.Value("profileId").(string))
+	log.Println(ctx.Value("profilename").(string))
+	if ctx.Value("profileId").(string) != hostId.Hex() {
 		return nil, errors.New("must be the host to add new accommodation")
 	}*/
 	hostInfo := &domain.Host{
