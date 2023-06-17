@@ -1,0 +1,157 @@
+.myProfile {
+  margin-left: 2rem;
+}
+.myProfile {
+  width: 100vw;
+  color: rgb(50, 50, 50);
+}
+.span {
+  font-size: 20px;
+  padding: 0.5rem 0rem;
+  display: flex;
+
+  gap: 5px;
+}
+.myProfile {
+  display: flex;
+  flex-direction: column;
+}
+
+.changeRoleButton {
+  background-color: black;
+  color: white;
+  padding: 0.8rem;
+  border: 1px solid white;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.saveChangesButton {
+  background-color: var(--acceptButtonGreen);
+  color: white;
+  padding: 0.8rem;
+  border: 1px solid white;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.input {
+  height: 3.5rem;
+  border-radius: 0.2rem;
+  border: 1px solid rgb(211, 209, 209);
+  width: 250px;
+  padding-left: 10px;
+  background-color: rgb(239, 239, 239);
+}
+
+.select {
+  height: 3.5rem;
+  border-radius: 0.2rem;
+  border: 1px solid rgb(211, 209, 209);
+  width: 260px;
+  padding-left: 10px;
+  background-color: rgb(239, 239, 239);
+}
+
+.timePicker {
+  height: 3.5rem;
+  border-radius: 0.2rem;
+  border: 1px solid rgb(211, 209, 209);
+  width: 260px;
+  padding-left: 10px;
+  background-color: rgb(239, 239, 239);
+}
+
+.inputContainer {
+  background-color: rgb(255, 255, 255);
+  display: flex;
+  gap: 3rem;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url("https://www.w3schools.com/howto/img_avatar2.png");
+  background-size: cover;
+  width: 10rem;
+  height: 10rem;
+  border-radius: 5rem;
+}
+
+.inputContainerVertical {
+  background-color: rgb(255, 255, 255);
+  border-radius: 1rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+.inputContainerVerticalEdit {
+  background-color: rgb(255, 255, 255);
+  border-radius: 1rem;
+  padding: 1rem;
+  display: flex;
+
+  gap: 1rem;
+}
+.spanEdit {
+  font-size: 20px;
+  padding: 0.5rem 0rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.spanReserve {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.modalTitle {
+  background-color: rgb(69, 37, 111);
+  color: white;
+  border-radius: 0.75rem 0.75rem 0rem 0rem;
+  padding: 1rem;
+  margin: 0;
+}
+.reserveButton {
+  background-color: rgb(69, 37, 111);
+  color: white;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: none;
+  cursor: pointer;
+  width: 150px;
+  margin-top: 1rem;
+}
+.register {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 3rem;
+}
+.inputChangePW {
+  height: 2rem;
+  border-radius: 0.2rem;
+  border: 1px solid rgb(211, 209, 209);
+  width: 250px;
+  padding-left: 10px;
+  background-color: rgb(239, 239, 239);
+}
+.changePW {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 3rem;
+}
+.changePWCont {
+  width: 450px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
