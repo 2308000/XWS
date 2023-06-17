@@ -124,8 +124,7 @@ func (handler *AccommodationHandler) GetAllSearched(ctx context.Context, request
 		Street:  request.Location.Street,
 	}
 	numberOfNights := int(request.Ending.AsTime().Sub(request.Beginning.AsTime()).Hours() / 24)
-	accommodations, indices, err := handler.service.GetAllSearched(ctx, *location, request.Beginning.AsTime(), request.Ending.AsTime(), int(request.NumberOfGuests))
-
+	accommodations, err := handler.service.GetAllSearched(ctx, *location, int(request.NumberOfGuests))
 	if err != nil {
 		return nil, err
 	}
@@ -133,8 +132,36 @@ func (handler *AccommodationHandler) GetAllSearched(ctx context.Context, request
 	response := &pb.AccommodationSearchResponse{
 		Accommodations: []*pb.AccommodationSearch{},
 	}
-	for i, accommodation := range accommodations {
-		accommodation.Availability = []domain.AvailableDate{accommodation.Availability[indices[i]]}
+	for _, accommodation := range accommodations {
+		reservations, err := handler.reservationClient.GetBetweenDates(ctx, &reservation.GetBetweenDatesRequest{Informations: &reservation.Informations{
+			AccommodationId: accommodation.Id.Hex(),
+			Beginning:       request.Beginning,
+			Ending:          request.Ending,
+		}})
+		if err != nil {
+			log.Println(accommodation.Id.Hex())
+			log.Println(request.Beginning.AsTime())
+			log.Println(request.Ending.AsTime())
+			return nil, err
+		}
+		if len(reservations.Reservations) > 0 {
+			continue
+		}
+		accommodationAvailableDateInfo, err := handler.service.GetAccommodationAvailableDatesForTimePeriod(ctx, accommodation.Id.Hex(), request.Beginning.AsTime(), request.Ending.AsTime())
+		if err != nil {
+			log.Println("moja")
+			return nil, err
+		}
+		if len(accommodationAvailableDateInfo) == 0 {
+			continue
+		}
+		availableDate := domain.AvailableDate{
+			Beginning:       accommodationAvailableDateInfo[0].Beginning,
+			Ending:          accommodationAvailableDateInfo[0].Ending,
+			Price:           accommodationAvailableDateInfo[0].Price,
+			IsPricePerGuest: accommodationAvailableDateInfo[0].IsPricePerGuest,
+		}
+		accommodation.Availability = []domain.AvailableDate{availableDate}
 		accommodationPb := mapAccommodationToPb(accommodation)
 
 		accommodationGrades, err := handler.gradeClient.GetByGraded(ctx, &grade.GetGradeRequest{Id: accommodationPb.Id})
