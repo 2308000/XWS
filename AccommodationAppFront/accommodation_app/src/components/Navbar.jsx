@@ -17,17 +17,21 @@ const Navbar = () => {
     <div>
       <div className={classes.navbar}>
         <ul className={classes.list}>
-          <li className={classes.navListItem}>
-            <NavLink to="/profile">Profile</NavLink>
-          </li>
-          {authCtx.role == "user" && (
+          {authCtx.isLoggedIn && (
+            <li className={classes.navListItem}>
+              <NavLink to="/profile">Profile</NavLink>
+            </li>
+          )}
+          {authCtx.role == "guest" && (
             <li className={classes.navListItem}>
               <NavLink to="/my-reservations">My reservations</NavLink>
             </li>
           )}
-          <li className={classes.navListItem}>
-            <NavLink to="/accommodations">Accommodations</NavLink>
-          </li>
+          {authCtx.isLoggedIn && (
+            <li className={classes.navListItem}>
+              <NavLink to="/accommodations">Accommodations</NavLink>
+            </li>
+          )}
           {authCtx.role == "host" && (
             <li className={classes.navListItem}>
               <NavLink to="/reservation-requests">Reservation requests</NavLink>
