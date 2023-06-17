@@ -7,7 +7,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 const (
@@ -49,7 +48,7 @@ func (store *AccommodationMongoDBStore) GetAll(ctx context.Context) ([]*domain.A
 	return store.filter(filter)
 }
 
-func (store *AccommodationMongoDBStore) GetAllSearched(ctx context.Context, location domain.Location, beginning time.Time, ending time.Time, numberOfGuests int) ([]*domain.Accommodation, []int, error) {
+func (store *AccommodationMongoDBStore) GetAllSearched(ctx context.Context, location domain.Location, numberOfGuests int) ([]*domain.Accommodation, error) {
 	filter := bson.D{
 		{"$and", bson.A{
 			bson.D{
@@ -69,22 +68,7 @@ func (store *AccommodationMongoDBStore) GetAllSearched(ctx context.Context, loca
 	}
 
 	accommodations, err := store.filter(filter)
-	if err != nil {
-		return nil, nil, err
-	}
-	var result []*domain.Accommodation
-	var indices []int
-	for _, accommodation := range accommodations {
-		for i, availableDate := range accommodation.Availability {
-			beginningChecksOut := availableDate.Beginning.Before(beginning) || availableDate.Beginning.Equal(beginning)
-			endingChecksOut := availableDate.Ending.After(ending) || availableDate.Ending.Equal(ending)
-			if beginningChecksOut && endingChecksOut {
-				result = append(result, accommodation)
-				indices = append(indices, i)
-			}
-		}
-	}
-	return result, indices, err
+	return accommodations, err
 }
 
 func (store *AccommodationMongoDBStore) GetAllFiltered(ctx context.Context, benefits domain.Benefits, isOutstanding bool) ([]*domain.Accommodation, error) {

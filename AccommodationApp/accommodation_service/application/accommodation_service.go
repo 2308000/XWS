@@ -33,8 +33,8 @@ func (service *AccommodationService) GetAllFiltered(ctx context.Context, benefit
 	return service.store.GetAllFiltered(ctx, benefits, isOutstanding)
 }
 
-func (service *AccommodationService) GetAllSearched(ctx context.Context, location domain.Location, beginning time.Time, ending time.Time, numberOfGuests int) ([]*domain.Accommodation, []int, error) {
-	return service.store.GetAllSearched(ctx, location, beginning, ending, numberOfGuests)
+func (service *AccommodationService) GetAllSearched(ctx context.Context, location domain.Location, numberOfGuests int) ([]*domain.Accommodation, error) {
+	return service.store.GetAllSearched(ctx, location, numberOfGuests)
 }
 
 func (service *AccommodationService) Create(ctx context.Context, accommodation *domain.Accommodation) (*domain.Accommodation, error) {
