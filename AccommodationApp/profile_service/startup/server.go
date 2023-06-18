@@ -3,6 +3,7 @@ package startup
 import (
 	"accommodation_booking/common/auth"
 	"accommodation_booking/common/client"
+	accommodation "accommodation_booking/common/proto/accommodation_service"
 	grade "accommodation_booking/common/proto/grade_service"
 	profile "accommodation_booking/common/proto/profile_service"
 	reservation "accommodation_booking/common/proto/reservation_service"
@@ -73,8 +74,13 @@ func (server *Server) Start() {
 		log.Fatalf("PCF: %v", err)
 	}
 
+	accommodationClient, err := client.NewAccommodationClient(fmt.Sprintf("%s:%s", server.config.AccommodationHost, server.config.AccommodationPort))
+	if err != nil {
+		log.Fatalf("PCF: %v", err)
+	}
+
 	profileService := server.initProfileService(profileStore, updateProfileOrchestrator)
-	profileHandler := server.initProfileHandler(profileService, reservationClient, gradeClient, userClient)
+	profileHandler := server.initProfileHandler(profileService, reservationClient, gradeClient, userClient, accommodationClient)
 
 	commandSubscriber := server.initSubscriber(server.config.CreateProfileCommandSubject, QueueGroup)
 	replyPublisher := server.initPublisher(server.config.CreateProfileReplySubject)
@@ -126,8 +132,8 @@ func (server *Server) initMongoClient() *mongo.Client {
 	return client
 }
 
-func (server *Server) initProfileHandler(service *application.ProfileService, reservationClient reservation.ReservationServiceClient, gradeClient grade.GradeServiceClient, userClient user.UserServiceClient) *api.ProfileHandler {
-	return api.NewProfileHandler(service, reservationClient, gradeClient, userClient)
+func (server *Server) initProfileHandler(service *application.ProfileService, reservationClient reservation.ReservationServiceClient, gradeClient grade.GradeServiceClient, userClient user.UserServiceClient, accommodationClient accommodation.AccommodationServiceClient) *api.ProfileHandler {
+	return api.NewProfileHandler(service, reservationClient, gradeClient, userClient, accommodationClient)
 }
 
 func (server *Server) initProfileStore(client *mongo.Client) domain.ProfileStore {

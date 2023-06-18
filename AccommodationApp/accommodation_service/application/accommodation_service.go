@@ -29,8 +29,8 @@ func (service *AccommodationService) GetAll(ctx context.Context) ([]*domain.Acco
 	return service.store.GetAll(ctx)
 }
 
-func (service *AccommodationService) GetAllFiltered(ctx context.Context, benefits domain.Benefits, isOutstanding bool) ([]*domain.Accommodation, error) {
-	return service.store.GetAllFiltered(ctx, benefits, isOutstanding)
+func (service *AccommodationService) GetAllFiltered(ctx context.Context, benefits domain.Benefits) ([]*domain.Accommodation, error) {
+	return service.store.GetAllFiltered(ctx, benefits)
 }
 
 func (service *AccommodationService) GetAllSearched(ctx context.Context, location domain.Location, numberOfGuests int) ([]*domain.Accommodation, error) {

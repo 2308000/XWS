@@ -1,6 +1,7 @@
 package api
 
 import (
+	accommodation "accommodation_booking/common/proto/accommodation_service"
 	grade "accommodation_booking/common/proto/grade_service"
 	pb "accommodation_booking/common/proto/profile_service"
 	reservation "accommodation_booking/common/proto/reservation_service"
@@ -18,20 +19,22 @@ import (
 
 type ProfileHandler struct {
 	pb.UnimplementedProfileServiceServer
-	service           *application.ProfileService
-	validate          *validator.Validate
-	gradeClient       grade.GradeServiceClient
-	reservationClient reservation.ReservationServiceClient
-	userClient        user.UserServiceClient
+	service             *application.ProfileService
+	validate            *validator.Validate
+	gradeClient         grade.GradeServiceClient
+	reservationClient   reservation.ReservationServiceClient
+	userClient          user.UserServiceClient
+	accommodationClient accommodation.AccommodationServiceClient
 }
 
-func NewProfileHandler(service *application.ProfileService, reservationClient reservation.ReservationServiceClient, gradeClient grade.GradeServiceClient, userClient user.UserServiceClient) *ProfileHandler {
+func NewProfileHandler(service *application.ProfileService, reservationClient reservation.ReservationServiceClient, gradeClient grade.GradeServiceClient, userClient user.UserServiceClient, accommodationClient accommodation.AccommodationServiceClient) *ProfileHandler {
 	return &ProfileHandler{
-		service:           service,
-		validate:          domain.NewProfileValidator(),
-		reservationClient: reservationClient,
-		gradeClient:       gradeClient,
-		userClient:        userClient,
+		service:             service,
+		validate:            domain.NewProfileValidator(),
+		reservationClient:   reservationClient,
+		gradeClient:         gradeClient,
+		userClient:          userClient,
+		accommodationClient: accommodationClient,
 	}
 }
 
@@ -113,6 +116,13 @@ func (handler *ProfileHandler) Get(ctx context.Context, request *pb.GetRequest) 
 		}
 		averageGrade := totalSum / float64(numOfGrades)
 		profilePb.AverageHostGrade = float32(averageGrade)
+		if averageGrade > 4.7 {
+			isOutstandingRes, err := handler.IsOutstandingHost(ctx, &pb.GetRequest{Id: request.Id})
+			if err != nil {
+				return nil, err
+			}
+			profilePb.IsOutstanding = isOutstandingRes.IsOutstanding
+		}
 	}
 	response := &pb.GetResponse{
 		Profile: profilePb,
@@ -120,6 +130,46 @@ func (handler *ProfileHandler) Get(ctx context.Context, request *pb.GetRequest) 
 	return response, nil
 }
 
+func (handler *ProfileHandler) IsOutstandingHost(ctx context.Context, request *pb.GetRequest) (*pb.IsOutstandingResponse, error) {
+	hostsAccommodations, err := handler.accommodationClient.GetByHost(ctx, &accommodation.GetAccommodationRequest{Id: request.Id})
+	if err != nil {
+		return nil, err
+	}
+	totalReservations := 0
+	totalNumberOfReservedDays := 0.0
+	for _, hostAccommodation := range hostsAccommodations.Accommodations {
+		numberOfReservationsForAccommodation, err := handler.reservationClient.GetBetweenDates(ctx, &reservation.GetBetweenDatesRequest{Informations: &reservation.Informations{
+			AccommodationId: hostAccommodation.Id,
+			Beginning:       timestamppb.New(time.Now().AddDate(-10, 0, 0)),
+			Ending:          timestamppb.New(time.Now()),
+		}})
+		if err != nil {
+			return nil, err
+		}
+		if len(numberOfReservationsForAccommodation.Reservations) > 0 {
+			totalReservations = totalReservations + len(numberOfReservationsForAccommodation.Reservations)
+			for _, accReservation := range numberOfReservationsForAccommodation.Reservations {
+				numberOfReservedDays := accReservation.Ending.AsTime().Sub(accReservation.Beginning.AsTime()).Hours() / 24
+				totalNumberOfReservedDays = totalNumberOfReservedDays + numberOfReservedDays
+			}
+		}
+	}
+
+	response := &pb.IsOutstandingResponse{IsOutstanding: false}
+	if totalReservations >= 1 && totalNumberOfReservedDays > 1 {
+		cancelledReservations, err := handler.reservationClient.GetByHostCanceled(ctx, &reservation.GetByHostInternRequest{Id: request.Id})
+		if err != nil {
+			return nil, err
+		}
+		cancellationPercentage := 0.0
+		cancellationPercentage = (float64(len(cancelledReservations.Reservations)) / float64(totalReservations)) * 100
+		if cancellationPercentage < 20 {
+			response.IsOutstanding = true
+		}
+	}
+
+	return response, nil
+}
 func (handler *ProfileHandler) GetAll(ctx context.Context, request *pb.GetAllRequest) (*pb.GetAllResponse, error) {
 	Profiles, err := handler.service.GetAll(ctx, strings.ReplaceAll(request.Search, " ", ""))
 	if err != nil {

@@ -18,6 +18,7 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProfileServiceClient interface {
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
+	IsOutstandingHost(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*IsOutstandingResponse, error)
 	GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error)
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
 	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
@@ -37,6 +38,15 @@ func NewProfileServiceClient(cc grpc.ClientConnInterface) ProfileServiceClient {
 func (c *profileServiceClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
 	out := new(GetResponse)
 	err := c.cc.Invoke(ctx, "/profile.ProfileService/Get", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *profileServiceClient) IsOutstandingHost(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*IsOutstandingResponse, error) {
+	out := new(IsOutstandingResponse)
+	err := c.cc.Invoke(ctx, "/profile.ProfileService/IsOutstandingHost", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -102,6 +112,7 @@ func (c *profileServiceClient) GetByToken(ctx context.Context, in *GetByTokenReq
 // for forward compatibility
 type ProfileServiceServer interface {
 	Get(context.Context, *GetRequest) (*GetResponse, error)
+	IsOutstandingHost(context.Context, *GetRequest) (*IsOutstandingResponse, error)
 	GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error)
 	Create(context.Context, *CreateRequest) (*CreateResponse, error)
 	Update(context.Context, *UpdateRequest) (*UpdateResponse, error)
@@ -117,6 +128,9 @@ type UnimplementedProfileServiceServer struct {
 
 func (*UnimplementedProfileServiceServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+}
+func (*UnimplementedProfileServiceServer) IsOutstandingHost(context.Context, *GetRequest) (*IsOutstandingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsOutstandingHost not implemented")
 }
 func (*UnimplementedProfileServiceServer) GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
@@ -156,6 +170,24 @@ func _ProfileService_Get_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProfileServiceServer).Get(ctx, req.(*GetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProfileService_IsOutstandingHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProfileServiceServer).IsOutstandingHost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/profile.ProfileService/IsOutstandingHost",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProfileServiceServer).IsOutstandingHost(ctx, req.(*GetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -275,6 +307,10 @@ var _ProfileService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Get",
 			Handler:    _ProfileService_Get_Handler,
+		},
+		{
+			MethodName: "IsOutstandingHost",
+			Handler:    _ProfileService_IsOutstandingHost_Handler,
 		},
 		{
 			MethodName: "GetAll",

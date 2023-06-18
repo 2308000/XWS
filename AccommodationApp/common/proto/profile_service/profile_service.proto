@@ -14,6 +14,12 @@ service ProfileService{
       get: "/profile/{id}"
     };
   }
+
+  rpc IsOutstandingHost(GetRequest) returns(IsOutstandingResponse) {
+    option (google.api.http) = {
+      get: "/profile/is-outstanding/{id}"
+    };
+  }
   rpc GetAll(GetAllRequest) returns(GetAllResponse) {
     option (google.api.http) = {
       get: "/profile"
@@ -52,6 +58,10 @@ service ProfileService{
 
 message GetRequest {
   string id = 1;
+}
+
+message IsOutstandingResponse {
+  bool isOutstanding = 1;
 }
 
 message GetResponse {
