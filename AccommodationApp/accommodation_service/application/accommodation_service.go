@@ -64,7 +64,10 @@ func (service *AccommodationService) UpdateAvailability(ctx context.Context, acc
 	sort.Slice(currentlyAvailableDates, func(i, j int) bool {
 		return currentlyAvailableDates[i].Beginning.Before(currentlyAvailableDates[j].Beginning)
 	})
-	// nazivi se odnose na postojeće
+
+	// nova je podskup postojece
+	var underlappingCompletely []int
+	// nova je nadskup postojece
 	var overlappingCompletely []int
 	// overlapping beggining -> postojeći početak upada u novi
 	var overlappingBeginning []int
@@ -73,6 +76,9 @@ func (service *AccommodationService) UpdateAvailability(ctx context.Context, acc
 	var equals []int
 
 	for i, currentlyAvailableDate := range currentlyAvailableDates {
+		if newAvailableDate.Beginning.After(currentlyAvailableDate.Beginning) && newAvailableDate.Ending.Before(currentlyAvailableDate.Ending) {
+			underlappingCompletely = append(underlappingCompletely, i)
+		}
 		if newAvailableDate.Beginning.Before(currentlyAvailableDate.Beginning) && newAvailableDate.Ending.After(currentlyAvailableDate.Ending) {
 			overlappingCompletely = append(overlappingCompletely, i)
 		}
@@ -105,7 +111,15 @@ func (service *AccommodationService) UpdateAvailability(ctx context.Context, acc
 		}
 		return accommodation, err
 	}
-
+	var additional domain.AvailableDate
+	usedAdditional := false
+	for _, currIdx := range underlappingCompletely {
+		temp := accommodation.Availability[currIdx].Ending
+		accommodation.Availability[currIdx].Ending = newAvailableDate.Beginning
+		additional.Beginning = newAvailableDate.Ending
+		additional.Ending = temp
+		usedAdditional = true
+	}
 	for _, currIdx := range overlappingBeginning {
 		accommodation.Availability[currIdx].Beginning = newAvailableDate.Ending
 	}
@@ -131,6 +145,11 @@ func (service *AccommodationService) UpdateAvailability(ctx context.Context, acc
 	}
 
 	accommodation.Availability = append(accommodation.Availability, newAvailableDate)
+
+	if usedAdditional == true {
+		accommodation.Availability = append(accommodation.Availability, additional)
+	}
+
 	sort.Slice(accommodation.Availability, func(i, j int) bool {
 		return accommodation.Availability[i].Beginning.Before(accommodation.Availability[j].Beginning)
 	})
