@@ -27,6 +27,7 @@ type AccommodationServiceClient interface {
 	UpdateAvailability(ctx context.Context, in *UpdateAvailabilityRequest, opts ...grpc.CallOption) (*UpdateAvailabilityResponse, error)
 	GetAccommodationAvailableDatesForTimePeriod(ctx context.Context, in *AccommodationTimePeriodRequest, opts ...grpc.CallOption) (*AccommodationAvailableDatesForTimePeriodResponse, error)
 	Delete(ctx context.Context, in *DeleteAccommodationRequest, opts ...grpc.CallOption) (*DeleteAccommodationResponse, error)
+	DeleteIntern(ctx context.Context, in *DeleteInternAccommodationRequest, opts ...grpc.CallOption) (*DeleteInternAccommodationResponse, error)
 }
 
 type accommodationServiceClient struct {
@@ -127,6 +128,15 @@ func (c *accommodationServiceClient) Delete(ctx context.Context, in *DeleteAccom
 	return out, nil
 }
 
+func (c *accommodationServiceClient) DeleteIntern(ctx context.Context, in *DeleteInternAccommodationRequest, opts ...grpc.CallOption) (*DeleteInternAccommodationResponse, error) {
+	out := new(DeleteInternAccommodationResponse)
+	err := c.cc.Invoke(ctx, "/accommodation.AccommodationService/DeleteIntern", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccommodationServiceServer is the server API for AccommodationService service.
 // All implementations must embed UnimplementedAccommodationServiceServer
 // for forward compatibility
@@ -141,6 +151,7 @@ type AccommodationServiceServer interface {
 	UpdateAvailability(context.Context, *UpdateAvailabilityRequest) (*UpdateAvailabilityResponse, error)
 	GetAccommodationAvailableDatesForTimePeriod(context.Context, *AccommodationTimePeriodRequest) (*AccommodationAvailableDatesForTimePeriodResponse, error)
 	Delete(context.Context, *DeleteAccommodationRequest) (*DeleteAccommodationResponse, error)
+	DeleteIntern(context.Context, *DeleteInternAccommodationRequest) (*DeleteInternAccommodationResponse, error)
 	mustEmbedUnimplementedAccommodationServiceServer()
 }
 
@@ -177,6 +188,9 @@ func (*UnimplementedAccommodationServiceServer) GetAccommodationAvailableDatesFo
 }
 func (*UnimplementedAccommodationServiceServer) Delete(context.Context, *DeleteAccommodationRequest) (*DeleteAccommodationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (*UnimplementedAccommodationServiceServer) DeleteIntern(context.Context, *DeleteInternAccommodationRequest) (*DeleteInternAccommodationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteIntern not implemented")
 }
 func (*UnimplementedAccommodationServiceServer) mustEmbedUnimplementedAccommodationServiceServer() {}
 
@@ -364,6 +378,24 @@ func _AccommodationService_Delete_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccommodationService_DeleteIntern_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteInternAccommodationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccommodationServiceServer).DeleteIntern(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/accommodation.AccommodationService/DeleteIntern",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccommodationServiceServer).DeleteIntern(ctx, req.(*DeleteInternAccommodationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _AccommodationService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "accommodation.AccommodationService",
 	HandlerType: (*AccommodationServiceServer)(nil),
@@ -407,6 +439,10 @@ var _AccommodationService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _AccommodationService_Delete_Handler,
+		},
+		{
+			MethodName: "DeleteIntern",
+			Handler:    _AccommodationService_DeleteIntern_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

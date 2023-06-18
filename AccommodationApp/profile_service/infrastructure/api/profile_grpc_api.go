@@ -9,6 +9,7 @@ import (
 	"accommodation_booking/profile_service/application"
 	"accommodation_booking/profile_service/domain"
 	"context"
+	"errors"
 	"github.com/go-playground/validator"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -223,9 +224,49 @@ func (handler ProfileHandler) Update(ctx context.Context, request *pb.UpdateRequ
 }
 
 func (handler *ProfileHandler) Delete(ctx context.Context, request *pb.DeleteRequest) (*pb.DeleteResponse, error) {
-	err := handler.service.Delete(ctx, request.Id)
+	foundUser, err := handler.userClient.Get(ctx, &user.GetRequest{Username: ctx.Value("username").(string)})
 	if err != nil {
 		return nil, err
+	}
+	var accommodationsIds []string
+	if foundUser.User.Role == "host" {
+		hostsAccommodations, err := handler.accommodationClient.GetByHost(ctx, &accommodation.GetAccommodationRequest{Id: foundUser.User.Id})
+		if err != nil {
+			return nil, err
+		}
+		for _, acc := range hostsAccommodations.Accommodations {
+			reservations, err := handler.reservationClient.GetAccommodationsReservations(ctx, &reservation.GetAccommodationsReservationsRequest{AccommodationId: acc.Id})
+			if err != nil {
+				return nil, err
+			}
+			if len(reservations.Reservations) != 0 {
+				return nil, errors.New("you cannot delete profile because you have approved reservations in future in one of your accommodations")
+			} else {
+				accommodationsIds = append(accommodationsIds, acc.Id)
+			}
+		}
+	} else {
+		guestsReservations, err := handler.reservationClient.GetUsersReservations(ctx, &reservation.GetUsersReservationsRequest{UserId: foundUser.User.Id})
+		if err != nil {
+			return nil, err
+		}
+		if len(guestsReservations.Reservations) != 0 {
+			return nil, errors.New("you cannot delete profile because you have pending or approved reservations in future")
+		}
+	}
+	err = handler.service.Delete(ctx, request.Id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = handler.userClient.DeleteIntern(ctx, &user.DeleteRequest{Id: foundUser.User.Id})
+	if err != nil {
+		return nil, err
+	}
+	for _, accId := range accommodationsIds {
+		handler.accommodationClient.DeleteIntern(ctx, &accommodation.DeleteInternAccommodationRequest{Id: accId})
+		if err != nil {
+			return nil, err
+		}
 	}
 	return &pb.DeleteResponse{}, nil
 }

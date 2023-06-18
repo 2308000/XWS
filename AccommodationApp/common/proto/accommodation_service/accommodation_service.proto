@@ -73,6 +73,12 @@ service AccommodationService{
       delete: "/accommodation/{id}"
     };
   }
+
+  rpc DeleteIntern(DeleteInternAccommodationRequest) returns(DeleteInternAccommodationResponse) {
+    option (google.api.http) = {
+      delete: "/accommodation/intern/{id}"
+    };
+  }
 }
 
 message AccommodationSearchRequest {
@@ -168,6 +174,13 @@ message DeleteAccommodationRequest {
 }
 
 message DeleteAccommodationResponse {
+}
+
+message DeleteInternAccommodationRequest {
+  string id = 1;
+}
+
+message DeleteInternAccommodationResponse {
 }
 
 message Accommodation {
