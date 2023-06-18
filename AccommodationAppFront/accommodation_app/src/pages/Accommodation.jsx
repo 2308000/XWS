@@ -154,7 +154,9 @@ const Accommodation = () => {
         <h2>Reviews</h2>
         <h2>
           Average grade :
-          {accommodation?.accommodation.averageAccommodationGrade.toFixed(2)}
+          {accommodation?.accommodation.averageAccommodationGrade !== "NaN"
+            ? accommodation?.accommodation.averageAccommodationGrade.toFixed(2)
+            : 0}
         </h2>
         <div>
           <div>

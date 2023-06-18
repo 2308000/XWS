@@ -30,6 +30,7 @@ const NewAccomodation = () => {
     event.preventDefault();
     const fd = new FormData();
     fd.append("file", image);
+    console.log(MARef.current.checked);
     fetch("http://localhost:8000/accommodation", {
       method: "POST",
       headers: {
@@ -45,10 +46,11 @@ const NewAccomodation = () => {
         hasWashingMachine: WMRef.current.checked,
         hasBathtub: bathtubRef.current.checked,
         hasBalcony: balconyRef.current.checked,
-        photos: image,
+        photos: [],
         name: nameRef.current.value,
-        minGuest: minGuestRef.current.value,
-        maxGuest: maxGuestRef.current.value,
+        minNumberOfGuests: minGuestRef.current.value,
+        maxNumberOfGuests: maxGuestRef.current.value,
+        isReservationAcceptenceManual: MARef.current.checked,
         location: {
           city: cityRef.current.value,
           country: countryRef.current.value,
