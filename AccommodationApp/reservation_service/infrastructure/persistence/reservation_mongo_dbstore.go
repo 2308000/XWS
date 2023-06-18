@@ -73,6 +73,7 @@ func (store *ReservationMongoDBStore) GetForUser(ctx context.Context, userId str
 func (store *ReservationMongoDBStore) GetPending(ctx context.Context) ([]*domain.Reservation, error) {
 	filter := bson.D{}
 	filter = append(filter, bson.E{"reservationStatus", bson.D{{"$eq", 0}}})
+	filter = append(filter, bson.E{"beginning", bson.D{{"$gte", time.Now()}}})
 	return store.filter(filter)
 }
 

@@ -275,9 +275,12 @@ const Accommodations = () => {
                       <div className={classes.pricesContainer}>
                         <h4>
                           Average grade:
-                          {(property?.accommodation?.averageAccommodationGrade).toFixed(
-                            2
-                          )}
+                          {property?.accommodation
+                            ?.averageAccommodationGrade !== "NaN"
+                            ? (property?.accommodation?.averageAccommodationGrade).toFixed(
+                                2
+                              )
+                            : 0}
                         </h4>
                         {numberOfGuestsRef.current.value && (
                           <h4> {numberOfGuestsRef.current.value} guests </h4>

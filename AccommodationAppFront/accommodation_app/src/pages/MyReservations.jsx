@@ -18,7 +18,7 @@ const MyReservations = () => {
   const [reservations, setReservations] = useState();
   const navigate = useNavigate();
   useEffect(() => {
-    fetch("http://localhost:8000/reservation/my", {
+    fetch("http://localhost:8000/reservation/my/future", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -76,6 +76,7 @@ const MyReservations = () => {
               <th>Start</th>
               <th>End</th>
               <th>Number of guests</th>
+              <th>Status</th>
               <th></th>
               <th></th>
             </tr>
@@ -87,8 +88,8 @@ const MyReservations = () => {
                 <td>{dayjs(app.beginning).format("DD-MM-YYYY")}</td>
                 <td>{dayjs(app.ending).format("DD-MM-YYYY")}</td>
                 <td>{app.guests}</td>
+                <td>{app.reservationStatus == 1 ? "Approved" : "Pending"}</td>
                 <td>
-                  {" "}
                   <button
                     className={utils.greenButton}
                     onClick={() => {
