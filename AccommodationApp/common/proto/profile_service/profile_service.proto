@@ -54,6 +54,19 @@ service ProfileService{
     };
   }
 
+  rpc IncreaseCancellationCounter(ICCRequest) returns(ICCResponse) {
+    option (google.api.http) = {
+      get: "/profile/icc/{id}"
+    };
+  }
+
+}
+
+message ICCRequest{
+  string id = 1;
+}
+
+message ICCResponse{
 }
 
 message GetRequest {

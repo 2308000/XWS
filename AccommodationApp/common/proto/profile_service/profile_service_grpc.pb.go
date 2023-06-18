@@ -25,6 +25,7 @@ type ProfileServiceClient interface {
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 	GenerateToken(ctx context.Context, in *GenerateTokenRequest, opts ...grpc.CallOption) (*GenerateTokenResponse, error)
 	GetByToken(ctx context.Context, in *GetByTokenRequest, opts ...grpc.CallOption) (*GetByTokenResponse, error)
+	IncreaseCancellationCounter(ctx context.Context, in *ICCRequest, opts ...grpc.CallOption) (*ICCResponse, error)
 }
 
 type profileServiceClient struct {
@@ -107,6 +108,15 @@ func (c *profileServiceClient) GetByToken(ctx context.Context, in *GetByTokenReq
 	return out, nil
 }
 
+func (c *profileServiceClient) IncreaseCancellationCounter(ctx context.Context, in *ICCRequest, opts ...grpc.CallOption) (*ICCResponse, error) {
+	out := new(ICCResponse)
+	err := c.cc.Invoke(ctx, "/profile.ProfileService/IncreaseCancellationCounter", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProfileServiceServer is the server API for ProfileService service.
 // All implementations must embed UnimplementedProfileServiceServer
 // for forward compatibility
@@ -119,6 +129,7 @@ type ProfileServiceServer interface {
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
 	GenerateToken(context.Context, *GenerateTokenRequest) (*GenerateTokenResponse, error)
 	GetByToken(context.Context, *GetByTokenRequest) (*GetByTokenResponse, error)
+	IncreaseCancellationCounter(context.Context, *ICCRequest) (*ICCResponse, error)
 	mustEmbedUnimplementedProfileServiceServer()
 }
 
@@ -149,6 +160,9 @@ func (*UnimplementedProfileServiceServer) GenerateToken(context.Context, *Genera
 }
 func (*UnimplementedProfileServiceServer) GetByToken(context.Context, *GetByTokenRequest) (*GetByTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetByToken not implemented")
+}
+func (*UnimplementedProfileServiceServer) IncreaseCancellationCounter(context.Context, *ICCRequest) (*ICCResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IncreaseCancellationCounter not implemented")
 }
 func (*UnimplementedProfileServiceServer) mustEmbedUnimplementedProfileServiceServer() {}
 
@@ -300,6 +314,24 @@ func _ProfileService_GetByToken_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProfileService_IncreaseCancellationCounter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ICCRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProfileServiceServer).IncreaseCancellationCounter(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/profile.ProfileService/IncreaseCancellationCounter",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProfileServiceServer).IncreaseCancellationCounter(ctx, req.(*ICCRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ProfileService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "profile.ProfileService",
 	HandlerType: (*ProfileServiceServer)(nil),
@@ -335,6 +367,10 @@ var _ProfileService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetByToken",
 			Handler:    _ProfileService_GetByToken_Handler,
+		},
+		{
+			MethodName: "IncreaseCancellationCounter",
+			Handler:    _ProfileService_IncreaseCancellationCounter_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

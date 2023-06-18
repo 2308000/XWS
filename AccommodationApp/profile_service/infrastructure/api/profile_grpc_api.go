@@ -230,6 +230,31 @@ func (handler *ProfileHandler) Delete(ctx context.Context, request *pb.DeleteReq
 	return &pb.DeleteResponse{}, nil
 }
 
+func (handler *ProfileHandler) IncreaseCancellationCounter(ctx context.Context, request *pb.ICCRequest) (*pb.ICCResponse, error) {
+	profile, err := handler.service.Get(ctx, request.Id)
+	if err != nil {
+		return nil, err
+	}
+	err = handler.service.Update(ctx, request.Id, &domain.Profile{
+		Id:                    profile.Id,
+		Username:              profile.Username,
+		FirstName:             profile.FirstName,
+		LastName:              profile.LastName,
+		Email:                 profile.Email,
+		Address:               profile.Address,
+		DateOfBirth:           profile.DateOfBirth,
+		PhoneNumber:           profile.PhoneNumber,
+		Gender:                profile.Gender,
+		Token:                 profile.Token,
+		ReservationsCancelled: profile.ReservationsCancelled + 1,
+		IsOutstanding:         profile.IsOutstanding,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ICCResponse{}, nil
+}
+
 func (handler *ProfileHandler) GenerateToken(ctx context.Context, request *pb.GenerateTokenRequest) (*pb.GenerateTokenResponse, error) {
 	if ctx.Value("userId").(string) != request.Id {
 		return nil, status.Errorf(codes.Unauthenticated, "user not authenticated")
