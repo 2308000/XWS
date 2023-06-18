@@ -4,41 +4,14 @@ import utils from "./Utils.module.css";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { useState, useRef, useEffect, useContext } from "react";
+import { useState, useRef, useEffect } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-
-const acc = {
-  Id: 1,
-  Host: 2,
-  Name: "penthaus neki",
-  HasWifi: true,
-  HasFreeParking: true,
-  HasWashingMachine: true,
-  MinNumberOfGuests: 2,
-  MaxNumberOfGuests: 7,
-  Availability: [
-    {
-      Price: 20,
-      IsPricePerGuest: true,
-    },
-    {
-      Price: 60,
-      IsPricePerGuest: true,
-    },
-    {
-      Price: 60,
-      IsPricePerGuest: true,
-    },
-    {
-      Price: 40,
-      IsPricePerGuest: true,
-    },
-  ],
-  IsReservationAcceptenceManual: true,
-};
+import { useParams } from "react-router-dom";
+import AuthContext from "../store/auth-context";
+import { useContext } from "react";
 const style = {
   position: "absolute",
   top: "50%",
@@ -49,6 +22,7 @@ const style = {
   borderRadius: 3,
 };
 const MyAccommodation = () => {
+  const authCtx = useContext(AuthContext);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -56,11 +30,31 @@ const MyAccommodation = () => {
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
   const [value, setValue] = useState(dayjs(tomorrow));
+  let { id } = useParams();
+  const [acc, setAcc] = useState();
+  const [accName, setAccName] = useState();
+  useEffect(() => {
+    console.log(id);
+    fetch("http://localhost:8000/accommodation/" + id, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authCtx.token,
+      },
+    })
+      .then((response) => response.json())
+      .then((actualData) => {
+        console.log(actualData);
+        setAcc(actualData.accommodation.availability);
+        setAccName(actualData.accommodation.name);
+      });
+  }, []);
+
   return (
     <div className={classes.body}>
       <div className={classes.home}>
         <br></br>
-        <h1>Accommodation name</h1>
+        <h1>{accName}</h1>
 
         <div className={classes.buttonContainerRight}>
           <button className={utils.greenButton} onClick={handleOpen}>
@@ -77,12 +71,12 @@ const MyAccommodation = () => {
             </tr>
           </thead>
           <tbody>
-            {acc.Availability?.map((app) => (
+            {acc?.map((app) => (
               <tr key={app.id}>
-                <td>{app.Price}</td>
-                <td>{app.Price}</td>
-                <td>{app.Price}</td>
-                <td>{app.Price}</td>
+                <td>{dayjs(app.beginning).format("DD-MM-YYYY")}</td>
+                <td>{dayjs(app.ending).format("DD-MM-YYYY")}</td>
+                <td>{app.price}</td>
+                <td>{app.isPricePerGuest ? "Per guest" : "Per unit"}</td>
               </tr>
             ))}
           </tbody>
