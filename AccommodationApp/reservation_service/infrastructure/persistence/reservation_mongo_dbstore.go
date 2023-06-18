@@ -70,6 +70,17 @@ func (store *ReservationMongoDBStore) GetForUser(ctx context.Context, userId str
 	}
 }
 
+func (store *ReservationMongoDBStore) GetForAccommodation(ctx context.Context, accommodationId string) ([]*domain.Reservation, error) {
+	id, err := primitive.ObjectIDFromHex(accommodationId)
+	if err != nil {
+		return nil, err
+	}
+	filter := bson.D{{"reservationStatus", bson.D{{"$eq", 1}}}}
+	filter = append(filter, bson.E{"beginning", bson.D{{"$gte", time.Now()}}})
+	filter = append(filter, bson.E{"accommodationId", id})
+	return store.filter(filter)
+}
+
 func (store *ReservationMongoDBStore) GetPending(ctx context.Context) ([]*domain.Reservation, error) {
 	filter := bson.D{}
 	filter = append(filter, bson.E{"reservationStatus", bson.D{{"$eq", 0}}})

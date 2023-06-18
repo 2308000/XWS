@@ -34,6 +34,10 @@ func (service *ReservationService) GetForUser(ctx context.Context, userId string
 	return service.store.GetForUser(ctx, userId, resType)
 }
 
+func (service *ReservationService) GetForAccommodation(ctx context.Context, userId string) ([]*domain.Reservation, error) {
+	return service.store.GetForAccommodation(ctx, userId)
+}
+
 func (service *ReservationService) GetPending(ctx context.Context) ([]*domain.Reservation, error) {
 	return service.store.GetPending(ctx)
 }

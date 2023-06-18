@@ -173,6 +173,30 @@ func (handler *ReservationHandler) GetUsersReservations(ctx context.Context, req
 	return response, nil
 }
 
+func (handler *ReservationHandler) GetAccommodationsReservations(ctx context.Context, request *pb.GetAccommodationsReservationsRequest) (*pb.GetAccommodationsReservationsResponse, error) {
+	Reservations, err := handler.service.GetForAccommodation(ctx, request.AccommodationId)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.GetAccommodationsReservationsResponse{
+		Reservations: []*pb.ReservationOut{},
+	}
+	for _, Reservation := range Reservations {
+		current := &pb.ReservationOut{
+			Id:                Reservation.Id.Hex(),
+			Accommodation:     nil,
+			User:              nil,
+			Beginning:         timestamppb.New(Reservation.Beginning),
+			Ending:            timestamppb.New(Reservation.Ending),
+			Guests:            Reservation.Guests,
+			ReservationStatus: int32(Reservation.ReservationStatus),
+		}
+		response.Reservations = append(response.Reservations, current)
+
+	}
+	return response, nil
+}
+
 func (handler *ReservationHandler) GetByHost(ctx context.Context, request *pb.GetByHostRequest) (*pb.GetByHostResponse, error) {
 	allReservations, err := handler.service.GetPending(ctx)
 	if err != nil {

@@ -110,6 +110,18 @@ func (handler *UserHandler) Update(ctx context.Context, request *pb.UpdateReques
 	return &pb.UpdateResponse{Username: username}, nil
 }
 
+func (handler *UserHandler) DeleteIntern(ctx context.Context, request *pb.DeleteRequest) (*pb.DeleteResponse, error) {
+	id, err := primitive.ObjectIDFromHex(request.Id)
+	if err != nil {
+		return nil, err
+	}
+	err = handler.service.Delete(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.DeleteResponse{}, nil
+}
+
 func (handler *UserHandler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	user, err := handler.service.Get(ctx, req.GetUsername())
 	if err != nil {

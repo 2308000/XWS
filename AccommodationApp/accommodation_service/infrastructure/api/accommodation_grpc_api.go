@@ -415,3 +415,11 @@ func (handler *AccommodationHandler) Delete(ctx context.Context, request *pb.Del
 	}
 	return &pb.DeleteAccommodationResponse{}, nil
 }
+
+func (handler *AccommodationHandler) DeleteIntern(ctx context.Context, request *pb.DeleteInternAccommodationRequest) (*pb.DeleteInternAccommodationResponse, error) {
+	err := handler.service.Delete(ctx, request.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.DeleteInternAccommodationResponse{}, nil
+}
