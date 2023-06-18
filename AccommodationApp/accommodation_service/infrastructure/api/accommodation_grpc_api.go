@@ -9,6 +9,7 @@ import (
 	reservation "accommodation_booking/common/proto/reservation_service"
 	user "accommodation_booking/common/proto/user_service"
 	"context"
+	"errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
@@ -339,6 +340,18 @@ func (handler AccommodationHandler) Update(ctx context.Context, request *pb.Upda
 }
 
 func (handler *AccommodationHandler) UpdateAvailability(ctx context.Context, request *pb.UpdateAvailabilityRequest) (*pb.UpdateAvailabilityResponse, error) {
+	reservationCheck, err := handler.reservationClient.GetBetweenDates(ctx, &reservation.GetBetweenDatesRequest{Informations: &reservation.Informations{
+		AccommodationId: request.AccommodationId,
+		Beginning:       request.AvailableDate.Beginning,
+		Ending:          request.AvailableDate.Ending,
+	}})
+	if err != nil {
+		return nil, err
+	}
+	if len(reservationCheck.Reservations) != 0 {
+		return nil, errors.New("the given accommodation already has reservations in given time period")
+	}
+
 	accommodationId := request.AccommodationId
 	//reservations, err := handler.reservationClient.
 	availableDate := domain.AvailableDate{
