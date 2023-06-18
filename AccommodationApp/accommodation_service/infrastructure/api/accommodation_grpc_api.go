@@ -157,9 +157,9 @@ func (handler *AccommodationHandler) GetAllSearched(ctx context.Context, request
 		log.Println("Smjestaj ", accommodation.Name, " nema rezervacije.")
 		accommodationAvailableDateInfo, err := handler.service.GetAccommodationAvailableDatesForTimePeriod(ctx, accommodation.Id.Hex(), request.Beginning.AsTime(), request.Ending.AsTime())
 		if err != nil {
-			log.Println("moja")
 			return nil, err
 		}
+
 		if len(accommodationAvailableDateInfo) == 0 {
 			log.Println("Smjestaj ", accommodation.Name, " se ne moze rezervisati.")
 			continue
@@ -172,7 +172,7 @@ func (handler *AccommodationHandler) GetAllSearched(ctx context.Context, request
 		}
 		accommodation.Availability = []domain.AvailableDate{availableDate}
 		accommodationPb := mapAccommodationToPb(accommodation)
-
+		log.Println("dodao smjestaj")
 		accommodationGrades, err := handler.gradeClient.GetByGraded(ctx, &grade.GetGradeRequest{Id: accommodationPb.Id})
 		if err != nil {
 			return nil, err
@@ -310,16 +310,17 @@ func (handler AccommodationHandler) Create(ctx context.Context, request *pb.Crea
 			City:    request.Accommodation.Location.City,
 			Street:  request.Accommodation.Location.Street,
 		},
-		HasWifi:            request.Accommodation.HasWifi,
-		HasAirConditioning: request.Accommodation.HasAirConditioning,
-		HasFreeParking:     request.Accommodation.HasFreeParking,
-		HasKitchen:         request.Accommodation.HasKitchen,
-		HasWashingMachine:  request.Accommodation.HasWashingMachine,
-		HasBathtub:         request.Accommodation.HasBathtub,
-		HasBalcony:         request.Accommodation.HasBalcony,
-		Photos:             request.Accommodation.Photos,
-		MinNumberOfGuests:  int(request.Accommodation.MinNumberOfGuests),
-		MaxNumberOfGuests:  int(request.Accommodation.MaxNumberOfGuests),
+		HasWifi:                       request.Accommodation.HasWifi,
+		HasAirConditioning:            request.Accommodation.HasAirConditioning,
+		HasFreeParking:                request.Accommodation.HasFreeParking,
+		HasKitchen:                    request.Accommodation.HasKitchen,
+		HasWashingMachine:             request.Accommodation.HasWashingMachine,
+		HasBathtub:                    request.Accommodation.HasBathtub,
+		HasBalcony:                    request.Accommodation.HasBalcony,
+		Photos:                        request.Accommodation.Photos,
+		MinNumberOfGuests:             int(request.Accommodation.MinNumberOfGuests),
+		MaxNumberOfGuests:             int(request.Accommodation.MaxNumberOfGuests),
+		IsReservationAcceptenceManual: request.Accommodation.IsReservationAcceptenceManual,
 	}
 	accommodation, err := handler.service.Create(ctx, accommodationInfo)
 	if err != nil {
