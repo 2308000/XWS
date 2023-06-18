@@ -5,66 +5,6 @@ import { useNavigate } from "react-router-dom";
 import AuthContext from "../store/auth-context";
 import { useContext, useEffect, useState } from "react";
 
-const properties = [
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 55,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-];
-
 const MyAccommodations = () => {
   const authCtx = useContext(AuthContext);
   const [properties, setProperties] = useState();

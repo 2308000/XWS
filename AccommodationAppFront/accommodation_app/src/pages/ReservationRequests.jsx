@@ -12,69 +12,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import AuthContext from "../store/auth-context";
 import { useContext } from "react";
 
-const reservations = [
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 55,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-];
-
 const ReservationRequests = () => {
   const authCtx = useContext(AuthContext);
-  const [properties, setProperties] = useState();
+  const [reservations, setReservations] = useState();
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     console.log(authCtx.token);
@@ -89,14 +30,48 @@ const ReservationRequests = () => {
       .then((response) => response.json())
       .then((actualData) => {
         console.log(actualData);
-        setProperties(actualData.reservations);
+        setRefresh(true);
       })
       .catch((error) => {
         alert(error);
       });
-  }, []);
+  }, [refresh]);
 
-  const handleCancel = () => {};
+  const handleConfirm = (id) => {
+    fetch("http://localhost:8000/reservation/approve/" + id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authCtx.token,
+      },
+    })
+      .then((response) => response.json())
+      .then((actualData) => {
+        console.log(actualData);
+        setRefresh(true);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+
+  const handleCancel = (id) => {
+    fetch("http://localhost:8000/reservation/reject/" + id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authCtx.token,
+      },
+    })
+      .then((response) => response.json())
+      .then((actualData) => {
+        console.log(actualData);
+        setReservations(actualData.reservations);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
 
   return (
     <div className={classes.body}>
@@ -105,50 +80,59 @@ const ReservationRequests = () => {
         <h1>Reservation requests</h1>
 
         <div className={classes.buttonContainerRight}></div>
-        <table className={classes.styledTable}>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Start</th>
-              <th>End</th>
-              <th>Guests</th>
-              <th>Number of cancellations</th>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {reservations?.map((app) => (
-              <tr key={app.id}>
-                <td>{app.Name}</td>
-                <td>{app.City}</td>
-                <td>{app.Start}</td>
-                <td>{app.End}</td>
-                <td>{app.Price}</td>
-                <td>
-                  <button
-                    className={utils.greenTableButton}
-                    onClick={() => {
-                      handleCancel();
-                    }}
-                  >
-                    Accept
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className={utils.redTableButton}
-                    onClick={() => {
-                      handleCancel();
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </td>
+        {reservations?.length > 0 ? (
+          <table className={classes.styledTable}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Guests</th>
+                <th>Guest</th>
+                <th>Number of cancellations</th>
+                <th></th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {reservations?.map((app) => (
+                <tr key={app.accommodation.id}>
+                  <td>{app.accommodation.name}</td>
+                  <td>{dayjs(app.beginning).format("DD-MM-YYYY")}</td>
+                  <td>{dayjs(app.ending).format("DD-MM-YYYY")}</td>
+                  <td>{app.guests}</td>
+                  <td>{app.user.username}</td>
+                  <td>{app.user.cancellationCounter}</td>
+
+                  <td>
+                    <button
+                      className={utils.greenTableButton}
+                      onClick={() => {
+                        handleConfirm(app.accommodation.id);
+                      }}
+                    >
+                      Accept
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      className={utils.redTableButton}
+                      onClick={() => {
+                        handleCancel(app.accommodation.id);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div>
+            <h2>No reservation requests</h2>
+          </div>
+        )}
       </div>
     </div>
   );
