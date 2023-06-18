@@ -22,7 +22,7 @@ var accommodations = []*domain.Accommodation{
 		Availability: []domain.AvailableDate{
 			{
 				Beginning:       time.Date(2023, time.May, 1, 0, 0, 0, 0, time.UTC),
-				Ending:          time.Date(2023, time.June, 14, 23, 59, 59, 999, time.UTC),
+				Ending:          time.Date(2023, time.May, 31, 23, 59, 59, 999, time.UTC),
 				Price:           40,
 				IsPricePerGuest: false,
 			},
