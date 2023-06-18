@@ -151,19 +151,17 @@ const Accommodation = () => {
             {accommodation?.accommodation.hasBathtub ? "Yes" : "No"}
           </div>
         </div>
-        <h2>Reviews</h2>
-        <h2>
+        <br></br>
+        <h3>
           Average grade :
           {accommodation?.accommodation.averageAccommodationGrade !== "NaN"
             ? accommodation?.accommodation.averageAccommodationGrade.toFixed(2)
             : 0}
-        </h2>
+        </h3>
+        <br></br>
+        <h2>Reviews</h2>
+        <br></br>
         <div>
-          <div>
-            <span>User </span>
-            <span>Grade </span>
-            <span>Date</span>
-          </div>
           {accommodation?.accommodation.grades.map((grade) => (
             <div>
               <span>{grade.guestName} </span>
