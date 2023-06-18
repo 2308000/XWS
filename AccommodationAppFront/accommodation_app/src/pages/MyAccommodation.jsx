@@ -9,7 +9,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AuthContext from "../store/auth-context";
 import { useContext } from "react";
 const style = {
@@ -30,9 +30,51 @@ const MyAccommodation = () => {
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
   const [value, setValue] = useState(dayjs(tomorrow));
+  const [valueEnd, setValueEnd] = useState(dayjs(tomorrow));
   let { id } = useParams();
   const [acc, setAcc] = useState();
   const [accName, setAccName] = useState();
+  const priceRef = useRef();
+  const pricingRef = useRef();
+  const navigate = useNavigate();
+  const [refresh, setRefresh] = useState(false);
+  const addAvailabilityHandler = () => {
+    event.preventDefault();
+    console.log(pricingRef.current.checked);
+    console.log(priceRef.current.value);
+    console.log(value);
+    console.log(valueEnd);
+    fetch("http://localhost:8000/accommodation/availability", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authCtx.token,
+      },
+      body: JSON.stringify({
+        accommodationId: id,
+        availableDate: {
+          beginning: value,
+          ending: valueEnd,
+          price: priceRef.current.value,
+          isPricePerGuest: pricingRef.current.checked,
+        },
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then((data) => {
+        if (data) console.log(data);
+        setRefresh(true);
+        //navigate("/my-accommodation/" + id);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+
   useEffect(() => {
     console.log(id);
     fetch("http://localhost:8000/accommodation/" + id, {
@@ -48,7 +90,7 @@ const MyAccommodation = () => {
         setAcc(actualData.accommodation.availability);
         setAccName(actualData.accommodation.name);
       });
-  }, []);
+  }, [refresh]);
 
   return (
     <div className={classes.body}>
@@ -71,8 +113,8 @@ const MyAccommodation = () => {
             </tr>
           </thead>
           <tbody>
-            {acc?.map((app) => (
-              <tr key={app.id}>
+            {acc?.map((app, index) => (
+              <tr key={index}>
                 <td>{dayjs(app.beginning).format("DD-MM-YYYY")}</td>
                 <td>{dayjs(app.ending).format("DD-MM-YYYY")}</td>
                 <td>{app.price}</td>
@@ -108,9 +150,9 @@ const MyAccommodation = () => {
                 <label>Ending date:</label>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
-                    value={value}
+                    value={valueEnd}
                     onChange={(newValue) => {
-                      setValue(newValue);
+                      setValueEnd(newValue);
                     }}
                     className={classes.DatePicker}
                   />
@@ -118,7 +160,7 @@ const MyAccommodation = () => {
               </div>
               <div className={classes.spanReserve}>
                 <label>Price:</label>
-                <input className={utils.inputPrice}></input>
+                <input className={utils.inputPrice} ref={priceRef}></input>
               </div>
               <div className={classes.spanReserve}>
                 <label>Pricing:</label>
@@ -128,17 +170,24 @@ const MyAccommodation = () => {
                   id="unit"
                   name="pricing"
                   value="unit"
+                  ref={pricingRef}
                 ></input>
-                <label for="html">Per unit</label>
+                <label>Per unit</label>
                 <input
+                  ref={pricingRef}
                   type="radio"
                   id="person"
                   name="pricing"
                   value="person"
                 ></input>
-                <label for="html">Per person</label>
+                <label>Per person</label>
               </div>
-              <button className={classes.reserveButton}>Add</button>
+              <button
+                className={classes.reserveButton}
+                onClick={addAvailabilityHandler}
+              >
+                Add
+              </button>
             </form>
           </div>
         </Box>
