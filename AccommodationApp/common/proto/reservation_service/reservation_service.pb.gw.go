@@ -383,6 +383,23 @@ func request_ReservationService_GetMyReservations_0(ctx context.Context, marshal
 	var protoReq GetMyReservationsRequest
 	var metadata runtime.ServerMetadata
 
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["resType"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "resType")
+	}
+
+	protoReq.ResType, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "resType", err)
+	}
+
 	msg, err := client.GetMyReservations(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
@@ -391,6 +408,23 @@ func request_ReservationService_GetMyReservations_0(ctx context.Context, marshal
 func local_request_ReservationService_GetMyReservations_0(ctx context.Context, marshaler runtime.Marshaler, server ReservationServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetMyReservationsRequest
 	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["resType"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "resType")
+	}
+
+	protoReq.ResType, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "resType", err)
+	}
 
 	msg, err := server.GetMyReservations(ctx, &protoReq)
 	return msg, metadata, err
@@ -946,7 +980,7 @@ func RegisterReservationServiceHandlerServer(ctx context.Context, mux *runtime.S
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/reservation.ReservationService/GetMyReservations", runtime.WithHTTPPathPattern("/reservation/my"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/reservation.ReservationService/GetMyReservations", runtime.WithHTTPPathPattern("/reservation/my/{resType}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1345,7 +1379,7 @@ func RegisterReservationServiceHandlerClient(ctx context.Context, mux *runtime.S
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/reservation.ReservationService/GetMyReservations", runtime.WithHTTPPathPattern("/reservation/my"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/reservation.ReservationService/GetMyReservations", runtime.WithHTTPPathPattern("/reservation/my/{resType}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1528,7 +1562,7 @@ var (
 
 	pattern_ReservationService_GetByHostRejected_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"reservation", "host", "rejected", "id"}, ""))
 
-	pattern_ReservationService_GetMyReservations_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"reservation", "my"}, ""))
+	pattern_ReservationService_GetMyReservations_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"reservation", "my", "resType"}, ""))
 
 	pattern_ReservationService_GetBetweenDates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"reservation", "dates"}, ""))
 

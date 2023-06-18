@@ -58,7 +58,7 @@ service ReservationService{
 
   rpc GetMyReservations(GetMyReservationsRequest) returns(GetMyReservationsResponse) {
     option (google.api.http) = {
-      get: "/reservation/my"
+      get: "/reservation/my/{resType}"
     };
   }
 
@@ -160,6 +160,7 @@ message GetBetweenDatesResponse {
   repeated ReservationOut reservations = 1;
 }
 message GetMyReservationsRequest {
+  string resType = 1;
 }
 
 message GetMyReservationsResponse {

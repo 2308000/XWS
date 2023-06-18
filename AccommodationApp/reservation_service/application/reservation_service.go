@@ -30,8 +30,8 @@ func (service *ReservationService) GetBetweenDates(ctx context.Context, beginnin
 	return service.store.GetBetweenDates(ctx, beginning, ending, accommodationId)
 }
 
-func (service *ReservationService) GetForUser(ctx context.Context, userId string) ([]*domain.Reservation, error) {
-	return service.store.GetForUser(ctx, userId)
+func (service *ReservationService) GetForUser(ctx context.Context, userId string, resType string) ([]*domain.Reservation, error) {
+	return service.store.GetForUser(ctx, userId, resType)
 }
 
 func (service *ReservationService) GetPending(ctx context.Context) ([]*domain.Reservation, error) {

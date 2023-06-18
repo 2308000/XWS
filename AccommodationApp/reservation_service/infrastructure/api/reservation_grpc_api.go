@@ -135,7 +135,7 @@ func (handler *ReservationHandler) GetBetweenDates(ctx context.Context, request 
 }
 
 func (handler *ReservationHandler) GetUsersReservations(ctx context.Context, request *pb.GetUsersReservationsRequest) (*pb.GetUsersReservationsResponse, error) {
-	Reservations, err := handler.service.GetForUser(ctx, request.UserId)
+	Reservations, err := handler.service.GetForUser(ctx, request.UserId, "")
 	if err != nil {
 		return nil, err
 	}
@@ -456,7 +456,7 @@ func (handler *ReservationHandler) GetByHostRejected(ctx context.Context, reques
 
 func (handler *ReservationHandler) GetMyReservations(ctx context.Context, request *pb.GetMyReservationsRequest) (*pb.GetMyReservationsResponse, error) {
 	userId := ctx.Value("userId").(string)
-	Reservations, err := handler.service.GetForUser(ctx, userId)
+	Reservations, err := handler.service.GetForUser(ctx, userId, request.ResType)
 	if err != nil {
 		return nil, err
 	}
