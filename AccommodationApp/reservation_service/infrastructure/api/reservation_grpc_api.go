@@ -134,7 +134,7 @@ func (handler *ReservationHandler) GetBetweenDates(ctx context.Context, request 
 }
 
 func (handler *ReservationHandler) GetUsersReservations(ctx context.Context, request *pb.GetUsersReservationsRequest) (*pb.GetUsersReservationsResponse, error) {
-	Reservations, err := handler.service.GetForUser(ctx, request.UserId, "")
+	Reservations, err := handler.service.GetForUser(ctx, request.UserId, "future")
 	if err != nil {
 		return nil, err
 	}
@@ -483,6 +483,7 @@ func (handler *ReservationHandler) GetMyReservations(ctx context.Context, reques
 	if err != nil {
 		return nil, err
 	}
+	log.Println(len(Reservations))
 	response := &pb.GetMyReservationsResponse{
 		Reservations: []*pb.ReservationOut{},
 	}

@@ -250,6 +250,7 @@ func (handler *ProfileHandler) Delete(ctx context.Context, request *pb.DeleteReq
 		if err != nil {
 			return nil, err
 		}
+		log.Println(guestsReservations.Reservations)
 		if len(guestsReservations.Reservations) != 0 {
 			return nil, errors.New("you cannot delete profile because you have pending or approved reservations in future")
 		}
