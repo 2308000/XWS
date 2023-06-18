@@ -13,6 +13,7 @@ import AuthContext from "../store/auth-context";
 import { useContext } from "react";
 const Accommodation = () => {
   const [accommodation, setAccommodation] = useState();
+  const navigate = useNavigate();
 
   let { id } = useParams();
   const authCtx = useContext(AuthContext);
@@ -31,6 +32,43 @@ const Accommodation = () => {
         setAccommodation(actualData);
       });
   }, []);
+
+  const reserveHandler = () => {
+    console.log(localStorage.getItem("startDate"));
+
+    const start = dayjs(localStorage.getItem("startDate")).format(
+      "YYYY-MM-DDTHH:mm:ss.SSSZ"
+    );
+    const end = dayjs(localStorage.getItem("endDate")).format(
+      "YYYY-MM-DDTHH:mm:ss.SSSZ"
+    );
+
+    fetch("http://localhost:8000/reservation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authCtx.token,
+      },
+      body: JSON.stringify({
+        accommodationId: id,
+        beginning: start,
+        ending: end,
+        guests: localStorage.getItem("numberOfGuests"),
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then((data) => {
+        if (data) console.log(data);
+        navigate("/my-reservations");
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
 
   return (
     <div className={classes.body}>
@@ -68,7 +106,11 @@ const Accommodation = () => {
             </div>
           </div>
           <div className={classes.priceDate}>
-            <button className={utils.greenButton}>Reserve</button>
+            {authCtx.role === "guest" && (
+              <button className={utils.greenButton} onClick={reserveHandler}>
+                Reserve
+              </button>
+            )}
           </div>
         </div>
         <br></br>
@@ -111,11 +153,8 @@ const Accommodation = () => {
         </div>
         <h2>Reviews</h2>
         <h2>
-          Average grade :{" "}
-          {Math.round(
-            accommodation?.accommodation.averageAccommodationGrade,
-            2
-          )}
+          Average grade :
+          {accommodation?.accommodation.averageAccommodationGrade.toFixed(2)}
         </h2>
         <div>
           <div>

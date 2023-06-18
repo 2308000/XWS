@@ -30,7 +30,7 @@ const ReservationRequests = () => {
       .then((response) => response.json())
       .then((actualData) => {
         console.log(actualData);
-        setRefresh(true);
+        setReservations(actualData.reservations);
       })
       .catch((error) => {
         alert(error);
@@ -38,6 +38,7 @@ const ReservationRequests = () => {
   }, [refresh]);
 
   const handleConfirm = (id) => {
+    console.log(id);
     fetch("http://localhost:8000/reservation/approve/" + id, {
       method: "PUT",
       headers: {
@@ -62,11 +63,12 @@ const ReservationRequests = () => {
         "Content-Type": "application/json",
         Authorization: authCtx.token,
       },
+      body: {},
     })
       .then((response) => response.json())
       .then((actualData) => {
         console.log(actualData);
-        setReservations(actualData.reservations);
+        setRefresh(true);
       })
       .catch((error) => {
         alert(error);
@@ -108,7 +110,7 @@ const ReservationRequests = () => {
                     <button
                       className={utils.greenTableButton}
                       onClick={() => {
-                        handleConfirm(app.accommodation.id);
+                        handleConfirm(app.id);
                       }}
                     >
                       Accept
@@ -118,7 +120,7 @@ const ReservationRequests = () => {
                     <button
                       className={utils.redTableButton}
                       onClick={() => {
-                        handleCancel(app.accommodation.id);
+                        handleCancel(app.id);
                       }}
                     >
                       Cancel

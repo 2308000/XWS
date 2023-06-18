@@ -180,6 +180,7 @@ const Accommodations = () => {
             <input
               className={classes.inputNumber}
               ref={numberOfGuestsRef}
+              defaultValue={nog}
             ></input>
           </div>
           <button className={classes.searchButton} onClick={searchHandler}>
@@ -274,7 +275,9 @@ const Accommodations = () => {
                       <div className={classes.pricesContainer}>
                         <h4>
                           Average grade:
-                          {property?.accommodation?.name}
+                          {(property?.accommodation?.averageAccommodationGrade).toFixed(
+                            2
+                          )}
                         </h4>
                         {numberOfGuestsRef.current.value && (
                           <h4> {numberOfGuestsRef.current.value} guests </h4>
@@ -287,6 +290,7 @@ const Accommodations = () => {
                         className={utils.greenButton}
                         onClick={() => {
                           checkHandler(property.accommodation.id);
+                          console.log(valueEnd);
                           localStorage.setItem("startDate", valueStart);
                           localStorage.setItem("endDate", valueEnd);
                           localStorage.setItem(

@@ -10,11 +10,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import AuthContext from "../store/auth-context";
+import { useNavigate } from "react-router-dom";
 
 const MyReservations = () => {
   const authCtx = useContext(AuthContext);
   const [refresh, setRefresh] = useState(false);
   const [reservations, setReservations] = useState();
+  const navigate = useNavigate();
   useEffect(() => {
     fetch("http://localhost:8000/reservation/my", {
       method: "GET",
@@ -29,6 +31,10 @@ const MyReservations = () => {
         setReservations(actualData.reservations);
       });
   }, [refresh]);
+
+  const handleGrade = (app) => {
+    navigate();
+  };
 
   const handleCancel = (id) => {
     fetch("http://localhost:8000/reservation/cancel/" + id, {
@@ -81,7 +87,17 @@ const MyReservations = () => {
                 <td>{dayjs(app.beginning).format("DD-MM-YYYY")}</td>
                 <td>{dayjs(app.ending).format("DD-MM-YYYY")}</td>
                 <td>{app.guests}</td>
-                <td></td>
+                <td>
+                  {" "}
+                  <button
+                    className={utils.greenButton}
+                    onClick={() => {
+                      handleGrade(app);
+                    }}
+                  >
+                    Grade
+                  </button>
+                </td>
                 <td>
                   <button
                     className={utils.redButton}
