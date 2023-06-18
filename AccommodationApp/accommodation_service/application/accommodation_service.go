@@ -93,7 +93,7 @@ func (service *AccommodationService) UpdateAvailability(ctx context.Context, acc
 		}
 	}
 
-	if len(overlappingCompletely) == 0 && len(overlappingBeginning) == 0 && len(overlappingEnding) == 0 && len(equals) == 0 {
+	if len(overlappingCompletely) == 0 && len(overlappingBeginning) == 0 && len(overlappingEnding) == 0 && len(equals) == 0 && len(underlappingCompletely) == 0 {
 		accommodation.Availability = append(accommodation.Availability, newAvailableDate)
 		accommodation, err := service.Update(context.TODO(), accommodationId, accommodation)
 		if err != nil {
@@ -114,10 +114,14 @@ func (service *AccommodationService) UpdateAvailability(ctx context.Context, acc
 	var additional domain.AvailableDate
 	usedAdditional := false
 	for _, currIdx := range underlappingCompletely {
-		temp := accommodation.Availability[currIdx].Ending
+		temp := domain.AvailableDate{
+			Beginning:       newAvailableDate.Ending,
+			Ending:          accommodation.Availability[currIdx].Ending,
+			Price:           accommodation.Availability[currIdx].Price,
+			IsPricePerGuest: accommodation.Availability[currIdx].IsPricePerGuest,
+		}
 		accommodation.Availability[currIdx].Ending = newAvailableDate.Beginning
-		additional.Beginning = newAvailableDate.Ending
-		additional.Ending = temp
+		additional = temp
 		usedAdditional = true
 	}
 	for _, currIdx := range overlappingBeginning {
@@ -134,7 +138,7 @@ func (service *AccommodationService) UpdateAvailability(ctx context.Context, acc
 
 	var indicesToRemove []int
 	for i, currDate := range accommodation.Availability {
-		if currDate.Price == 1 {
+		if currDate.Price == -1 {
 			indicesToRemove = append(indicesToRemove, i)
 		}
 	}
