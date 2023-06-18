@@ -132,6 +132,7 @@ func (handler *AccommodationHandler) GetAllSearched(ctx context.Context, request
 	response := &pb.AccommodationSearchResponse{
 		Accommodations: []*pb.AccommodationSearch{},
 	}
+	log.Println("Trazim slobodne smjestaje od ", request.Beginning.AsTime(), " do ", request.Ending.AsTime())
 	for _, accommodation := range accommodations {
 		reservations, err := handler.reservationClient.GetBetweenDates(ctx, &reservation.GetBetweenDatesRequest{Informations: &reservation.Informations{
 			AccommodationId: accommodation.Id.Hex(),
@@ -139,20 +140,20 @@ func (handler *AccommodationHandler) GetAllSearched(ctx context.Context, request
 			Ending:          request.Ending,
 		}})
 		if err != nil {
-			log.Println(accommodation.Id.Hex())
-			log.Println(request.Beginning.AsTime())
-			log.Println(request.Ending.AsTime())
 			return nil, err
 		}
 		if len(reservations.Reservations) > 0 {
+			log.Println("Smjestaj ", accommodation.Name, " ima rezervacije.")
 			continue
 		}
+		log.Println("Smjestaj ", accommodation.Name, " nema rezervacije.")
 		accommodationAvailableDateInfo, err := handler.service.GetAccommodationAvailableDatesForTimePeriod(ctx, accommodation.Id.Hex(), request.Beginning.AsTime(), request.Ending.AsTime())
 		if err != nil {
 			log.Println("moja")
 			return nil, err
 		}
 		if len(accommodationAvailableDateInfo) == 0 {
+			log.Println("Smjestaj ", accommodation.Name, " se ne moze rezervisati.")
 			continue
 		}
 		availableDate := domain.AvailableDate{
@@ -221,7 +222,7 @@ func (handler *AccommodationHandler) GetAllFiltered(ctx context.Context, request
 		HasBathtub:         request.Benefits.HasBathtub,
 		HasFreeParking:     request.Benefits.HasFreeParking,
 	}
-	accommodations, err := handler.service.GetAllFiltered(ctx, *benefits, request.IsOutstandingHost)
+	accommodations, err := handler.service.GetAllFiltered(ctx, *benefits)
 	var indicesToKeep []int
 	for _, accommodation := range accommodations {
 		for i, currentDTO := range filterSearchResult {
@@ -243,6 +244,15 @@ func (handler *AccommodationHandler) GetAllFiltered(ctx context.Context, request
 
 	for i, _ := range finalFilter {
 		accommodation2 := finalFilter[i].Accommodation
+		if request.IsOutstandingHost == true {
+			isOutstandingRes, err := handler.profileClient.IsOutstandingHost(ctx, &profile.GetRequest{Id: accommodation2.Host.HostId})
+			if err != nil {
+				return nil, err
+			}
+			if isOutstandingRes.IsOutstanding == false {
+				continue
+			}
+		}
 		finalFilter[i].Accommodation.Grades = []*pb.AccommodationGrade2{}
 		accommodationGrades, err := handler.gradeClient.GetByGraded(ctx, &grade.GetGradeRequest{Id: accommodation2.Id})
 		if err != nil {

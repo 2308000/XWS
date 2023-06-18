@@ -71,12 +71,9 @@ func (store *AccommodationMongoDBStore) GetAllSearched(ctx context.Context, loca
 	return accommodations, err
 }
 
-func (store *AccommodationMongoDBStore) GetAllFiltered(ctx context.Context, benefits domain.Benefits, isOutstanding bool) ([]*domain.Accommodation, error) {
+func (store *AccommodationMongoDBStore) GetAllFiltered(ctx context.Context, benefits domain.Benefits) ([]*domain.Accommodation, error) {
 	filter := bson.D{}
 
-	if isOutstanding {
-		filter = append(filter, bson.E{"host.isOutstanding", true})
-	}
 	if benefits.HasWifi {
 		filter = append(filter, bson.E{"hasWifi", true})
 	}
