@@ -9,101 +9,84 @@ import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-
-const reservations = [
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 55,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-];
+import AuthContext from "../store/auth-context";
 
 const MyReservations = () => {
-  const handleCancel = () => {};
+  const authCtx = useContext(AuthContext);
+  const [refresh, setRefresh] = useState(false);
+  const [reservations, setReservations] = useState();
+  useEffect(() => {
+    fetch("http://localhost:8000/reservation/my", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authCtx.token,
+      },
+    })
+      .then((response) => response.json())
+      .then((actualData) => {
+        console.log(actualData);
+        setReservations(actualData.reservations);
+      });
+  }, [refresh]);
+
+  const handleCancel = (id) => {
+    fetch("http://localhost:8000/reservation/cancel/" + id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authCtx.token,
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else if (res.status == 500) {
+          throw new Error("Can not cancel, less than 1 day left");
+        } else if (res.status == 404) {
+          throw new Error("Account with this email does not exist");
+        }
+      })
+      .then((actualData) => {
+        console.log(actualData);
+        setRefresh(true);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
 
   return (
     <div className={classes.body}>
       <div className={classes.home}>
         <br></br>
-        <h1>Accommodation name</h1>
+        <h1>My reservations</h1>
 
         <div className={classes.buttonContainerRight}></div>
         <table className={classes.styledTable}>
           <thead>
             <tr>
               <th>Name</th>
-              <th>City</th>
               <th>Start</th>
               <th>End</th>
-              <th>Price</th>
-              <th>price</th>
+              <th>Number of guests</th>
+              <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             {reservations?.map((app) => (
               <tr key={app.id}>
-                <td>{app.Name}</td>
-                <td>{app.City}</td>
-                <td>{app.Start}</td>
-                <td>{app.End}</td>
-                <td>{app.Price}</td>
+                <td>{app.accommodation.name}</td>
+                <td>{dayjs(app.beginning).format("DD-MM-YYYY")}</td>
+                <td>{dayjs(app.ending).format("DD-MM-YYYY")}</td>
+                <td>{app.guests}</td>
+                <td></td>
                 <td>
                   <button
                     className={utils.redButton}
                     onClick={() => {
-                      handleCancel();
+                      handleCancel(app.id);
                     }}
                   >
                     Cancel
