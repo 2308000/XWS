@@ -520,7 +520,7 @@ func (handler ReservationHandler) Create(ctx context.Context, request *pb.Create
 		return nil, errors.New("guest number restriction violation")
 	}
 	status := 0
-	if selectedAccommodation.Accommodation.IsReservationAcceptenceManual {
+	if !selectedAccommodation.Accommodation.IsReservationAcceptenceManual {
 		status = 1
 	}
 	reservation := &domain.Reservation{
@@ -655,30 +655,7 @@ func (handler *ReservationHandler) Cancel(ctx context.Context, request *pb.Cance
 		if err != nil {
 			return nil, err
 		}
-		response, err := handler.profileClient.Get(ctx, &profile.GetRequest{Id: ctx.Value("userId").(string)})
-		if err != nil {
-			return nil, err
-		}
-		_, err = handler.profileClient.Update(ctx, &profile.UpdateRequest{
-			Id: response.Profile.Id,
-			Profile: &profile.Profile{
-				Id:                    response.Profile.Id,
-				Username:              response.Profile.Username,
-				FirstName:             response.Profile.FirstName,
-				LastName:              response.Profile.LastName,
-				Email:                 response.Profile.Email,
-				Address:               response.Profile.Address,
-				DateOfBirth:           response.Profile.DateOfBirth,
-				PhoneNumber:           response.Profile.PhoneNumber,
-				Gender:                response.Profile.Gender,
-				Token:                 response.Profile.Token,
-				ReservationsCancelled: response.Profile.ReservationsCancelled + 1,
-				IsOutstanding:         response.Profile.IsOutstanding,
-			},
-		})
-		if err != nil {
-			return nil, err
-		}
+		handler.profileClient.IncreaseCancellationCounter(ctx, &profile.ICCRequest{Id: ctx.Value("userId").(string)})
 		return &pb.CancelReservationResponse{}, nil
 	}
 }
