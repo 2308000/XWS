@@ -111,7 +111,6 @@ func (handler *ReservationHandler) GetAll(ctx context.Context, request *pb.GetAl
 }
 
 func (handler *ReservationHandler) GetBetweenDates(ctx context.Context, request *pb.GetBetweenDatesRequest) (*pb.GetBetweenDatesResponse, error) {
-	log.Println("usao u grpc")
 	Reservations, err := handler.service.GetBetweenDates(ctx, request.Informations.Beginning.AsTime(), request.Informations.Ending.AsTime(), request.Informations.AccommodationId)
 	if err != nil {
 		return nil, err

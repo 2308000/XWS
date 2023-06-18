@@ -456,7 +456,7 @@ func RegisterAccommodationServiceHandlerServer(ctx context.Context, mux *runtime
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.AccommodationService/Get", runtime.WithHTTPPathPattern("/accommodation/{id}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accommodation.AccommodationService/Get", runtime.WithHTTPPathPattern("/accommodation/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -480,7 +480,7 @@ func RegisterAccommodationServiceHandlerServer(ctx context.Context, mux *runtime
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.AccommodationService/GetByHost", runtime.WithHTTPPathPattern("/accommodation/host/{id}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accommodation.AccommodationService/GetByHost", runtime.WithHTTPPathPattern("/accommodation/host/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -504,7 +504,7 @@ func RegisterAccommodationServiceHandlerServer(ctx context.Context, mux *runtime
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.AccommodationService/GetAll", runtime.WithHTTPPathPattern("/accommodation"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accommodation.AccommodationService/GetAll", runtime.WithHTTPPathPattern("/accommodation"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -528,7 +528,7 @@ func RegisterAccommodationServiceHandlerServer(ctx context.Context, mux *runtime
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.AccommodationService/GetAllFiltered", runtime.WithHTTPPathPattern("/accommodation/filter"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accommodation.AccommodationService/GetAllFiltered", runtime.WithHTTPPathPattern("/accommodation/filter"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -552,7 +552,7 @@ func RegisterAccommodationServiceHandlerServer(ctx context.Context, mux *runtime
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.AccommodationService/GetAllSearched", runtime.WithHTTPPathPattern("/accommodation/search"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accommodation.AccommodationService/GetAllSearched", runtime.WithHTTPPathPattern("/accommodation/search"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -576,7 +576,7 @@ func RegisterAccommodationServiceHandlerServer(ctx context.Context, mux *runtime
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.AccommodationService/Create", runtime.WithHTTPPathPattern("/accommodation"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accommodation.AccommodationService/Create", runtime.WithHTTPPathPattern("/accommodation"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -600,7 +600,7 @@ func RegisterAccommodationServiceHandlerServer(ctx context.Context, mux *runtime
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.AccommodationService/Update", runtime.WithHTTPPathPattern("/accommodation/{id}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accommodation.AccommodationService/Update", runtime.WithHTTPPathPattern("/accommodation/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -624,7 +624,7 @@ func RegisterAccommodationServiceHandlerServer(ctx context.Context, mux *runtime
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.AccommodationService/UpdateAvailability", runtime.WithHTTPPathPattern("/accommodation/availability"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accommodation.AccommodationService/UpdateAvailability", runtime.WithHTTPPathPattern("/accommodation/availability"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -648,7 +648,7 @@ func RegisterAccommodationServiceHandlerServer(ctx context.Context, mux *runtime
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.AccommodationService/GetAccommodationAvailableDatesForTimePeriod", runtime.WithHTTPPathPattern("/accommodation/availability"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accommodation.AccommodationService/GetAccommodationAvailableDatesForTimePeriod", runtime.WithHTTPPathPattern("/accommodation/availability"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -672,7 +672,7 @@ func RegisterAccommodationServiceHandlerServer(ctx context.Context, mux *runtime
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.AccommodationService/Delete", runtime.WithHTTPPathPattern("/accommodation/{id}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accommodation.AccommodationService/Delete", runtime.WithHTTPPathPattern("/accommodation/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -735,7 +735,7 @@ func RegisterAccommodationServiceHandlerClient(ctx context.Context, mux *runtime
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.AccommodationService/Get", runtime.WithHTTPPathPattern("/accommodation/{id}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/accommodation.AccommodationService/Get", runtime.WithHTTPPathPattern("/accommodation/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -756,7 +756,7 @@ func RegisterAccommodationServiceHandlerClient(ctx context.Context, mux *runtime
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.AccommodationService/GetByHost", runtime.WithHTTPPathPattern("/accommodation/host/{id}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/accommodation.AccommodationService/GetByHost", runtime.WithHTTPPathPattern("/accommodation/host/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -777,7 +777,7 @@ func RegisterAccommodationServiceHandlerClient(ctx context.Context, mux *runtime
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.AccommodationService/GetAll", runtime.WithHTTPPathPattern("/accommodation"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/accommodation.AccommodationService/GetAll", runtime.WithHTTPPathPattern("/accommodation"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -798,7 +798,7 @@ func RegisterAccommodationServiceHandlerClient(ctx context.Context, mux *runtime
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.AccommodationService/GetAllFiltered", runtime.WithHTTPPathPattern("/accommodation/filter"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/accommodation.AccommodationService/GetAllFiltered", runtime.WithHTTPPathPattern("/accommodation/filter"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -819,7 +819,7 @@ func RegisterAccommodationServiceHandlerClient(ctx context.Context, mux *runtime
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.AccommodationService/GetAllSearched", runtime.WithHTTPPathPattern("/accommodation/search"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/accommodation.AccommodationService/GetAllSearched", runtime.WithHTTPPathPattern("/accommodation/search"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -840,7 +840,7 @@ func RegisterAccommodationServiceHandlerClient(ctx context.Context, mux *runtime
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.AccommodationService/Create", runtime.WithHTTPPathPattern("/accommodation"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/accommodation.AccommodationService/Create", runtime.WithHTTPPathPattern("/accommodation"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -861,7 +861,7 @@ func RegisterAccommodationServiceHandlerClient(ctx context.Context, mux *runtime
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.AccommodationService/Update", runtime.WithHTTPPathPattern("/accommodation/{id}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/accommodation.AccommodationService/Update", runtime.WithHTTPPathPattern("/accommodation/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -882,7 +882,7 @@ func RegisterAccommodationServiceHandlerClient(ctx context.Context, mux *runtime
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.AccommodationService/UpdateAvailability", runtime.WithHTTPPathPattern("/accommodation/availability"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/accommodation.AccommodationService/UpdateAvailability", runtime.WithHTTPPathPattern("/accommodation/availability"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -903,7 +903,7 @@ func RegisterAccommodationServiceHandlerClient(ctx context.Context, mux *runtime
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.AccommodationService/GetAccommodationAvailableDatesForTimePeriod", runtime.WithHTTPPathPattern("/accommodation/availability"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/accommodation.AccommodationService/GetAccommodationAvailableDatesForTimePeriod", runtime.WithHTTPPathPattern("/accommodation/availability"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -924,7 +924,7 @@ func RegisterAccommodationServiceHandlerClient(ctx context.Context, mux *runtime
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.AccommodationService/Delete", runtime.WithHTTPPathPattern("/accommodation/{id}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/accommodation.AccommodationService/Delete", runtime.WithHTTPPathPattern("/accommodation/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return

@@ -3,6 +3,7 @@ package api
 import (
 	"accommodation_booking/accommodation_service/application"
 	"accommodation_booking/accommodation_service/domain"
+	accommodation "accommodation_booking/common/proto/accommodation_service"
 	pb "accommodation_booking/common/proto/accommodation_service"
 	grade "accommodation_booking/common/proto/grade_service"
 	profile "accommodation_booking/common/proto/profile_service"
@@ -13,24 +14,27 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
+	"time"
 )
 
 type AccommodationHandler struct {
 	pb.UnimplementedAccommodationServiceServer
-	service           *application.AccommodationService
-	profileClient     profile.ProfileServiceClient
-	reservationClient reservation.ReservationServiceClient
-	gradeClient       grade.GradeServiceClient
-	userClient        user.UserServiceClient
+	service             *application.AccommodationService
+	profileClient       profile.ProfileServiceClient
+	reservationClient   reservation.ReservationServiceClient
+	gradeClient         grade.GradeServiceClient
+	userClient          user.UserServiceClient
+	accommodationClient accommodation.AccommodationServiceClient
 }
 
-func NewAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient, reservationClient reservation.ReservationServiceClient, gradeClient grade.GradeServiceClient, userClient user.UserServiceClient) *AccommodationHandler {
+func NewAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient, reservationClient reservation.ReservationServiceClient, gradeClient grade.GradeServiceClient, userClient user.UserServiceClient, accommodationClient accommodation.AccommodationServiceClient) *AccommodationHandler {
 	return &AccommodationHandler{
-		service:           service,
-		profileClient:     profileClient,
-		reservationClient: reservationClient,
-		gradeClient:       gradeClient,
-		userClient:        userClient,
+		service:             service,
+		profileClient:       profileClient,
+		reservationClient:   reservationClient,
+		gradeClient:         gradeClient,
+		userClient:          userClient,
+		accommodationClient: accommodationClient,
 	}
 }
 
@@ -286,13 +290,11 @@ func (handler *AccommodationHandler) GetAllFiltered(ctx context.Context, request
 }
 
 func (handler AccommodationHandler) Create(ctx context.Context, request *pb.CreateAccommodationRequest) (*pb.CreateAccommodationResponse, error) {
+	if ctx.Value("userId") != request.Accommodation.HostId {
+		return nil, errors.New("must be the owner to create the accommodation")
+	}
 	host, err := handler.profileClient.Get(ctx, &profile.GetRequest{Id: request.Accommodation.HostId})
 	hostId, err := primitive.ObjectIDFromHex(host.Profile.Id)
-	/*log.Println(ctx.Value("profileId").(string))
-	log.Println(ctx.Value("profilename").(string))
-	if ctx.Value("profileId").(string) != hostId.Hex() {
-		return nil, errors.New("must be the host to add new accommodation")
-	}*/
 	hostInfo := &domain.Host{
 		HostId:        hostId,
 		Username:      host.Profile.Username,
@@ -340,6 +342,20 @@ func (handler AccommodationHandler) Update(ctx context.Context, request *pb.Upda
 }
 
 func (handler *AccommodationHandler) UpdateAvailability(ctx context.Context, request *pb.UpdateAvailabilityRequest) (*pb.UpdateAvailabilityResponse, error) {
+	if request.AvailableDate.Ending.AsTime().Before(request.AvailableDate.Ending.AsTime()) || request.AvailableDate.Ending.AsTime().Equal(request.AvailableDate.Beginning.AsTime()) {
+		return nil, errors.New("cannot update availability with invalid dates")
+	}
+	if request.AvailableDate.Beginning.AsTime().Before(time.Now()) {
+		return nil, errors.New("cannot update availability into the past")
+	}
+	accommodationOwnershipCheck, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: request.AccommodationId})
+	if err != nil {
+		return nil, err
+	}
+	if accommodationOwnershipCheck.Accommodation.Host.HostId != ctx.Value("userId") {
+		return nil, errors.New("must be the owner of the accommodation to update its availability")
+	}
+
 	reservationCheck, err := handler.reservationClient.GetBetweenDates(ctx, &reservation.GetBetweenDatesRequest{Informations: &reservation.Informations{
 		AccommodationId: request.AccommodationId,
 		Beginning:       request.AvailableDate.Beginning,
@@ -353,7 +369,6 @@ func (handler *AccommodationHandler) UpdateAvailability(ctx context.Context, req
 	}
 
 	accommodationId := request.AccommodationId
-	//reservations, err := handler.reservationClient.
 	availableDate := domain.AvailableDate{
 		Beginning:       request.AvailableDate.Beginning.AsTime(),
 		Ending:          request.AvailableDate.Ending.AsTime(),

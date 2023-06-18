@@ -424,7 +424,7 @@ func RegisterGradeServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.GradeService/Get", runtime.WithHTTPPathPattern("/grade/{id}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/grade.GradeService/Get", runtime.WithHTTPPathPattern("/grade/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -448,7 +448,7 @@ func RegisterGradeServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.GradeService/GetHostsGradedByGuest", runtime.WithHTTPPathPattern("/grade/guest/{id}/hosts"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/grade.GradeService/GetHostsGradedByGuest", runtime.WithHTTPPathPattern("/grade/guest/{id}/hosts"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -472,7 +472,7 @@ func RegisterGradeServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.GradeService/GetAccommodationsGradedByGuest", runtime.WithHTTPPathPattern("/grade/guest/{id}/accommodations"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/grade.GradeService/GetAccommodationsGradedByGuest", runtime.WithHTTPPathPattern("/grade/guest/{id}/accommodations"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -496,7 +496,7 @@ func RegisterGradeServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.GradeService/GetByGraded", runtime.WithHTTPPathPattern("/grade/graded/{id}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/grade.GradeService/GetByGraded", runtime.WithHTTPPathPattern("/grade/graded/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -520,7 +520,7 @@ func RegisterGradeServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.GradeService/GetAll", runtime.WithHTTPPathPattern("/grade"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/grade.GradeService/GetAll", runtime.WithHTTPPathPattern("/grade"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -544,7 +544,7 @@ func RegisterGradeServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.GradeService/Create", runtime.WithHTTPPathPattern("/grade"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/grade.GradeService/Create", runtime.WithHTTPPathPattern("/grade"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -568,7 +568,7 @@ func RegisterGradeServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.GradeService/Update", runtime.WithHTTPPathPattern("/grade/{id}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/grade.GradeService/Update", runtime.WithHTTPPathPattern("/grade/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -592,7 +592,7 @@ func RegisterGradeServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/profile.GradeService/Delete", runtime.WithHTTPPathPattern("/grade/{id}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/grade.GradeService/Delete", runtime.WithHTTPPathPattern("/grade/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -655,7 +655,7 @@ func RegisterGradeServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.GradeService/Get", runtime.WithHTTPPathPattern("/grade/{id}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/grade.GradeService/Get", runtime.WithHTTPPathPattern("/grade/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -676,7 +676,7 @@ func RegisterGradeServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.GradeService/GetHostsGradedByGuest", runtime.WithHTTPPathPattern("/grade/guest/{id}/hosts"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/grade.GradeService/GetHostsGradedByGuest", runtime.WithHTTPPathPattern("/grade/guest/{id}/hosts"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -697,7 +697,7 @@ func RegisterGradeServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.GradeService/GetAccommodationsGradedByGuest", runtime.WithHTTPPathPattern("/grade/guest/{id}/accommodations"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/grade.GradeService/GetAccommodationsGradedByGuest", runtime.WithHTTPPathPattern("/grade/guest/{id}/accommodations"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -718,7 +718,7 @@ func RegisterGradeServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.GradeService/GetByGraded", runtime.WithHTTPPathPattern("/grade/graded/{id}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/grade.GradeService/GetByGraded", runtime.WithHTTPPathPattern("/grade/graded/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -739,7 +739,7 @@ func RegisterGradeServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.GradeService/GetAll", runtime.WithHTTPPathPattern("/grade"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/grade.GradeService/GetAll", runtime.WithHTTPPathPattern("/grade"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -760,7 +760,7 @@ func RegisterGradeServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.GradeService/Create", runtime.WithHTTPPathPattern("/grade"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/grade.GradeService/Create", runtime.WithHTTPPathPattern("/grade"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -781,7 +781,7 @@ func RegisterGradeServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.GradeService/Update", runtime.WithHTTPPathPattern("/grade/{id}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/grade.GradeService/Update", runtime.WithHTTPPathPattern("/grade/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -802,7 +802,7 @@ func RegisterGradeServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/profile.GradeService/Delete", runtime.WithHTTPPathPattern("/grade/{id}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/grade.GradeService/Delete", runtime.WithHTTPPathPattern("/grade/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return

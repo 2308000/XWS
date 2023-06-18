@@ -1,22 +1,32 @@
 package api
 
 import (
+	accommodation "accommodation_booking/common/proto/accommodation_service"
 	pb "accommodation_booking/common/proto/grade_service"
+	profile "accommodation_booking/common/proto/profile_service"
+	reservation "accommodation_booking/common/proto/reservation_service"
 	"accommodation_booking/grade_service/application"
 	"accommodation_booking/grade_service/domain"
 	"context"
+	"errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
 
 type GradeHandler struct {
 	pb.UnimplementedGradeServiceServer
-	service *application.GradeService
+	service             *application.GradeService
+	profileClient       profile.ProfileServiceClient
+	accommodationClient accommodation.AccommodationServiceClient
+	reservationClient   reservation.ReservationServiceClient
 }
 
-func NewGradeHandler(service *application.GradeService) *GradeHandler {
+func NewGradeHandler(service *application.GradeService, profileClient profile.ProfileServiceClient, accommodationClient accommodation.AccommodationServiceClient, reservationClient reservation.ReservationServiceClient) *GradeHandler {
 	return &GradeHandler{
-		service: service,
+		service:             service,
+		profileClient:       profileClient,
+		accommodationClient: accommodationClient,
+		reservationClient:   reservationClient,
 	}
 }
 
@@ -109,14 +119,34 @@ func (handler *GradeHandler) GetAll(ctx context.Context, request *pb.GetAllGrade
 }
 
 func (handler GradeHandler) Create(ctx context.Context, request *pb.CreateGradeRequest) (*pb.CreateGradeResponse, error) {
+	if ctx.Value("userId").(string) != request.Grade.GuestId {
+		return nil, errors.New("you cannot grade for others")
+	}
+
 	guestId, err := primitive.ObjectIDFromHex(request.Grade.GuestId)
 	gradedId, err := primitive.ObjectIDFromHex(request.Grade.GradedId)
+	gradedName := ""
+	if request.Grade.IsHostGrade == true {
+		gradedProfileInfo, err := handler.profileClient.Get(ctx, &profile.GetRequest{Id: request.Grade.GradedId})
+		if err != nil {
+			return nil, err
+		}
+		gradedName = gradedProfileInfo.Profile.Username
+	} else {
+		gradedAccommodationInfo, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: request.Grade.GradedId})
+		if err != nil {
+			return nil, err
+		}
+		gradedName = gradedAccommodationInfo.Accommodation.Name
+	}
 	domainGrade := &domain.Grade{
-		Id:       primitive.NewObjectID(),
-		GuestId:  guestId,
-		GradedId: gradedId,
-		Grade:    request.Grade.Value,
-		Date:     time.Now(),
+		Id:          primitive.NewObjectID(),
+		GuestId:     guestId,
+		GradedId:    gradedId,
+		GradedName:  gradedName,
+		Grade:       request.Grade.Value,
+		Date:        time.Now(),
+		IsHostGrade: request.Grade.IsHostGrade,
 	}
 	grade, err := handler.service.Create(ctx, domainGrade)
 	if err != nil {
@@ -128,6 +158,14 @@ func (handler GradeHandler) Create(ctx context.Context, request *pb.CreateGradeR
 }
 
 func (handler GradeHandler) Update(ctx context.Context, request *pb.UpdateGradeRequest) (*pb.UpdateGradeResponse, error) {
+	gradeInfo, err := handler.service.Get(ctx, request.Id)
+	if err != nil {
+		return nil, err
+	}
+	if gradeInfo.GuestId.Hex() != ctx.Value("userId").(string) {
+		return nil, errors.New("you can only update your own grades")
+	}
+
 	grade, err := handler.service.Get(ctx, request.Id)
 	grade.Date = time.Now()
 	grade.Grade = request.Value
@@ -141,7 +179,14 @@ func (handler GradeHandler) Update(ctx context.Context, request *pb.UpdateGradeR
 }
 
 func (handler *GradeHandler) Delete(ctx context.Context, request *pb.DeleteGradeRequest) (*pb.DeleteGradeResponse, error) {
-	err := handler.service.Delete(ctx, request.Id)
+	gradeInfo, err := handler.service.Get(ctx, request.Id)
+	if err != nil {
+		return nil, err
+	}
+	if gradeInfo.GuestId.Hex() != ctx.Value("userId").(string) {
+		return nil, errors.New("you can only delete your own grades")
+	}
+	err = handler.service.Delete(ctx, request.Id)
 	if err != nil {
 		return nil, err
 	}

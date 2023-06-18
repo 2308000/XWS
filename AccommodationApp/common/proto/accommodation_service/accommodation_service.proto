@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option go_package = "accommodation_booking/common/accommodation";
 
-package profile;
+package accommodation;
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";

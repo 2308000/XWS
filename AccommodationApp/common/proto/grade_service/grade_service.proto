@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option go_package = "grade_booking/common/grade";
 
-package profile;
+package grade;
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
