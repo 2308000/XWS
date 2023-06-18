@@ -254,7 +254,7 @@ func (handler *ProfileHandler) Delete(ctx context.Context, request *pb.DeleteReq
 			return nil, errors.New("you cannot delete profile because you have pending or approved reservations in future")
 		}
 	}
-	err = handler.service.Delete(ctx, request.Id)
+	err = handler.service.Delete(ctx, ctx.Value("userId").(string))
 	if err != nil {
 		return nil, err
 	}
