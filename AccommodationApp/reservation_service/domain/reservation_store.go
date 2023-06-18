@@ -7,7 +7,7 @@ import (
 
 type ReservationStore interface {
 	Get(ctx context.Context, reservationId string) (*Reservation, error)
-	GetForUser(ctx context.Context, userId string) ([]*Reservation, error)
+	GetForUser(ctx context.Context, userId string, resType string) ([]*Reservation, error)
 	GetBetweenDates(ctx context.Context, beginning time.Time, ending time.Time, accommodationId string) ([]*Reservation, error)
 	GetBetweenDatesPending(ctx context.Context, beginning time.Time, ending time.Time, accommodationId string) ([]*Reservation, error)
 	GetAll(ctx context.Context) ([]*Reservation, error)

@@ -39,15 +39,35 @@ func (store *ReservationMongoDBStore) GetAll(ctx context.Context) ([]*domain.Res
 	return store.GetAll(ctx)
 }
 
-func (store *ReservationMongoDBStore) GetForUser(ctx context.Context, userId string) ([]*domain.Reservation, error) {
+func (store *ReservationMongoDBStore) GetForUser(ctx context.Context, userId string, resType string) ([]*domain.Reservation, error) {
 	id, err := primitive.ObjectIDFromHex(userId)
 	if err != nil {
 		return nil, err
 	}
-	filter := bson.D{}
-	filter = append(filter, bson.E{"userId", id})
-	filter = append(filter, bson.E{"reservationStatus", bson.D{{"$ne", 2}}})
-	return store.filter(filter)
+	if resType == "future" {
+		filter := bson.D{
+			{"$or", bson.A{
+				bson.D{
+					{"reservationStatus", bson.D{{"$eq", 0}}},
+				},
+				bson.D{
+					{"reservationStatus", bson.D{{"$eq", 1}}},
+				},
+			}},
+		}
+		filter = append(filter, bson.E{"beginning", bson.D{{"$gte", time.Now()}}})
+		filter = append(filter, bson.E{"userId", id})
+		return store.filter(filter)
+	} else if resType == "past" {
+		filter := bson.D{{"reservationStatus", bson.D{{"$eq", 1}}}}
+		filter = append(filter, bson.E{"ending", bson.D{{"$lte", time.Now()}}})
+		filter = append(filter, bson.E{"userId", id})
+		return store.filter(filter)
+	} else {
+		filter := bson.D{}
+		filter = append(filter, bson.E{"userId", id})
+		return store.filter(filter)
+	}
 }
 
 func (store *ReservationMongoDBStore) GetPending(ctx context.Context) ([]*domain.Reservation, error) {
