@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"log"
 	"strings"
 	"time"
 )
@@ -138,6 +139,7 @@ func (handler *ProfileHandler) IsOutstandingHost(ctx context.Context, request *p
 	totalReservations := 0
 	totalNumberOfReservedDays := 0.0
 	for _, hostAccommodation := range hostsAccommodations.Accommodations {
+		log.Println("Accommodation: ", hostAccommodation.Name)
 		numberOfReservationsForAccommodation, err := handler.reservationClient.GetBetweenDates(ctx, &reservation.GetBetweenDatesRequest{Informations: &reservation.Informations{
 			AccommodationId: hostAccommodation.Id,
 			Beginning:       timestamppb.New(time.Now().AddDate(-10, 0, 0)),
@@ -146,6 +148,7 @@ func (handler *ProfileHandler) IsOutstandingHost(ctx context.Context, request *p
 		if err != nil {
 			return nil, err
 		}
+		log.Println("Broj termina: ", len(numberOfReservationsForAccommodation.Reservations))
 		if len(numberOfReservationsForAccommodation.Reservations) > 0 {
 			totalReservations = totalReservations + len(numberOfReservationsForAccommodation.Reservations)
 			for _, accReservation := range numberOfReservationsForAccommodation.Reservations {
@@ -154,16 +157,19 @@ func (handler *ProfileHandler) IsOutstandingHost(ctx context.Context, request *p
 			}
 		}
 	}
-
+	log.Println("Ukupan broj rezervisanih dana: ", totalNumberOfReservedDays)
+	log.Println("Ukupan broj rezervacija: ", totalReservations)
 	response := &pb.IsOutstandingResponse{IsOutstanding: false}
-	if totalReservations >= 1 && totalNumberOfReservedDays > 1 {
+	if totalReservations >= 5 && totalNumberOfReservedDays > 50 {
 		cancelledReservations, err := handler.reservationClient.GetByHostCanceled(ctx, &reservation.GetByHostInternRequest{Id: request.Id})
+		log.Println("Broj otkazanih za hosta: ", len(cancelledReservations.Reservations))
 		if err != nil {
 			return nil, err
 		}
 		cancellationPercentage := 0.0
 		cancellationPercentage = (float64(len(cancelledReservations.Reservations)) / float64(totalReservations)) * 100
-		if cancellationPercentage < 20 {
+		log.Println("Procenat otkaza: ", cancellationPercentage)
+		if cancellationPercentage < 5 {
 			response.IsOutstanding = true
 		}
 	}

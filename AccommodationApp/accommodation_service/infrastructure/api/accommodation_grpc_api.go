@@ -124,6 +124,9 @@ func (handler *AccommodationHandler) GetAllSearched(ctx context.Context, request
 		Street:  request.Location.Street,
 	}
 	numberOfNights := int(request.Ending.AsTime().Sub(request.Beginning.AsTime()).Hours() / 24)
+	if numberOfNights == 0 {
+		numberOfNights = 1
+	}
 	accommodations, err := handler.service.GetAllSearched(ctx, *location, int(request.NumberOfGuests))
 	if err != nil {
 		return nil, err
