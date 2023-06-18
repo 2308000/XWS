@@ -11,14 +11,28 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import AuthContext from "../store/auth-context";
 import { useNavigate } from "react-router-dom";
-
-const MyReservations = () => {
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  borderRadius: 3,
+};
+const MyPastReservations = () => {
   const authCtx = useContext(AuthContext);
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   const [refresh, setRefresh] = useState(false);
   const [reservations, setReservations] = useState();
   const navigate = useNavigate();
+  const [selectedAccommodation, setSelectedAccommodation] = useState();
+  const gradeRef = useRef();
+
   useEffect(() => {
-    fetch("http://localhost:8000/reservation/my/future", {
+    fetch("http://localhost:8000/reservation/my/past", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -32,33 +46,24 @@ const MyReservations = () => {
       });
   }, [refresh]);
 
-  const handleGrade = (app) => {
-    navigate();
-  };
-
-  const handleCancel = (id) => {
-    fetch("http://localhost:8000/reservation/cancel/" + id, {
-      method: "PUT",
+  const gradeHandler = () => {
+    fetch("http://localhost:8000/grade", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: authCtx.token,
       },
+      body: JSON.stringify({
+        guestId: authCtx.id,
+        gradedId: selectedAccommodation.accommodation.id,
+        value: gradeRef.current.value,
+        isHostGrade: false,
+      }),
     })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else if (res.status == 500) {
-          throw new Error("Can not cancel, less than 1 day left");
-        } else if (res.status == 404) {
-          throw new Error("Account with this email does not exist");
-        }
-      })
+      .then((response) => response.json())
       .then((actualData) => {
         console.log(actualData);
-        setRefresh(true);
-      })
-      .catch((error) => {
-        alert(error);
+        setProperties(actualData.accommodations);
       });
   };
 
@@ -68,16 +73,7 @@ const MyReservations = () => {
         <br></br>
         <h1>My reservations</h1>
 
-        <div className={classes.buttonContainerRight}>
-          <button
-            className={utils.greenButton}
-            onClick={() => {
-              navigate("/my-past-reservations");
-            }}
-          >
-            Past reservations
-          </button>
-        </div>
+        <div className={classes.buttonContainerRight}></div>
         <table className={classes.styledTable}>
           <thead>
             <tr>
@@ -97,15 +93,15 @@ const MyReservations = () => {
                 <td>{dayjs(app.ending).format("DD-MM-YYYY")}</td>
                 <td>{app.guests}</td>
                 <td>{app.reservationStatus == 1 ? "Approved" : "Pending"}</td>
-
                 <td>
                   <button
-                    className={utils.redButton}
+                    className={utils.greenButton}
                     onClick={() => {
-                      handleCancel(app.id);
+                      setSelectedAccommodation(app);
+                      setOpen(true);
                     }}
                   >
-                    Cancel
+                    Grade
                   </button>
                 </td>
               </tr>
@@ -113,8 +109,31 @@ const MyReservations = () => {
           </tbody>
         </table>
       </div>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div>
+            <div className={classes.modalTitle}>Grade acoommodation</div>
+            <div className={classes.register}>
+              <div className={classes.grading}>
+                <div>
+                  <label>Grade: </label>
+                  <input className={utils.input} ref={gradeRef}></input>
+                </div>
+              </div>
+              <button className={classes.reserveButton} onClick={gradeHandler}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </Box>
+      </Modal>
     </div>
   );
 };
 
-export default MyReservations;
+export default MyPastReservations;

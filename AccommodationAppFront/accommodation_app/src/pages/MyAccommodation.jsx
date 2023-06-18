@@ -63,6 +63,10 @@ const MyAccommodation = () => {
       .then((res) => {
         if (res.ok) {
           return res.json();
+        } else if (res.status == 500) {
+          throw new Error(
+            "Can not update because there are existing reservations!"
+          );
         }
       })
       .then((data) => {

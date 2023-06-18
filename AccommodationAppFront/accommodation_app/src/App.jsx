@@ -21,6 +21,8 @@ import MyAccommodation from "./pages/MyAccommodation";
 import MyReservations from "./pages/MyReservations";
 import ReservationRequests from "./pages/ReservationRequests";
 import Accommodation from "./pages/Accommodation";
+import MyPastReservations from "./pages/MyPastReservations";
+import MyGrades from "./pages/MyGrades";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -45,6 +47,11 @@ const router = createBrowserRouter(
         <Route
           path="/my-reservations"
           element={<MyReservations></MyReservations>}
+        ></Route>
+        <Route path="/my-grades" element={<MyGrades></MyGrades>}></Route>
+        <Route
+          path="/my-past-reservations"
+          element={<MyPastReservations></MyPastReservations>}
         ></Route>
         <Route
           path="/reservation-requests"

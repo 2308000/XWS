@@ -27,6 +27,11 @@ const Navbar = () => {
               <NavLink to="/my-reservations">My reservations</NavLink>
             </li>
           )}
+          {authCtx.role == "guest" && (
+            <li className={classes.navListItem}>
+              <NavLink to="/my-grades">My grades</NavLink>
+            </li>
+          )}
           {authCtx.isLoggedIn && (
             <li className={classes.navListItem}>
               <NavLink to="/accommodations">Accommodations</NavLink>
