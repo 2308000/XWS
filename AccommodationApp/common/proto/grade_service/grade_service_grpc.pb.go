@@ -37,7 +37,7 @@ func NewGradeServiceClient(cc grpc.ClientConnInterface) GradeServiceClient {
 
 func (c *gradeServiceClient) Get(ctx context.Context, in *GetGradeRequest, opts ...grpc.CallOption) (*GetGradeResponse, error) {
 	out := new(GetGradeResponse)
-	err := c.cc.Invoke(ctx, "/profile.GradeService/Get", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/grade.GradeService/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (c *gradeServiceClient) Get(ctx context.Context, in *GetGradeRequest, opts 
 
 func (c *gradeServiceClient) GetHostsGradedByGuest(ctx context.Context, in *GetGradeRequest, opts ...grpc.CallOption) (*GetAllGradesResponse, error) {
 	out := new(GetAllGradesResponse)
-	err := c.cc.Invoke(ctx, "/profile.GradeService/GetHostsGradedByGuest", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/grade.GradeService/GetHostsGradedByGuest", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (c *gradeServiceClient) GetHostsGradedByGuest(ctx context.Context, in *GetG
 
 func (c *gradeServiceClient) GetAccommodationsGradedByGuest(ctx context.Context, in *GetGradeRequest, opts ...grpc.CallOption) (*GetAllGradesResponse, error) {
 	out := new(GetAllGradesResponse)
-	err := c.cc.Invoke(ctx, "/profile.GradeService/GetAccommodationsGradedByGuest", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/grade.GradeService/GetAccommodationsGradedByGuest", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (c *gradeServiceClient) GetAccommodationsGradedByGuest(ctx context.Context,
 
 func (c *gradeServiceClient) GetByGraded(ctx context.Context, in *GetGradeRequest, opts ...grpc.CallOption) (*GetAllGradesResponse, error) {
 	out := new(GetAllGradesResponse)
-	err := c.cc.Invoke(ctx, "/profile.GradeService/GetByGraded", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/grade.GradeService/GetByGraded", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func (c *gradeServiceClient) GetByGraded(ctx context.Context, in *GetGradeReques
 
 func (c *gradeServiceClient) GetAll(ctx context.Context, in *GetAllGradesRequest, opts ...grpc.CallOption) (*GetAllGradesResponse, error) {
 	out := new(GetAllGradesResponse)
-	err := c.cc.Invoke(ctx, "/profile.GradeService/GetAll", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/grade.GradeService/GetAll", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func (c *gradeServiceClient) GetAll(ctx context.Context, in *GetAllGradesRequest
 
 func (c *gradeServiceClient) Create(ctx context.Context, in *CreateGradeRequest, opts ...grpc.CallOption) (*CreateGradeResponse, error) {
 	out := new(CreateGradeResponse)
-	err := c.cc.Invoke(ctx, "/profile.GradeService/Create", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/grade.GradeService/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +91,7 @@ func (c *gradeServiceClient) Create(ctx context.Context, in *CreateGradeRequest,
 
 func (c *gradeServiceClient) Update(ctx context.Context, in *UpdateGradeRequest, opts ...grpc.CallOption) (*UpdateGradeResponse, error) {
 	out := new(UpdateGradeResponse)
-	err := c.cc.Invoke(ctx, "/profile.GradeService/Update", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/grade.GradeService/Update", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func (c *gradeServiceClient) Update(ctx context.Context, in *UpdateGradeRequest,
 
 func (c *gradeServiceClient) Delete(ctx context.Context, in *DeleteGradeRequest, opts ...grpc.CallOption) (*DeleteGradeResponse, error) {
 	out := new(DeleteGradeResponse)
-	err := c.cc.Invoke(ctx, "/profile.GradeService/Delete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/grade.GradeService/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +166,7 @@ func _GradeService_Get_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/profile.GradeService/Get",
+		FullMethod: "/grade.GradeService/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GradeServiceServer).Get(ctx, req.(*GetGradeRequest))
@@ -184,7 +184,7 @@ func _GradeService_GetHostsGradedByGuest_Handler(srv interface{}, ctx context.Co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/profile.GradeService/GetHostsGradedByGuest",
+		FullMethod: "/grade.GradeService/GetHostsGradedByGuest",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GradeServiceServer).GetHostsGradedByGuest(ctx, req.(*GetGradeRequest))
@@ -202,7 +202,7 @@ func _GradeService_GetAccommodationsGradedByGuest_Handler(srv interface{}, ctx c
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/profile.GradeService/GetAccommodationsGradedByGuest",
+		FullMethod: "/grade.GradeService/GetAccommodationsGradedByGuest",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GradeServiceServer).GetAccommodationsGradedByGuest(ctx, req.(*GetGradeRequest))
@@ -220,7 +220,7 @@ func _GradeService_GetByGraded_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/profile.GradeService/GetByGraded",
+		FullMethod: "/grade.GradeService/GetByGraded",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GradeServiceServer).GetByGraded(ctx, req.(*GetGradeRequest))
@@ -238,7 +238,7 @@ func _GradeService_GetAll_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/profile.GradeService/GetAll",
+		FullMethod: "/grade.GradeService/GetAll",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GradeServiceServer).GetAll(ctx, req.(*GetAllGradesRequest))
@@ -256,7 +256,7 @@ func _GradeService_Create_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/profile.GradeService/Create",
+		FullMethod: "/grade.GradeService/Create",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GradeServiceServer).Create(ctx, req.(*CreateGradeRequest))
@@ -274,7 +274,7 @@ func _GradeService_Update_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/profile.GradeService/Update",
+		FullMethod: "/grade.GradeService/Update",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GradeServiceServer).Update(ctx, req.(*UpdateGradeRequest))
@@ -292,7 +292,7 @@ func _GradeService_Delete_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/profile.GradeService/Delete",
+		FullMethod: "/grade.GradeService/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GradeServiceServer).Delete(ctx, req.(*DeleteGradeRequest))
@@ -301,7 +301,7 @@ func _GradeService_Delete_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 var _GradeService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "profile.GradeService",
+	ServiceName: "grade.GradeService",
 	HandlerType: (*GradeServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

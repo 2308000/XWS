@@ -2,7 +2,11 @@ package startup
 
 import (
 	"accommodation_booking/common/auth"
+	"accommodation_booking/common/client"
+	accommodation "accommodation_booking/common/proto/accommodation_service"
 	grade "accommodation_booking/common/proto/grade_service"
+	profile "accommodation_booking/common/proto/profile_service"
+	reservation "accommodation_booking/common/proto/reservation_service"
 	saga "accommodation_booking/common/saga/messaging"
 	"accommodation_booking/common/saga/messaging/nats"
 	"accommodation_booking/grade_service/application"
@@ -48,8 +52,23 @@ func (server *Server) Start() {
 
 	jwtManager := auth.NewJWTManager("secretKey", 60*time.Minute)
 
+	profileClient, err := client.NewProfileClient(fmt.Sprintf("%s:%s", server.config.ProfileHost, server.config.ProfilePort))
+	if err != nil {
+		log.Fatalf("PCF: %v", err)
+	}
+
+	accommodationClient, err := client.NewAccommodationClient(fmt.Sprintf("%s:%s", server.config.AccommodationHost, server.config.AccommodationPort))
+	if err != nil {
+		log.Fatalf("PCF: %v", err)
+	}
+
+	reservationClient, err := client.NewReservationClient(fmt.Sprintf("%s:%s", server.config.ReservationHost, server.config.ReservationPort))
+	if err != nil {
+		log.Fatalf("PCF: %v", err)
+	}
+
 	gradeService := server.initGradeService(gradeStore)
-	gradeHandler := server.initGradeHandler(gradeService)
+	gradeHandler := server.initGradeHandler(gradeService, profileClient, accommodationClient, reservationClient)
 
 	server.startGrpcServer(gradeHandler, jwtManager)
 }
@@ -82,8 +101,8 @@ func (server *Server) initMongoClient() *mongo.Client {
 	return client
 }
 
-func (server *Server) initGradeHandler(service *application.GradeService) *api.GradeHandler {
-	return api.NewGradeHandler(service)
+func (server *Server) initGradeHandler(service *application.GradeService, profileClient profile.ProfileServiceClient, accommodationClient accommodation.AccommodationServiceClient, reservationClient reservation.ReservationServiceClient) *api.GradeHandler {
+	return api.NewGradeHandler(service, profileClient, accommodationClient, reservationClient)
 }
 
 func (server *Server) initGradeStore(client *mongo.Client) domain.GradeStore {

@@ -46,6 +46,7 @@ func accessibleRoles() map[string][]string {
 		accommodationServicePath + "GetAll":             {"host"},
 		accommodationServicePath + "Create":             {"host"},
 		accommodationServicePath + "UpdateAvailability": {"host"},
+		accommodationServicePath + "Delete":             {"host"},
 	}
 }
 
@@ -75,8 +76,13 @@ func (server *Server) Start() {
 		log.Fatalf("PCF: %v", err)
 	}
 
+	accommodationClient, err := client.NewAccommodationClient(fmt.Sprintf("%s:%s", server.config.AccommodationHost, server.config.AccommodationPort))
+	if err != nil {
+		log.Fatalf("PCF: %v", err)
+	}
+
 	accommodationService := server.initAccommodationService(accommodationStore)
-	accommodationHandler := server.initAccommodationHandler(accommodationService, profileClient, reservationClient, gradeClient, userClient)
+	accommodationHandler := server.initAccommodationHandler(accommodationService, profileClient, reservationClient, gradeClient, userClient, accommodationClient)
 
 	commandSubscriber := server.initSubscriber(server.config.UpdateProfileCommandSubject, QueueGroup)
 	replyPublisher := server.initPublisher(server.config.UpdateProfileReplySubject)
@@ -120,8 +126,8 @@ func (server *Server) initMongoClient() *mongo.Client {
 	return client
 }
 
-func (server *Server) initAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient, reservationClient reservation.ReservationServiceClient, gradeClient grade.GradeServiceClient, userClient user.UserServiceClient) *api.AccommodationHandler {
-	return api.NewAccommodationHandler(service, profileClient, reservationClient, gradeClient, userClient)
+func (server *Server) initAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient, reservationClient reservation.ReservationServiceClient, gradeClient grade.GradeServiceClient, userClient user.UserServiceClient, accommodationClient accommodation.AccommodationServiceClient) *api.AccommodationHandler {
+	return api.NewAccommodationHandler(service, profileClient, reservationClient, gradeClient, userClient, accommodationClient)
 }
 
 func (server *Server) initAccommodationStore(client *mongo.Client) domain.AccommodationStore {
