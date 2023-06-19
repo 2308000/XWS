@@ -100,15 +100,11 @@ func (handler *ProfileHandler) Get(ctx context.Context, request *pb.GetRequest) 
 		if err != nil {
 			return nil, err
 		}
-		totalSum := 0.0
-		numOfGrades := 0
 		for _, hostGrade := range hostGrades.Grades {
 			guestName, err := handler.userClient.GetById(ctx, &user.GetByIdRequest{Id: hostGrade.GuestId})
 			if err != nil {
 				return nil, err
 			}
-			totalSum = totalSum + float64(hostGrade.Grade)
-			numOfGrades = numOfGrades + 1
 			pbGrade := pb.HostGrade{
 				HostName: guestName.User.Username,
 				Grade:    hostGrade.Grade,
@@ -116,15 +112,11 @@ func (handler *ProfileHandler) Get(ctx context.Context, request *pb.GetRequest) 
 			}
 			profilePb.HostGrades = append(profilePb.HostGrades, &pbGrade)
 		}
-		averageGrade := totalSum / float64(numOfGrades)
-		profilePb.AverageHostGrade = float32(averageGrade)
-		if averageGrade > 4.7 {
-			isOutstandingRes, err := handler.IsOutstandingHost(ctx, &pb.GetRequest{Id: request.Id})
-			if err != nil {
-				return nil, err
-			}
-			profilePb.IsOutstanding = isOutstandingRes.IsOutstanding
+		isOutstandingRes, err := handler.IsOutstandingHost(ctx, &pb.GetRequest{Id: request.Id})
+		if err != nil {
+			return nil, err
 		}
+		profilePb.IsOutstanding = isOutstandingRes.IsOutstanding
 	}
 	response := &pb.GetResponse{
 		Profile: profilePb,
@@ -133,6 +125,25 @@ func (handler *ProfileHandler) Get(ctx context.Context, request *pb.GetRequest) 
 }
 
 func (handler *ProfileHandler) IsOutstandingHost(ctx context.Context, request *pb.GetRequest) (*pb.IsOutstandingResponse, error) {
+	hostGrades, err := handler.gradeClient.GetByGraded(ctx, &grade.GetGradeRequest{Id: request.Id})
+	if err != nil {
+		return nil, err
+	}
+	totalSum := 0.0
+	numOfGrades := 0
+	for _, hostGrade := range hostGrades.Grades {
+		if err != nil {
+			return nil, err
+		}
+		totalSum = totalSum + float64(hostGrade.Grade)
+		numOfGrades = numOfGrades + 1
+	}
+	averageGrade := totalSum / float64(numOfGrades)
+	log.Println("Average host grade: ", averageGrade)
+	if averageGrade <= 4.7 {
+		return &pb.IsOutstandingResponse{IsOutstanding: false}, nil
+	}
+
 	hostsAccommodations, err := handler.accommodationClient.GetByHost(ctx, &accommodation.GetAccommodationRequest{Id: request.Id})
 	if err != nil {
 		return nil, err
@@ -149,7 +160,7 @@ func (handler *ProfileHandler) IsOutstandingHost(ctx context.Context, request *p
 		if err != nil {
 			return nil, err
 		}
-		log.Println("Broj termina: ", len(numberOfReservationsForAccommodation.Reservations))
+		log.Println("Number of reservations: ", len(numberOfReservationsForAccommodation.Reservations))
 		if len(numberOfReservationsForAccommodation.Reservations) > 0 {
 			totalReservations = totalReservations + len(numberOfReservationsForAccommodation.Reservations)
 			for _, accReservation := range numberOfReservationsForAccommodation.Reservations {
@@ -158,18 +169,18 @@ func (handler *ProfileHandler) IsOutstandingHost(ctx context.Context, request *p
 			}
 		}
 	}
-	log.Println("Ukupan broj rezervisanih dana: ", totalNumberOfReservedDays)
-	log.Println("Ukupan broj rezervacija: ", totalReservations)
+	log.Println("Total number of days reserved: ", totalNumberOfReservedDays)
+	log.Println("Total number of reservations in the past: ", totalReservations)
 	response := &pb.IsOutstandingResponse{IsOutstanding: false}
 	if totalReservations >= 5 && totalNumberOfReservedDays > 50 {
 		cancelledReservations, err := handler.reservationClient.GetByHostCanceled(ctx, &reservation.GetByHostInternRequest{Id: request.Id})
-		log.Println("Broj otkazanih za hosta: ", len(cancelledReservations.Reservations))
+		log.Println("Total number of all time cancellations: ", len(cancelledReservations.Reservations))
 		if err != nil {
 			return nil, err
 		}
 		cancellationPercentage := 0.0
 		cancellationPercentage = (float64(len(cancelledReservations.Reservations)) / float64(totalReservations)) * 100
-		log.Println("Procenat otkaza: ", cancellationPercentage)
+		log.Println("Cancellation percentage: ", cancellationPercentage)
 		if cancellationPercentage < 5 {
 			response.IsOutstanding = true
 		}
