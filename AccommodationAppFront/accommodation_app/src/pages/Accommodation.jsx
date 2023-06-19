@@ -278,6 +278,9 @@ const Accommodation = () => {
           <div>
             <div className={classes.modalTitle}>Host Details</div>
             <div className={classes.register}>
+              {accommodation?.accommodation.host.isOutstanding && (
+                <h3 className={classes.blueText}>Outstanding host</h3>
+              )}
               <h3>Host name: {accommodation?.accommodation.host.username}</h3>
               <h3>
                 Phone number: {accommodation?.accommodation.host.phoneNumber}
