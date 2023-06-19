@@ -45,8 +45,6 @@ func NewConfig() *Config {
 		GradePort:                   os.Getenv("GRADE_SERVICE_PORT"),
 		UserHost:                    os.Getenv("USER_SERVICE_HOST"),
 		UserPort:                    os.Getenv("USER_SERVICE_PORT"),
-		AccommodationHost:           os.Getenv("ACCOMMODATION_SERVICE_HOST"),
-		AccommodationPort:           os.Getenv("ACCOMMODATION_SERVICE_PORT"),
 		NatsHost:                    os.Getenv("NATS_HOST"),
 		NatsPort:                    os.Getenv("NATS_PORT"),
 		NatsUser:                    os.Getenv("NATS_USER"),
