@@ -108,7 +108,7 @@ const ReservationRequests = () => {
 
                   <td>
                     <button
-                      className={utils.greenTableButton}
+                      className={utils.blueTableButton}
                       onClick={() => {
                         handleConfirm(app.id);
                       }}

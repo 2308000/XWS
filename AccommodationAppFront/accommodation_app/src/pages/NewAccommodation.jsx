@@ -185,7 +185,7 @@ const NewAccomodation = () => {
           </div>
         </div>
         <div className={utils.buttonContainerCenter}>
-          <button className={utils.greenButton} onClick={addHandler}>
+          <button className={utils.blueButton} onClick={addHandler}>
             Create
           </button>
         </div>

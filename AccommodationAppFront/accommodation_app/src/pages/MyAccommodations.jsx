@@ -43,7 +43,7 @@ const MyAccommodations = () => {
           <h1>My accomodations</h1>
           <div className={utils.buttonContainerRight}>
             <button
-              className={utils.greenButton}
+              className={utils.blueButton}
               onClick={addAccommodationHandler}
             >
               Add
@@ -55,13 +55,17 @@ const MyAccommodations = () => {
                 <div className={classes.image}></div>
                 <div>
                   <h2>{property?.name}</h2>
+                  <h3>
+                    {property?.location.street}, {property?.location.city},{" "}
+                    {property?.location.country}
+                  </h3>
                 </div>
               </div>
               <div className={classes.property}>
                 <div className={classes.propertyCont}>
                   <div className={classes.checkButtonContainer}>
                     <button
-                      className={utils.greenButton}
+                      className={utils.lightBlueButton}
                       onClick={() => {
                         selectPropertyHandler(property);
                       }}

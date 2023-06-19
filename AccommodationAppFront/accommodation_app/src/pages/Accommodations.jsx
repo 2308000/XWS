@@ -67,7 +67,10 @@ const Accommodations = () => {
       alert("Please enter number of guests!");
       return;
     }
-
+    if (numberOfGuestsRef.current.value < 1) {
+      alert("Please enter valid number of guests!");
+      return;
+    }
     fetch("http://localhost:8000/accommodation/search", {
       method: "POST",
       headers: {
@@ -92,7 +95,7 @@ const Accommodations = () => {
   };
 
   const checkHandler = (id) => {
-    navigate("/accommodations/" + id);
+    window.open(`/accommodations/${id}`, "_blank");
   };
 
   const filterHandler = () => {

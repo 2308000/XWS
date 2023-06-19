@@ -94,7 +94,7 @@ const MyPastReservations = () => {
                 <td>{app.reservationStatus == 1 ? "Approved" : "Pending"}</td>
                 <td>
                   <button
-                    className={utils.greenButton}
+                    className={utils.blueButton}
                     onClick={() => {
                       setSelectedAccommodation(app);
                       setOpen(true);

@@ -318,8 +318,8 @@
   background-color: rgba(1, 216, 249, 0.1);
 }
 .grade {
-  width: 25px;
-  height: 25px;
+  width: 22px;
+  height: 22px;
   background-color: rgb(20, 20, 128);
   color: white;
   display: flex;
@@ -328,7 +328,8 @@
   padding: 0.5rem;
   border-radius: 0.2rem;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 16px;
+  margin-top: -1rem;
 }
 .propertyPriceContainer {
   display: flex;
