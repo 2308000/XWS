@@ -1,6 +1,5 @@
 .body {
   background-color: rgb(244, 242, 242);
-  height: calc(100vh - 80px);
 }
 
 .home {
@@ -12,6 +11,7 @@
   flex-direction: column;
   padding: 1rem;
   gap: 2rem;
+  padding-bottom: 2rem;
 }
 
 .image {
@@ -143,4 +143,22 @@
   table-layout: fixed;
   border-radius: 1rem;
   overflow: hidden;
+}
+.gradesContainer {
+  display: flex;
+  justify-content: space-around;
+}
+.gradeContainer {
+  background-color: rgb(240, 235, 235);
+  padding: 2rem 4rem;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.allGradesContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
