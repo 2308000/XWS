@@ -127,7 +127,7 @@ const MyGrades = () => {
             <h1>Accommodation grades</h1>
             <div className={classes.buttonContainerRight}>
               <button
-                className={utils.blackButton}
+                className={utils.lightBlueButton}
                 onClick={() => {
                   setToggleACC(true);
                   getHostGrades();
@@ -213,7 +213,7 @@ const MyGrades = () => {
             <h1>Host grades</h1>
             <div className={classes.buttonContainerRight}>
               <button
-                className={utils.blackButton}
+                className={utils.lightBlueButton}
                 onClick={() => {
                   setToggleACC(false);
                 }}

@@ -43,14 +43,14 @@ const MyAccommodations = () => {
           <h1>My accomodations</h1>
           <div className={utils.buttonContainerRight}>
             <button
-              className={utils.blueButton}
+              className={utils.lightBlueButton}
               onClick={addAccommodationHandler}
             >
               Add
             </button>
           </div>
           {properties?.map((property) => (
-            <div className={classes.propertyContainer}>
+            <div className={classes.accommodationContainer}>
               <div className={classes.imgTitle}>
                 <div className={classes.image}></div>
                 <div>
@@ -65,7 +65,7 @@ const MyAccommodations = () => {
                 <div className={classes.propertyCont}>
                   <div className={classes.checkButtonContainer}>
                     <button
-                      className={utils.lightBlueButton}
+                      className={utils.blueButton}
                       onClick={() => {
                         selectPropertyHandler(property);
                       }}

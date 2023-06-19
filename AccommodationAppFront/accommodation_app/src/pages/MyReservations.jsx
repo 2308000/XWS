@@ -70,7 +70,7 @@ const MyReservations = () => {
 
         <div className={classes.buttonContainerRight}>
           <button
-            className={utils.blackButton}
+            className={utils.lightBlueButton}
             onClick={() => {
               navigate("/my-past-reservations");
             }}

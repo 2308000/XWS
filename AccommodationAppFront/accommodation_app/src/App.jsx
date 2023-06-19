@@ -24,6 +24,8 @@ import Accommodation from "./pages/Accommodation";
 import MyPastReservations from "./pages/MyPastReservations";
 import MyGrades from "./pages/MyGrades";
 import HostGrades from "./pages/HostGrades";
+import PrivateRoutes from "./utils/LoginRoutes";
+import AdminRoutes from "./utils/AdminRoutes";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -32,7 +34,6 @@ const router = createBrowserRouter(
       <Route path="/login" element={<Login></Login>} />
       <Route path="/" element={<RootLayout></RootLayout>}>
         <Route path="/" index element={<Home></Home>}></Route>
-        <Route path="/profile" element={<MyProfile></MyProfile>}></Route>
         <Route
           path="/accommodations"
           element={<Accomodations></Accomodations>}
@@ -41,32 +42,44 @@ const router = createBrowserRouter(
           path="/accommodations/:id"
           element={<Accommodation></Accommodation>}
         ></Route>
-        <Route
-          path="/new-accommodation"
-          element={<NewAccomodation></NewAccomodation>}
-        ></Route>
-        <Route
-          path="/my-reservations"
-          element={<MyReservations></MyReservations>}
-        ></Route>
-        <Route path="/my-grades" element={<MyGrades></MyGrades>}></Route>
-        <Route path="/host-grades" element={<HostGrades></HostGrades>}></Route>
-        <Route
-          path="/my-past-reservations"
-          element={<MyPastReservations></MyPastReservations>}
-        ></Route>
-        <Route
-          path="/reservation-requests"
-          element={<ReservationRequests></ReservationRequests>}
-        ></Route>
-        <Route
-          path="/my-accommodations"
-          element={<MyAccommodations></MyAccommodations>}
-        ></Route>
-        <Route
-          path="/my-accommodations/:id"
-          element={<MyAccommodation></MyAccommodation>}
-        ></Route>
+        <Route element={<PrivateRoutes />}>
+          <Route path="/profile" element={<MyProfile></MyProfile>}></Route>
+
+          <Route
+            path="/my-reservations"
+            element={<MyReservations></MyReservations>}
+          ></Route>
+
+          <Route path="/my-grades" element={<MyGrades></MyGrades>}></Route>
+          <Route
+            path="/my-past-reservations"
+            element={<MyPastReservations></MyPastReservations>}
+          ></Route>
+          <Route element={<AdminRoutes />}>
+            <Route
+              path="/new-accommodation"
+              element={<NewAccomodation></NewAccomodation>}
+            ></Route>
+
+            <Route
+              path="/host-grades"
+              element={<HostGrades></HostGrades>}
+            ></Route>
+
+            <Route
+              path="/reservation-requests"
+              element={<ReservationRequests></ReservationRequests>}
+            ></Route>
+            <Route
+              path="/my-accommodations"
+              element={<MyAccommodations></MyAccommodations>}
+            ></Route>
+            <Route
+              path="/my-accommodations/:id"
+              element={<MyAccommodation></MyAccommodation>}
+            ></Route>
+          </Route>
+        </Route>
       </Route>
     </Route>
   )
