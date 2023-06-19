@@ -140,7 +140,10 @@ const Accommodation = () => {
               <h3>Total price : {localStorage.getItem("totalPrice")}</h3>
             </div>
           </div>
+
           <div className={classes.priceDate}>
+            <h3>{accommodation?.accommodation.host.username}</h3>
+            <h3>{accommodation?.accommodation.host.phoneNumber}</h3>
             {authCtx.role === "guest" && (
               <button className={utils.blueButton} onClick={reserveHandler}>
                 Reserve

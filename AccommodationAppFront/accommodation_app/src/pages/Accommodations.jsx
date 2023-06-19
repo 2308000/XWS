@@ -9,8 +9,6 @@ import { useState, useRef, useEffect, useContext } from "react";
 import Property from "../components/Property";
 import { useNavigate } from "react-router-dom";
 
-const prop = [{ Id: 0 }, { Id: 1 }];
-
 const Accommodations = () => {
   const [properties, setProperties] = useState();
   const today = new Date();
