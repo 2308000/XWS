@@ -74,15 +74,20 @@ func (handler *GradeHandler) GetAccommodationsGradedByGuest(ctx context.Context,
 }
 
 func (handler *GradeHandler) GetByGraded(ctx context.Context, request *pb.GetGradeRequest) (*pb.GetAllGradesResponse, error) {
-	Grades, err := handler.service.GetByGraded(ctx, request.Id)
+	grades, err := handler.service.GetByGraded(ctx, request.Id)
 	if err != nil {
 		return nil, err
 	}
 	response := &pb.GetAllGradesResponse{
 		Grades: []*pb.Grade{},
 	}
-	for _, Grade := range Grades {
-		current := mapGradeToPb(Grade)
+	for _, grade := range grades {
+		current := mapGradeToPb(grade)
+		guestInfo, err := handler.profileClient.Get(ctx, &profile.GetRequest{Id: grade.GuestId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		current.GradedName = guestInfo.Profile.Username
 		response.Grades = append(response.Grades, current)
 	}
 	return response, nil

@@ -1,41 +1,36 @@
 version: "3.8"
 
 services:
-  user_service:
-    image: user_service
-    container_name: user_service
+  accommodation_service:
+    image: accommodation_service
+    container_name: accommodation_service
     build:
       context: .
-      dockerfile: ./user_service/Dockerfile
+      dockerfile: ./accommodation_service/Dockerfile
     restart: on-failure
     ports:
-      - 8001:${USER_SERVICE_PORT}
+      - 8003:${ACCOMMODATION_SERVICE_PORT}
     environment:
       OS_ENV: docker
-      USER_DB_HOST: ${USER_DB_HOST}
-      USER_DB_PORT: ${USER_DB_PORT}
-      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
-    depends_on:
-      - user_db
-    networks:
-      - network
-
-  reservation_service:
-    image: reservation_service
-    container_name: reservation_service
-    build:
-      context: .
-      dockerfile: ./reservation_service/Dockerfile
-    restart: on-failure
-    ports:
-      - 8004:${RESERVATION_SERVICE_PORT}
-    environment:
-      OS_ENV: docker
-      RESERVATION_DB_HOST: ${RESERVATION_DB_HOST}
-      RESERVATION_DB_PORT: ${RESERVATION_DB_PORT}
+      ACCOMMODATION_DB_HOST: ${ACCOMMODATION_DB_HOST}
+      ACCOMMODATION_DB_PORT: ${ACCOMMODATION_DB_PORT}
+      ACCOMMODATION_SERVICE_PORT: ${ACCOMMODATION_SERVICE_PORT}
+      PROFILE_SERVICE_HOST: ${PROFILE_SERVICE_HOST}
+      PROFILE_SERVICE_PORT: ${PROFILE_SERVICE_PORT}
+      RESERVATION_SERVICE_HOST: ${RESERVATION_SERVICE_HOST}
       RESERVATION_SERVICE_PORT: ${RESERVATION_SERVICE_PORT}
+      GRADE_SERVICE_HOST: ${GRADE_SERVICE_HOST}
+      GRADE_SERVICE_PORT: ${GRADE_SERVICE_PORT}
+      USER_SERVICE_HOST: ${USER_SERVICE_HOST}
+      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
+      NATS_HOST: ${NATS_HOST}
+      NATS_PORT: ${NATS_PORT}
+      NATS_USER: ${NATS_USER}
+      NATS_PASS: ${NATS_PASS}
+      UPDATE_PROFILE_COMMAND_SUBJECT: ${UPDATE_PROFILE_COMMAND_SUBJECT}
+      UPDATE_PROFILE_REPLY_SUBJECT: ${UPDATE_PROFILE_REPLY_SUBJECT}
     depends_on:
-      - reservation_db
+      - accommodation_db
     networks:
       - network
 
@@ -54,17 +49,160 @@ services:
       GATEWAY_PORT: ${GATEWAY_PORT}
       USER_SERVICE_HOST: ${USER_SERVICE_HOST}
       USER_SERVICE_PORT: ${USER_SERVICE_PORT}
+      PROFILE_SERVICE_HOST: ${PROFILE_SERVICE_HOST}
+      PROFILE_SERVICE_PORT: ${PROFILE_SERVICE_PORT}
+      ACCOMMODATION_SERVICE_HOST: ${ACCOMMODATION_SERVICE_HOST}
+      ACCOMMODATION_SERVICE_PORT: ${ACCOMMODATION_SERVICE_PORT}
       RESERVATION_SERVICE_HOST: ${RESERVATION_SERVICE_HOST}
       RESERVATION_SERVICE_PORT: ${RESERVATION_SERVICE_PORT}
+      GRADE_SERVICE_HOST: ${GRADE_SERVICE_HOST}
+      GRADE_SERVICE_PORT: ${GRADE_SERVICE_PORT}
     networks:
       - network
 
-  user_db:
-    image: mongo
-    container_name: user_db
+  grade_service:
+    image: grade_service
+    container_name: grade_service
+    build:
+      context: .
+      dockerfile: ./grade_service/Dockerfile
     restart: on-failure
     ports:
-      - 27017:${USER_DB_PORT}
+      - 8005:${GRADE_SERVICE_PORT}
+
+    environment:
+      OS_ENV: docker
+      GRADE_DB_HOST: ${GRADE_DB_HOST}
+      GRADE_DB_PORT: ${GRADE_DB_PORT}
+      GRADE_SERVICE_PORT: ${GRADE_SERVICE_PORT}
+      PROFILE_SERVICE_HOST: ${PROFILE_SERVICE_HOST}
+      PROFILE_SERVICE_PORT: ${PROFILE_SERVICE_PORT}
+      RESERVATION_SERVICE_HOST: ${RESERVATION_SERVICE_HOST}
+      RESERVATION_SERVICE_PORT: ${RESERVATION_SERVICE_PORT}
+      ACCOMMODATION_SERVICE_HOST: ${ACCOMMODATION_SERVICE_HOST}
+      ACCOMMODATION_SERVICE_PORT: ${ACCOMMODATION_SERVICE_PORT}
+      NATS_HOST: ${NATS_HOST}
+      NATS_PORT: ${NATS_PORT}
+      NATS_USER: ${NATS_USER}
+      NATS_PASS: ${NATS_PASS}
+    depends_on:
+      - grade_db
+    networks:
+      - network
+
+  profile_service:
+    image: profile_service
+    container_name: profile_service
+    build:
+      context: .
+      dockerfile: ./profile_service/Dockerfile
+    restart: on-failure
+    ports:
+      - 8002:${PROFILE_SERVICE_PORT}
+    environment:
+      OS_ENV: docker
+      PROFILE_DB_HOST: ${PROFILE_DB_HOST}
+      PROFILE_DB_PORT: ${PROFILE_DB_PORT}
+      PROFILE_SERVICE_PORT: ${PROFILE_SERVICE_PORT}
+      RESERVATION_SERVICE_HOST: ${RESERVATION_SERVICE_HOST}
+      RESERVATION_SERVICE_PORT: ${RESERVATION_SERVICE_PORT}
+      GRADE_SERVICE_HOST: ${GRADE_SERVICE_HOST}
+      GRADE_SERVICE_PORT: ${GRADE_SERVICE_PORT}
+      USER_SERVICE_HOST: ${USER_SERVICE_HOST}
+      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
+      ACCOMMODATION_SERVICE_HOST: ${ACCOMMODATION_SERVICE_HOST}
+      ACCOMMODATION_SERVICE_PORT: ${ACCOMMODATION_SERVICE_PORT}
+      NATS_HOST: ${NATS_HOST}
+      NATS_PORT: ${NATS_PORT}
+      NATS_USER: ${NATS_USER}
+      NATS_PASS: ${NATS_PASS}
+      UPDATE_PROFILE_COMMAND_SUBJECT: ${UPDATE_PROFILE_COMMAND_SUBJECT}
+      UPDATE_PROFILE_REPLY_SUBJECT: ${UPDATE_PROFILE_REPLY_SUBJECT}
+      CREATE_PROFILE_COMMAND_SUBJECT: ${CREATE_PROFILE_COMMAND_SUBJECT}
+      CREATE_PROFILE_REPLY_SUBJECT: ${CREATE_PROFILE_REPLY_SUBJECT}
+    depends_on:
+      - profile_db
+    networks:
+      - network
+
+  reservation_service:
+    image: reservation_service
+    container_name: reservation_service
+    build:
+      context: .
+      dockerfile: ./reservation_service/Dockerfile
+    restart: on-failure
+    ports:
+      - 8004:${RESERVATION_SERVICE_PORT}
+    environment:
+      OS_ENV: docker
+      RESERVATION_DB_HOST: ${RESERVATION_DB_HOST}
+      RESERVATION_DB_PORT: ${RESERVATION_DB_PORT}
+      RESERVATION_SERVICE_PORT: ${RESERVATION_SERVICE_PORT}
+      USER_SERVICE_HOST: ${USER_SERVICE_HOST}
+      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
+      ACCOMMODATION_SERVICE_HOST: ${ACCOMMODATION_SERVICE_HOST}
+      ACCOMMODATION_SERVICE_PORT: ${ACCOMMODATION_SERVICE_PORT}
+      PROFILE_SERVICE_HOST: ${PROFILE_SERVICE_HOST}
+      PROFILE_SERVICE_PORT: ${PROFILE_SERVICE_PORT}
+    depends_on:
+      - reservation_db
+    networks:
+      - network
+
+  user_service:
+    image: user_service
+    container_name: user_service
+    build:
+      context: .
+      dockerfile: ./user_service/Dockerfile
+    restart: on-failure
+    ports:
+      - 8001:${USER_SERVICE_PORT}
+    environment:
+      OS_ENV: docker
+      USER_DB_HOST: ${USER_DB_HOST}
+      USER_DB_PORT: ${USER_DB_PORT}
+      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
+      PROFILE_SERVICE_HOST: ${PROFILE_SERVICE_HOST}
+      PROFILE_SERVICE_PORT: ${PROFILE_SERVICE_PORT}
+      NATS_HOST: ${NATS_HOST}
+      NATS_PORT: ${NATS_PORT}
+      NATS_USER: ${NATS_USER}
+      NATS_PASS: ${NATS_PASS}
+      UPDATE_PROFILE_COMMAND_SUBJECT: ${UPDATE_PROFILE_COMMAND_SUBJECT}
+      UPDATE_PROFILE_REPLY_SUBJECT: ${UPDATE_PROFILE_REPLY_SUBJECT}
+      CREATE_PROFILE_COMMAND_SUBJECT: ${CREATE_PROFILE_COMMAND_SUBJECT}
+      CREATE_PROFILE_REPLY_SUBJECT: ${CREATE_PROFILE_REPLY_SUBJECT}
+    depends_on:
+      - user_db
+    networks:
+      - network
+
+  accommodation_db:
+    image: mongo
+    container_name: accommodation_db
+    restart: on-failure
+    ports:
+      - 27017:${ACCOMMODATION_DB_PORT}
+    networks:
+      - network
+
+  grade_db:
+    image: mongo
+    container_name: grade_db
+    restart: on-failure
+    #ports:
+    #  - 27017:${GRADE_DB_PORT}
+    networks:
+      - network
+
+  profile_db:
+    image: mongo
+    container_name: profile_db
+    restart: on-failure
+    #ports:
+    #  - 27017:${PROFILE_DB_PORT}
     networks:
       - network
 
@@ -72,8 +210,24 @@ services:
     image: mongo
     container_name: reservation_db
     restart: on-failure
-    ports:
-      - 27017:${RESERVATION_DB_PORT}
+    #ports:
+    #  - 27017:${RESERVATION_DB_PORT}
+    networks:
+      - network
+
+  user_db:
+    image: mongo
+    container_name: user_db
+    restart: on-failure
+    #ports:
+    #  - 27017:${USER_DB_PORT}
+    networks:
+      - network
+
+  nats:
+    image: nats
+    container_name: nats
+    restart: on-failure
     networks:
       - network
 
