@@ -86,6 +86,11 @@ const Flights = () => {
   };
 
   const buyTicketHandler = () => {
+    if (numberOfTickets < 1) {
+      alert("Please enter valid number of tickets");
+      return;
+    }
+
     event.preventDefault();
     fetch(
       "https://localhost:5000/api/Ticket/" +
@@ -101,10 +106,19 @@ const Flights = () => {
         body: JSON.stringify({}),
       }
     )
-      .then((response) => response)
+      .then((res) => {
+        if (res.ok) {
+          return res;
+        } else if (res.status == 400) {
+          throw new Error("Can not buy that amount!");
+        }
+      })
       .then((actualData) => {
         alert("Succes!");
         navigate("/reservations");
+      })
+      .catch((error) => {
+        alert(error);
       });
   };
 
