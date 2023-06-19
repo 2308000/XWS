@@ -69,39 +69,43 @@ const Accommodation = () => {
 
   const reserveHandler = () => {
     console.log(localStorage.getItem("startDate"));
+    if (authCtx.role !== "guest") {
+      alert("Log in as guest to reserve accommodation!");
+      navigate("/login");
+    } else {
+      const start = dayjs(localStorage.getItem("startDate")).format(
+        "YYYY-MM-DDTHH:mm:ss.SSSZ"
+      );
+      const end = dayjs(localStorage.getItem("endDate")).format(
+        "YYYY-MM-DDTHH:mm:ss.SSSZ"
+      );
 
-    const start = dayjs(localStorage.getItem("startDate")).format(
-      "YYYY-MM-DDTHH:mm:ss.SSSZ"
-    );
-    const end = dayjs(localStorage.getItem("endDate")).format(
-      "YYYY-MM-DDTHH:mm:ss.SSSZ"
-    );
-
-    fetch("http://localhost:8000/reservation", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: authCtx.token,
-      },
-      body: JSON.stringify({
-        accommodationId: id,
-        beginning: start,
-        ending: end,
-        guests: localStorage.getItem("numberOfGuests"),
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
+      fetch("http://localhost:8000/reservation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: authCtx.token,
+        },
+        body: JSON.stringify({
+          accommodationId: id,
+          beginning: start,
+          ending: end,
+          guests: localStorage.getItem("numberOfGuests"),
+        }),
       })
-      .then((data) => {
-        if (data) console.log(data);
-        navigate("/my-reservations");
-      })
-      .catch((error) => {
-        alert(error);
-      });
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+        })
+        .then((data) => {
+          if (data) console.log(data);
+          navigate("/my-reservations");
+        })
+        .catch((error) => {
+          alert(error);
+        });
+    }
   };
 
   const viewHostHandler = () => {};
@@ -110,16 +114,32 @@ const Accommodation = () => {
     <div className={classes.body}>
       <br></br>
       <div className={classes.home}>
-        <div className={classes.container}>
-          <div className={classes.imgTitle}>
-            <div className={classes.image}></div>
-            <div>
-              <h1>{accommodation?.accommodation.name}</h1>
+        <div className={classes.imgTitle}>
+          <div className={classes.priceReserveContainer}>
+            <div className={classes.reserve}>
               <h3>
+                {localStorage.getItem("numberOfGuests")} guests, from{" "}
+                {dayjs(localStorage.getItem("startDate")).format("DD.MM.YYYY")}{" "}
+                to {dayjs(localStorage.getItem("endDate")).format("DD.MM.YYYY")}
+              </h3>
+            </div>
+            <div className={classes.reserve}>
+              <h3>Total price : EUR {localStorage.getItem("totalPrice")}</h3>
+              <button className={utils.blueButton} onClick={reserveHandler}>
+                Reserve
+              </button>
+            </div>
+          </div>
+          <div className={classes.topContainer}>
+            <div className={classes.image}></div>
+            <div className={classes.title}>
+              <h1>{accommodation?.accommodation.name}</h1>
+              <h3 className={classes.underlinedBlueText}>
                 {accommodation?.accommodation.location.street},{" "}
                 {accommodation?.accommodation.location.city},{" "}
                 {accommodation?.accommodation.location.country}
               </h3>
+              <br></br>
               <h5>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
                 Molestias, nulla? Porro vitae voluptatum rem esse possimus sunt
@@ -128,94 +148,55 @@ const Accommodation = () => {
                 eum officia. Dolor quam ducimus ex quaerat adipisci quae sequi
                 impedit quidem, optio sapiente!
               </h5>
-              <h3>
-                From{" "}
-                {dayjs(localStorage.getItem("startDate")).format("DD-MM-YYYY")}{" "}
-                to {dayjs(localStorage.getItem("endDate")).format("DD-MM-YYYY")}
-              </h3>
-              <h3>
-                Number of guests : {localStorage.getItem("numberOfGuests")}
-              </h3>
-              <h3>Price per night : {localStorage.getItem("pricePerNight")}</h3>
-              <h3>Total price : {localStorage.getItem("totalPrice")}</h3>
-            </div>
-          </div>
-
-          <div className={classes.priceDate}>
-            <h3>{accommodation?.accommodation.host.username}</h3>
-            <h3>{accommodation?.accommodation.host.phoneNumber}</h3>
-            {authCtx.role === "guest" && (
-              <button className={utils.blueButton} onClick={reserveHandler}>
-                Reserve
+              <br></br>
+              <button
+                className={utils.blueButton}
+                onClick={() => {
+                  getHostGrades();
+                  setOpen(true);
+                }}
+              >
+                Host details
               </button>
-            )}
-            <button
-              className={utils.blueButton}
-              onClick={() => {
-                getHostGrades();
-                setOpen(true);
-              }}
-            >
-              View host
-            </button>
-          </div>
-        </div>
-        <br></br>
-        <h2>Benefits</h2>
-        <div>
-          <div>
-            <span>Wifi: </span>
-            <span>{accommodation?.accommodation.hasWifi ? "Yes" : "No"}</span>
-          </div>
-          <div>
-            <span>Parking: </span>
-            <span>
-              {accommodation?.accommodation.hasParking ? "Yes" : "No"}
-            </span>
-          </div>
-          <div>
-            <span>Balcony: </span>
-            <span>
-              {accommodation?.accommodation.hasBalcony ? "Yes" : "No"}
-            </span>
-          </div>
-          <div>
-            <span>Washing machine: </span>
-            <span>
-              {accommodation?.accommodation.hasWashingMachine ? "Yes" : "No"}
-            </span>
-          </div>
-          <div>
-            <span>Kithcen facilities: </span>
-            {accommodation?.accommodation.hasKitchen ? "Yes" : "No"}
-          </div>
-          <div>
-            <span>Bathtub: </span>
-            {accommodation?.accommodation.hasBathtub ? "Yes" : "No"}
-          </div>
-          <div>
-            <span>Air Conditioning: </span>
-            {accommodation?.accommodation.hasAirConditioning ? "Yes" : "No"}
-          </div>
-        </div>
-        <br></br>
-        <h3>
-          Average grade :
-          {accommodation?.accommodation.averageAccommodationGrade !== "NaN"
-            ? accommodation?.accommodation.averageAccommodationGrade.toFixed(2)
-            : 0}
-        </h3>
-        <br></br>
-        <h2>Reviews</h2>
-        <br></br>
-        <div>
-          {accommodation?.accommodation.grades.map((grade) => (
-            <div>
-              <span>{grade.guestName} </span>
-              <span>{grade.grade} </span>
-              <span>{dayjs(grade.date).format("DD-MM-YYYY")}</span>
             </div>
-          ))}
+          </div>
+        </div>
+        <div>
+          <h2>Benefits</h2>
+          <div class={classes.gridContainer}>
+            <div class={classes.gridItem}>
+              <span>Parking: </span>
+              {accommodation?.accommodation.hasParking ? "Yes" : "No"}
+            </div>
+            <div class={classes.gridItem}>
+              <span>Wifi: </span>
+              {accommodation?.accommodation.hasWifi ? "Yes" : "No"}
+            </div>
+            <div class={classes.gridItem}>
+              <span>Balcony: </span>
+              {accommodation?.accommodation.hasBalcony ? "Yes" : "No"}
+            </div>
+            <div class={classes.gridItem}>
+              <span>Washing machine: </span>
+              {accommodation?.accommodation.hasWashingMachine ? "Yes" : "No"}
+            </div>
+            <div class={classes.gridItem}>
+              <span>Kithcen facilities: </span>
+              {accommodation?.accommodation.hasKitchen ? "Yes" : "No"}
+            </div>
+            <div class={classes.gridItem}>
+              <span>Bathtub: </span>
+              {accommodation?.accommodation.hasBathtub ? "Yes" : "No"}
+            </div>
+            <div class={classes.gridItem}>
+              <span>Air Conditioning: </span>
+              {accommodation?.accommodation.hasAirConditioning ? "Yes" : "No"}
+            </div>
+            <div class={classes.gridItem}>
+              <span>TV: </span>
+              <span>Yes</span>
+            </div>
+          </div>
         </div>
       </div>
       <Modal
@@ -226,26 +207,41 @@ const Accommodation = () => {
       >
         <Box sx={style}>
           <div>
-            <div className={classes.modalTitle}>Host grades</div>
+            <div className={classes.modalTitle}>Host Details</div>
             <div className={classes.register}>
+              <h3>Host name: {accommodation?.accommodation.host.username}</h3>
+              <h3>
+                Phone number: {accommodation?.accommodation.host.phoneNumber}
+              </h3>
+              <h3>Grades</h3>
               <table className={classes.styledTable}>
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Grade</th>
+                    <th>User</th>
                     <th>Date</th>
+                    <th>Grade</th>
                   </tr>
                 </thead>
                 <tbody>
                   {HGrades?.map((app, index) => (
                     <tr key={index}>
                       <td>{app.gradedName}</td>
-                      <td>{app.grade}</td>
                       <td>{dayjs(app.date).format("DD-MM-YYYY")}</td>
+                      <td>{app.grade}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              <div>
+                <button
+                  className={utils.blueButton}
+                  onClick={() => {
+                    setOpen(false);
+                  }}
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </Box>

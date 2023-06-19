@@ -8,7 +8,10 @@
   margin: auto;
   background-color: white;
   border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
   padding: 1rem;
+  gap: 2rem;
 }
 
 .image {
@@ -23,7 +26,9 @@
 }
 .imgTitle {
   display: flex;
-  gap: 2rem;
+  flex-direction: column;
+  width: 100%;
+  gap: 1rem;
 }
 .priceDate {
   display: flex;
@@ -44,6 +49,51 @@
   display: flex;
   gap: 0.5rem;
   align-items: center;
+}
+
+.topContainer {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+.blueText {
+  color: rgb(25, 118, 210);
+  font-size: 1.7rem;
+}
+.underlinedBlueText {
+  color: rgb(2, 18, 168);
+  font-size: 1.1rem;
+}
+
+.priceReserveContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.reserve {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.benefits {
+  font-size: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  padding: 0.5rem;
+}
+.gridItem {
+  background-color: rgba(255, 255, 255, 0.8);
+
+  padding: 15px;
+
+  text-align: center;
 }
 
 .modalTitle {
@@ -89,7 +139,7 @@
   border-collapse: collapse;
   margin: 0;
   padding: 0;
-  width: 100%;
+  width: 400px;
   table-layout: fixed;
   border-radius: 1rem;
   overflow: hidden;

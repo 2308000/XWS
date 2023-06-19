@@ -86,7 +86,7 @@
   font-weight: 500;
   cursor: pointer;
   width: 150px;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
 }
 
 .greenButton {
@@ -97,7 +97,7 @@
   font-weight: 500;
   cursor: pointer;
   width: 150px;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
 }
 .greenButtonDisabled {
   background-color: rgb(160, 161, 161);
@@ -107,7 +107,7 @@
   font-weight: 500;
 
   width: 150px;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
 }
 .redButton {
   background-color: rgb(255, 0, 0);
@@ -117,7 +117,7 @@
   font-weight: 500;
   cursor: pointer;
   width: 150px;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
 }
 .lightGreyButton {
   background-color: transparent;
@@ -126,7 +126,7 @@
   border: 1px solid rgb(78, 77, 77);
   cursor: pointer;
   width: 150px;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
 }
 
 .whiteButton {
@@ -137,7 +137,7 @@
   font-weight: 500;
   cursor: pointer;
   width: 150px;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -219,7 +219,7 @@
   font-weight: 500;
   cursor: pointer;
   width: 100px;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
 }
 .redTableButton {
   background-color: red;
@@ -229,7 +229,7 @@
   font-weight: 500;
   cursor: pointer;
   width: 100px;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
 }
 .blueTableButton {
   background-color: rgb(23, 72, 179);
@@ -239,7 +239,7 @@
   font-weight: 500;
   cursor: pointer;
   width: 100px;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
 }
 .blueButton {
   background-color: rgb(23, 72, 179);
@@ -249,15 +249,15 @@
   font-weight: 500;
   cursor: pointer;
   width: 150px;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
 }
 .lightBlueButton {
-  background-color: rgb(12, 138, 170);
+  background-color: rgb(5, 117, 236);
   color: white;
   padding: 0.8rem;
-  border: 1px solid rgb(12, 138, 170);
+  border: rgb(5, 117, 236);
   font-weight: 500;
   cursor: pointer;
   width: 150px;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
 }

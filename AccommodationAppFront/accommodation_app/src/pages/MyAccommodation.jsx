@@ -103,7 +103,7 @@ const MyAccommodation = () => {
         <h1>{accName}</h1>
 
         <div className={classes.buttonContainerRight}>
-          <button className={utils.greenButton} onClick={handleOpen}>
+          <button className={utils.lightBlueButton} onClick={handleOpen}>
             Add
           </button>
         </div>

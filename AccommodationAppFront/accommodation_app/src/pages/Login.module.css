@@ -21,7 +21,7 @@
   gap: 1rem;
   padding: 4rem;
   border: 1px solid rgb(186, 184, 184);
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   box-shadow: rgba(124, 124, 124, 0.35) 0px 5px 15px;
 }
 
@@ -34,7 +34,7 @@
 
 .loginButton {
   background-color: rgb(23, 72, 179);
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   border: none;
   padding: 1rem;
   color: white;
@@ -60,7 +60,7 @@
   background-color: rgb(162, 162, 162);
   border-radius: 1rem;
   border: none;
-  padding: 1rem;
+  border-radius: 0.5rem;
   color: rgb(205, 205, 205);
   margin-top: 1rem;
   width: 200px;
