@@ -10,6 +10,7 @@ import dayjs, { Dayjs } from "dayjs";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
+import { useNavigate } from "react-router-dom";
 
 const MyProfile = () => {
   const style = {
@@ -51,7 +52,7 @@ const MyProfile = () => {
   const phoneNumberInputRef = useRef();
   const genderInputRef = useRef();
   const [validation, setValidation] = useState(true);
-
+  const navigate = useNavigate();
   const [value, setValue] = useState(dayjs("2023-05-14"));
   const genders = ["female", "male"];
   const [newPw, setNewPw] = useState();
@@ -161,6 +162,34 @@ const MyProfile = () => {
       setValidation(true);
     }
   }, [newRePw, newPw]);
+
+  const deleteProfileHandler = () => {
+    fetch("http://localhost:8000/profile", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authCtx.token,
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else if (res.status == 500) {
+          throw new Error("Can not delete profile");
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        localStorage.removeItem("id");
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        localStorage.removeItem("role");
+        navigate("/login");
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
 
   return (
     <>
@@ -291,7 +320,12 @@ const MyProfile = () => {
                     <p>Are you sure you want to delete your account?</p>
                   </div>
                   <div className={utils.buttonContainerRight}>
-                    <button className={utils.redButton}>Delete</button>
+                    <button
+                      className={utils.redButton}
+                      onClick={deleteProfileHandler}
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
               </div>

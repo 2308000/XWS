@@ -63,7 +63,6 @@ const MyPastReservations = () => {
       .then((response) => response.json())
       .then((actualData) => {
         console.log(actualData);
-        setProperties(actualData.accommodations);
       });
   };
 
