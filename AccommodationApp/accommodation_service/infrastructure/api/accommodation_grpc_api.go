@@ -19,22 +19,20 @@ import (
 
 type AccommodationHandler struct {
 	pb.UnimplementedAccommodationServiceServer
-	service             *application.AccommodationService
-	profileClient       profile.ProfileServiceClient
-	reservationClient   reservation.ReservationServiceClient
-	gradeClient         grade.GradeServiceClient
-	userClient          user.UserServiceClient
-	accommodationClient accommodation.AccommodationServiceClient
+	service           *application.AccommodationService
+	profileClient     profile.ProfileServiceClient
+	reservationClient reservation.ReservationServiceClient
+	gradeClient       grade.GradeServiceClient
+	userClient        user.UserServiceClient
 }
 
-func NewAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient, reservationClient reservation.ReservationServiceClient, gradeClient grade.GradeServiceClient, userClient user.UserServiceClient, accommodationClient accommodation.AccommodationServiceClient) *AccommodationHandler {
+func NewAccommodationHandler(service *application.AccommodationService, profileClient profile.ProfileServiceClient, reservationClient reservation.ReservationServiceClient, gradeClient grade.GradeServiceClient, userClient user.UserServiceClient) *AccommodationHandler {
 	return &AccommodationHandler{
-		service:             service,
-		profileClient:       profileClient,
-		reservationClient:   reservationClient,
-		gradeClient:         gradeClient,
-		userClient:          userClient,
-		accommodationClient: accommodationClient,
+		service:           service,
+		profileClient:     profileClient,
+		reservationClient: reservationClient,
+		gradeClient:       gradeClient,
+		userClient:        userClient,
 	}
 }
 
@@ -354,7 +352,7 @@ func (handler *AccommodationHandler) UpdateAvailability(ctx context.Context, req
 	if request.AvailableDate.Beginning.AsTime().Before(time.Now()) {
 		return nil, errors.New("cannot update availability into the past")
 	}
-	accommodationOwnershipCheck, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: request.AccommodationId})
+	accommodationOwnershipCheck, err := handler.Get(ctx, &accommodation.GetAccommodationRequest{Id: request.AccommodationId})
 	if err != nil {
 		return nil, err
 	}
