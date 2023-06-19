@@ -172,6 +172,11 @@ func (handler *AccommodationHandler) GetAllSearched(ctx context.Context, request
 		}
 		accommodation.Availability = []domain.AvailableDate{availableDate}
 		accommodationPb := mapAccommodationToPb(accommodation)
+		isOutstandingHost, err := handler.profileClient.IsOutstandingHost(ctx, &profile.GetRequest{Id: accommodation.Host.HostId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		accommodationPb.Host.IsOutstanding = isOutstandingHost.IsOutstanding
 		log.Println("dodao smjestaj")
 		accommodationGrades, err := handler.gradeClient.GetByGraded(ctx, &grade.GetGradeRequest{Id: accommodationPb.Id})
 		if err != nil {
