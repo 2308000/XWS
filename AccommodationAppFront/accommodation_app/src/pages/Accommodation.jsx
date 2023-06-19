@@ -129,10 +129,9 @@ const Accommodation = () => {
                 impedit quidem, optio sapiente!
               </h5>
               <h3>
-                From
-                {dayjs(localStorage.getItem("startDate")).format("DD-MM-YYYY")}
-                to
-                {dayjs(localStorage.getItem("endDate")).format("DD-MM-YYYY")}
+                From{" "}
+                {dayjs(localStorage.getItem("startDate")).format("DD-MM-YYYY")}{" "}
+                to {dayjs(localStorage.getItem("endDate")).format("DD-MM-YYYY")}
               </h3>
               <h3>
                 Number of guests : {localStorage.getItem("numberOfGuests")}
@@ -192,8 +191,8 @@ const Accommodation = () => {
             {accommodation?.accommodation.hasBathtub ? "Yes" : "No"}
           </div>
           <div>
-            <span>Air: </span>
-            {accommodation?.accommodation.hasBathtub ? "Yes" : "No"}
+            <span>Air Conditioning: </span>
+            {accommodation?.accommodation.hasAirConditioning ? "Yes" : "No"}
           </div>
         </div>
         <br></br>

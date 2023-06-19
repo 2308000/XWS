@@ -264,12 +264,14 @@ const Accommodations = () => {
                 <div className={classes.imgTitle}>
                   <div className={classes.image}></div>
                   <div>
-                    <h2>{property.accommodation.name}</h2>
-                    <h4>
+                    <h2 className={classes.blueText}>
+                      {property.accommodation.name}
+                    </h2>
+                    <h5 className={classes.underlinedBlueText}>
                       {property.accommodation.location.street},{" "}
                       {property.accommodation.location.city},{" "}
                       {property.accommodation.location.country}
-                    </h4>
+                    </h5>
                     <br></br>
                     <h5>
                       Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -312,7 +314,9 @@ const Accommodations = () => {
                             <h4> {numberOfGuestsRef.current.value} guests </h4>
                           )}
                           <h4>Price per night: {property.pricePerNight}</h4>
-                          <h3>Total price: {property.totalPrice}</h3>
+                          <br></br>
+                          <h4>Total price:</h4>
+                          <h2>EUR {property.totalPrice}</h2>
                         </div>
                         <br></br>
                         <button

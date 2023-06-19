@@ -197,6 +197,11 @@ const MyProfile = () => {
       {!toggleEdit && (
         <div className={classes.myProfile}>
           <div className={utils.title}>My Profile</div>
+          {user?.profile.isOutstanding && (
+            <div className={classes.outstandingHost}>
+              <h2> Outstanding host</h2>
+            </div>
+          )}
           <div className={classes.inputContainerVertical}>
             <div className={classes.inputContainer}>
               <div>

@@ -50,7 +50,7 @@ func (handler *ProfileHandler) Get(ctx context.Context, request *pb.GetRequest) 
 	profilePb := &pb.Profile{
 		Id:        request.Id,
 		Username:  profile.Username,
-		FirstName: profile.Email,
+		FirstName: profile.FirstName,
 		LastName:  profile.LastName,
 		Email:     profile.Email,
 		Address: &pb.Address{
