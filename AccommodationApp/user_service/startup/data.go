@@ -7,94 +7,34 @@ import (
 
 var users = []*auth.User{
 	{
-		Id:       getObjectId("aaaaaaaa0123456789000000"),
-		Username: "host1",
-		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
-		Role:     "guest",
-	},
-	{
-		Id:       getObjectId("aaaaaaaa0123456789000001"),
-		Username: "host2",
-		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
-		Role:     "host",
-	},
-	{
-		Id:       getObjectId("aaaaaaaa0123456789000002"),
-		Username: "host3",
-		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
-		Role:     "guest",
-	},
-	{
-		Id:       getObjectId("aaaaaaaa0123456789000003"),
-		Username: "host4",
-		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
-		Role:     "guest",
-	},
-	{
-		Id:       getObjectId("aaaaaaaa0123456789000004"),
-		Username: "host5",
-		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
-		Role:     "host",
-	},
-	{
-		Id:       getObjectId("aaaaaaaa9876543210000000"),
-		Username: "guest1",
-		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
-		Role:     "guest",
-	},
-	{
-		Id:       getObjectId("aaaaaaaa9876543210000001"),
+		Id:       getObjectId("62706d1b624b3da748f63fe3"),
 		Username: "guest2",
 		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
 		Role:     "guest",
 	},
 	{
-		Id:       getObjectId("aaaaaaaa9876543210000002"),
-		Username: "guest3",
+		Id:       getObjectId("62706d1b623b3da748f63fa1"),
+		Username: "host",
+		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
+		Role:     "host",
+	},
+	{
+		Id:       getObjectId("55306d1b623b3da748f63fa1"),
+		Username: "guest",
 		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
 		Role:     "guest",
 	},
 	{
-		Id:       getObjectId("aaaaaaaa9876543210000003"),
-		Username: "guest4",
+		Id:       getObjectId("55306d1b615b3da748f63fa1"),
+		Username: "peasant",
 		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
 		Role:     "guest",
 	},
 	{
-		Id:       getObjectId("aaaaaaaa9876543210000004"),
-		Username: "guest5",
+		Id:       getObjectId("62706d1b623b4da748f63bc3"),
+		Username: "sega",
 		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
-		Role:     "guest",
-	},
-	{
-		Id:       getObjectId("aaaaaaaa9876543210000005"),
-		Username: "guest6",
-		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
-		Role:     "guest",
-	},
-	{
-		Id:       getObjectId("aaaaaaaa9876543210000006"),
-		Username: "guest7",
-		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
-		Role:     "guest",
-	},
-	{
-		Id:       getObjectId("aaaaaaaa9876543210000007"),
-		Username: "guest8",
-		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
-		Role:     "guest",
-	},
-	{
-		Id:       getObjectId("aaaaaaaa9876543210000008"),
-		Username: "guest9",
-		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
-		Role:     "guest",
-	},
-	{
-		Id:       getObjectId("aaaaaaaa9876543210000009"),
-		Username: "guest10",
-		Password: "$2a$10$UVn74F/yEiUzKWBSGVyzHe2UfpVJ95zY50Q8bz1RFyrAYVfwFAj4i",
-		Role:     "guest",
+		Role:     "host",
 	},
 }
 
