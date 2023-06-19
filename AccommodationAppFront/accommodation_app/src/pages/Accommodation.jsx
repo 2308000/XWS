@@ -28,7 +28,9 @@ const Accommodation = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [HGrades, setHGrades] = useState();
-
+  const [openGrades, setOpenGrades] = useState(false);
+  const handleOpenGrades = () => setOpenGrades(true);
+  const handleCloseGrades = () => setOpenGrades(false);
   let { id } = useParams();
   const authCtx = useContext(AuthContext);
   useEffect(() => {
@@ -198,7 +200,74 @@ const Accommodation = () => {
             </div>
           </div>
         </div>
+        <div>
+          <div className={classes.allGradesContainer}>
+            <h2>Last User Reviews</h2>
+            <button
+              className={utils.lightBlueButton}
+              onClick={() => {
+                setOpenGrades(true);
+              }}
+            >
+              View All
+            </button>
+          </div>
+          <br></br>
+          <br></br>
+          <div className={classes.gradesContainer}>
+            {accommodation?.accommodation.grades.map((grade) => (
+              <div className={classes.gradeContainer}>
+                <h2>{grade.grade} </h2>
+                <span>{grade.guestName} </span>
+
+                <span>{dayjs(grade.date).format("dddd, DD.MM.YYYY")}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
+      <Modal
+        open={openGrades}
+        onClose={handleCloseGrades}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div>
+            <div className={classes.modalTitle}>Accomodation Reviews</div>
+            <div className={classes.register}>
+              <table className={classes.styledTable}>
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Date</th>
+                    <th>Grade</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {accommodation?.accommodation.grades.map((app, index) => (
+                    <tr key={index}>
+                      <td>{app.guestName}</td>
+                      <td>{dayjs(app.date).format("DD-MM-YYYY")}</td>
+                      <td>{app.grade}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div>
+                <button
+                  className={utils.blueButton}
+                  onClick={() => {
+                    setOpenGrades(false);
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </Box>
+      </Modal>
       <Modal
         open={open}
         onClose={handleClose}
@@ -209,6 +278,9 @@ const Accommodation = () => {
           <div>
             <div className={classes.modalTitle}>Host Details</div>
             <div className={classes.register}>
+              {accommodation?.accommodation.host.isOutstanding && (
+                <h3 className={classes.blueText}>Outstanding host</h3>
+              )}
               <h3>Host name: {accommodation?.accommodation.host.username}</h3>
               <h3>
                 Phone number: {accommodation?.accommodation.host.phoneNumber}

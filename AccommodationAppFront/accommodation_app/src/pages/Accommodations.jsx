@@ -15,8 +15,8 @@ const Accommodations = () => {
   const tomorrow = new Date(today);
   const start = new Date(today);
   const end = new Date(today);
-  start.setDate(tomorrow.getDate() - 2);
-  end.setDate(tomorrow.getDate() + 3);
+  start.setDate(tomorrow.getDate() + 4);
+  end.setDate(tomorrow.getDate() + 6);
   tomorrow.setDate(tomorrow.getDate() + 1);
   const [valueStart, setValueStart] = useState(dayjs(start));
   const [valueEnd, setValueEnd] = useState(dayjs(end));
@@ -244,8 +244,10 @@ const Accommodations = () => {
             {cityRef?.current?.value?.length > 0 ||
             countryRef?.current?.value?.length > 0 ? (
               <h2>
-                Properties in {cityRef?.current.value} ,{" "}
-                {countryRef?.current.value}
+                Properties in {cityRef?.current.value}
+                {countryRef?.current.value && cityRef?.current.value
+                  ? ` , ${countryRef?.current.value}`
+                  : countryRef?.current.value}
               </h2>
             ) : (
               <h2>Properties</h2>

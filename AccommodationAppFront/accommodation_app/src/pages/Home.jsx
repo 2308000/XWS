@@ -8,65 +8,6 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useState, useRef, useEffect, useContext } from "react";
 import Property from "../components/Property";
 import { useNavigate } from "react-router-dom";
-const properties = [
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-  {
-    Id: 1,
-    Host: 2,
-    Name: "penthaus neki",
-    HasWifi: true,
-    HasFreeParking: true,
-    HasWashingMachine: true,
-    MinNumberOfGuests: 2,
-    MaxNumberOfGuests: 7,
-    Availability: [
-      {
-        Price: 20,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 60,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 55,
-        IsPricePerGuest: true,
-      },
-      {
-        Price: 40,
-        IsPricePerGuest: true,
-      },
-    ],
-    IsReservationAcceptenceManual: true,
-  },
-];
 
 const Home = () => {
   const [properties, setProperties] = useState();
@@ -74,8 +15,8 @@ const Home = () => {
   const tomorrow = new Date(today);
   const start = new Date(today);
   const end = new Date(today);
-  start.setDate(tomorrow.getDate() - 2);
-  end.setDate(tomorrow.getDate() + 3);
+  start.setDate(tomorrow.getDate() + 4);
+  end.setDate(tomorrow.getDate() + 6);
   tomorrow.setDate(tomorrow.getDate() + 1);
   const [valueStart, setValueStart] = useState(dayjs(start));
   const [valueEnd, setValueEnd] = useState(dayjs(end));
@@ -303,8 +244,10 @@ const Home = () => {
             {cityRef?.current?.value?.length > 0 ||
             countryRef?.current?.value?.length > 0 ? (
               <h2>
-                Properties in {cityRef?.current.value} ,{" "}
-                {countryRef?.current.value}
+                Properties in {cityRef?.current.value}
+                {countryRef?.current.value && cityRef?.current.value
+                  ? ` , ${countryRef?.current.value}`
+                  : countryRef?.current.value}
               </h2>
             ) : (
               <h2>Properties</h2>
