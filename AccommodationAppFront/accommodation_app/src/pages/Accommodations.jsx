@@ -233,9 +233,11 @@ const Accommodations = () => {
               <input type="checkbox" ref={OHRef}></input>
               <label>Outstanding host</label>
             </div>
-            <button className={classes.searchButton} onClick={filterHandler}>
-              Filter
-            </button>
+            <div className={utils.buttonContainerCenter}>
+              <button className={classes.searchButton} onClick={filterHandler}>
+                Filter
+              </button>
+            </div>
           </div>
           <div className={classes.tableContainer}>
             {cityRef?.current?.value?.length > 0 ||
@@ -249,7 +251,11 @@ const Accommodations = () => {
             )}
             {properties?.map((property) => (
               <div
-                className={classes.propertyContainer}
+                className={
+                  property?.accommodation.host.isOutstanding
+                    ? classes.propertyContainerOutstanding
+                    : classes.propertyContainer
+                }
                 key={property.accommodation.id}
               >
                 <div className={classes.imgTitle}>
@@ -262,9 +268,22 @@ const Accommodations = () => {
                       {property.accommodation.location.country}
                     </h4>
                     <br></br>
+                    <h5>
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Eaque suscipit autem odit amet!
+                    </h5>
+                    <br></br>
                     <h5>{property?.accommodation.hasWifi && "Wifi"}</h5>
                     <h5>
                       {property?.accommodation.hasFreeParking && "Free Parking"}
+                    </h5>{" "}
+                    <h5>
+                      {property?.accommodation.hasAirConditioning &&
+                        "Air Conditioning"}
+                    </h5>{" "}
+                    <h5>
+                      {property?.accommodation.hasKitchen &&
+                        "Kitchen facilities"}
                     </h5>
                     <h5>{property.Name}</h5>
                   </div>
@@ -273,45 +292,50 @@ const Accommodations = () => {
                   <div className={classes.propertyCont}>
                     <div className={classes.checkButtonContainer}>
                       <div className={classes.pricesContainer}>
-                        <h4>
-                          Average grade:
-                          {property?.accommodation
-                            ?.averageAccommodationGrade !== "NaN"
-                            ? (property?.accommodation?.averageAccommodationGrade).toFixed(
-                                2
-                              )
-                            : 0}
-                        </h4>
-                        {numberOfGuestsRef.current.value && (
-                          <h4> {numberOfGuestsRef.current.value} guests </h4>
-                        )}
-                        <h4>Price per night: {property.pricePerNight}</h4>
-                        <h4>Total price: {property.totalPrice}</h4>
-                        <h4>{property.Name}</h4>
+                        <div className={classes.grade}>
+                          <p>
+                            {property?.accommodation
+                              ?.averageAccommodationGrade !== "NaN"
+                              ? (property?.accommodation?.averageAccommodationGrade).toFixed(
+                                  2
+                                )
+                              : 0}
+                          </p>
+                        </div>
                       </div>
-                      <button
-                        className={utils.greenButton}
-                        onClick={() => {
-                          checkHandler(property.accommodation.id);
-                          console.log(valueEnd);
-                          localStorage.setItem("startDate", valueStart);
-                          localStorage.setItem("endDate", valueEnd);
-                          localStorage.setItem(
-                            "numberOfGuests",
-                            numberOfGuestsRef.current.value
-                          );
-                          localStorage.setItem(
-                            "pricePerNight",
-                            property?.pricePerNight
-                          );
-                          localStorage.setItem(
-                            "totalPrice",
-                            property?.totalPrice
-                          );
-                        }}
-                      >
-                        Check
-                      </button>
+                      <div>
+                        <div className={classes.propertyPriceContainer}>
+                          {numberOfGuestsRef.current.value && (
+                            <h4> {numberOfGuestsRef.current.value} guests </h4>
+                          )}
+                          <h4>Price per night: {property.pricePerNight}</h4>
+                          <h3>Total price: {property.totalPrice}</h3>
+                        </div>
+                        <br></br>
+                        <button
+                          className={utils.blueButton}
+                          onClick={() => {
+                            checkHandler(property.accommodation.id);
+                            console.log(valueEnd);
+                            localStorage.setItem("startDate", valueStart);
+                            localStorage.setItem("endDate", valueEnd);
+                            localStorage.setItem(
+                              "numberOfGuests",
+                              numberOfGuestsRef.current.value
+                            );
+                            localStorage.setItem(
+                              "pricePerNight",
+                              property?.pricePerNight
+                            );
+                            localStorage.setItem(
+                              "totalPrice",
+                              property?.totalPrice
+                            );
+                          }}
+                        >
+                          Check
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
