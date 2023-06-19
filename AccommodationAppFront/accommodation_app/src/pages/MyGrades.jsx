@@ -127,7 +127,7 @@ const MyGrades = () => {
             <h1>Accommodation grades</h1>
             <div className={classes.buttonContainerRight}>
               <button
-                className={utils.greenButton}
+                className={utils.blackButton}
                 onClick={() => {
                   setToggleACC(true);
                   getHostGrades();
@@ -164,7 +164,7 @@ const MyGrades = () => {
                     </td>
                     <td>
                       <button
-                        className={utils.greenButton}
+                        className={utils.blueButton}
                         onClick={() => {
                           setSelectedAccommodation(app);
                           setOpen(true);
@@ -213,7 +213,7 @@ const MyGrades = () => {
             <h1>Host grades</h1>
             <div className={classes.buttonContainerRight}>
               <button
-                className={utils.greenButton}
+                className={utils.blackButton}
                 onClick={() => {
                   setToggleACC(false);
                 }}
@@ -249,7 +249,7 @@ const MyGrades = () => {
                     </td>
                     <td>
                       <button
-                        className={utils.greenButton}
+                        className={utils.blueButton}
                         onClick={() => {
                           setSelectedHost(app);
                           setOpen(true);

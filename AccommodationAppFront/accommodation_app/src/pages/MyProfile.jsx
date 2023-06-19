@@ -78,6 +78,7 @@ const MyProfile = () => {
       .then((actualData) => {
         console.log(actualData);
         setUser(actualData);
+        setValue(dayjs(actualData.profile.dateOfBirth));
       });
   }, [saved]);
 
@@ -251,7 +252,7 @@ const MyProfile = () => {
               <button className={utils.whiteButton} onClick={handleToggleEdit}>
                 Edit Profile
               </button>
-              <button className={utils.greenButton} onClick={handleOpen}>
+              <button className={utils.blueButton} onClick={handleOpen}>
                 Change password
               </button>
               <button className={utils.redButton} onClick={handleOpenDelete}>
@@ -291,7 +292,7 @@ const MyProfile = () => {
                   <div className={classes.buttonContainerCenter}>
                     {validation ? (
                       <button
-                        className={utils.greenButton}
+                        className={utils.blueButton}
                         onClick={handleChangePW}
                       >
                         Save
@@ -435,10 +436,10 @@ const MyProfile = () => {
             </div>
           </div>
           <div className={utils.buttonContainerEdit}>
-            <button onClick={handleCloseEdit} className={utils.redButton}>
+            <button onClick={handleCloseEdit} className={utils.whiteButton}>
               Close
             </button>
-            <button className={utils.greenButton} onClick={handleSaveChanges}>
+            <button className={utils.blueButton} onClick={handleSaveChanges}>
               Save
             </button>
           </div>

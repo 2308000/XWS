@@ -45,7 +45,7 @@
 }
 
 .searchButton {
-  background-color: rgb(28, 62, 153);
+  background-color: rgb(5, 117, 236);
   color: white;
   padding: 1rem;
   border-radius: 1rem;
@@ -250,15 +250,15 @@
   display: flex;
   margin: 1rem;
   gap: 1rem;
-  border: 1px solid rgb(224, 224, 224);
+  border: 1px solid rgb(169, 169, 169);
   border-radius: 0.3rem;
   padding: 1rem;
   justify-content: space-between;
 }
 
 .image {
-  width: 200px;
-  height: 200px;
+  min-width: 200px;
+  min-height: 200px;
   background-color: rgb(56, 75, 150);
 }
 .property {
@@ -281,7 +281,7 @@
 .checkButtonContainer {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 1rem;
 }
 .inputPrice {
@@ -298,7 +298,7 @@
 .pricesContainer {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   justify-content: end;
 }
 .myAccContainer {
@@ -306,4 +306,33 @@
   background-color: rgb(255, 255, 255);
   padding: 1rem;
   width: 100%;
+}
+.propertyContainerOutstanding {
+  display: flex;
+  margin: 1rem;
+  gap: 1rem;
+  border: 1px solid rgb(12, 185, 233);
+  border-radius: 0.3rem;
+  padding: 1rem;
+  justify-content: space-between;
+  background-color: rgba(1, 216, 249, 0.1);
+}
+.grade {
+  width: 22px;
+  height: 22px;
+  background-color: rgb(20, 20, 128);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: -1rem;
+}
+.propertyPriceContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }

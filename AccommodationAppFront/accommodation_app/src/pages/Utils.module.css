@@ -110,10 +110,10 @@
   border-radius: 1rem;
 }
 .redButton {
-  background-color: red;
+  background-color: rgb(255, 0, 0);
   color: white;
   padding: 0.8rem;
-  border: 1px solid red;
+  border: 1px solid rgb(255, 0, 0);
   font-weight: 500;
   cursor: pointer;
   width: 150px;
@@ -229,5 +229,35 @@
   font-weight: 500;
   cursor: pointer;
   width: 100px;
+  border-radius: 1rem;
+}
+.blueTableButton {
+  background-color: rgb(23, 72, 179);
+  color: white;
+  padding: 0.8rem;
+  border: 1px solid rgb(11, 63, 117);
+  font-weight: 500;
+  cursor: pointer;
+  width: 100px;
+  border-radius: 1rem;
+}
+.blueButton {
+  background-color: rgb(23, 72, 179);
+  color: white;
+  padding: 0.8rem;
+  border: 1px solid rgb(11, 63, 117);
+  font-weight: 500;
+  cursor: pointer;
+  width: 150px;
+  border-radius: 1rem;
+}
+.lightBlueButton {
+  background-color: rgb(12, 138, 170);
+  color: white;
+  padding: 0.8rem;
+  border: 1px solid rgb(12, 138, 170);
+  font-weight: 500;
+  cursor: pointer;
+  width: 150px;
   border-radius: 1rem;
 }

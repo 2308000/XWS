@@ -4,7 +4,7 @@
 }
 
 .home {
-  width: 70%;
+  width: 60%;
   margin: auto;
   background-color: white;
   border-radius: 1rem;
@@ -13,8 +13,8 @@
 
 .image {
   min-width: 300px;
-  height: 300px;
-  background-color: rgb(53, 40, 90);
+  min-height: 300px;
+  background-color: rgb(70, 97, 172);
 }
 .container {
   display: flex;
@@ -31,4 +31,66 @@
   justify-content: flex-end;
   align-items: center;
   gap: 1rem;
+}
+.register {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 3rem;
+}
+.spanReserve {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.modalTitle {
+  background-color: rgb(28, 62, 153);
+  color: white;
+  border-radius: 0.75rem 0.75rem 0rem 0rem;
+  padding: 1rem;
+  margin: 0;
+}
+.styledTable thead tr {
+  background-color: rgb(28, 62, 153);
+  color: #ffffff;
+  text-align: left;
+}
+
+.styledTable th,
+.styledTable td {
+  padding: 1rem 1rem;
+}
+.styledTable th {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.styledTable tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.styledTable tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+.styledTable tbody tr:nth-of-type(odd) {
+  background-color: #ffffff;
+}
+
+.styledTable tbody tr:last-of-type {
+  border-bottom: 1px solid var(--darkGreen);
+}
+
+.styledTable {
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  table-layout: fixed;
+  border-radius: 1rem;
+  overflow: hidden;
 }

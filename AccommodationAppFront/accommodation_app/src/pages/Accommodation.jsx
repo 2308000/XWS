@@ -2,18 +2,32 @@ import React from "react";
 import classes from "./Property.module.css";
 import utils from "./Utils.module.css";
 import dayjs, { Dayjs } from "dayjs";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useState, useRef, useEffect } from "react";
-import Property from "../components/Property";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import AuthContext from "../store/auth-context";
 import { useContext } from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  borderRadius: 3,
+};
+
 const Accommodation = () => {
   const [accommodation, setAccommodation] = useState();
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [HGrades, setHGrades] = useState();
 
   let { id } = useParams();
   const authCtx = useContext(AuthContext);
@@ -32,6 +46,26 @@ const Accommodation = () => {
         setAccommodation(actualData);
       });
   }, []);
+
+  const getHostGrades = () => {
+    console.log(accommodation);
+    fetch(
+      "http://localhost:8000/grade/graded/" +
+        accommodation.accommodation.host.hostId,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: authCtx.token,
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((actualData) => {
+        console.log(actualData);
+        setHGrades(actualData.grades);
+      });
+  };
 
   const reserveHandler = () => {
     console.log(localStorage.getItem("startDate"));
@@ -70,6 +104,8 @@ const Accommodation = () => {
       });
   };
 
+  const viewHostHandler = () => {};
+
   return (
     <div className={classes.body}>
       <br></br>
@@ -107,10 +143,19 @@ const Accommodation = () => {
           </div>
           <div className={classes.priceDate}>
             {authCtx.role === "guest" && (
-              <button className={utils.greenButton} onClick={reserveHandler}>
+              <button className={utils.blueButton} onClick={reserveHandler}>
                 Reserve
               </button>
             )}
+            <button
+              className={utils.blueButton}
+              onClick={() => {
+                getHostGrades();
+                setOpen(true);
+              }}
+            >
+              View host
+            </button>
           </div>
         </div>
         <br></br>
@@ -171,6 +216,38 @@ const Accommodation = () => {
           ))}
         </div>
       </div>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div>
+            <div className={classes.modalTitle}>Host grades</div>
+            <div className={classes.register}>
+              <table className={classes.styledTable}>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Grade</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {HGrades?.map((app, index) => (
+                    <tr key={index}>
+                      <td>{app.gradedName}</td>
+                      <td>{app.grade}</td>
+                      <td>{dayjs(app.date).format("DD-MM-YYYY")}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </Box>
+      </Modal>
     </div>
   );
 };
