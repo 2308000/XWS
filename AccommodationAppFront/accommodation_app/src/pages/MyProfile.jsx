@@ -78,6 +78,7 @@ const MyProfile = () => {
       .then((actualData) => {
         console.log(actualData);
         setUser(actualData);
+        setValue(dayjs(actualData.profile.dateOfBirth));
       });
   }, [saved]);
 
