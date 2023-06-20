@@ -132,11 +132,19 @@ func (handler GradeHandler) Create(ctx context.Context, request *pb.CreateGradeR
 	gradedId, err := primitive.ObjectIDFromHex(request.Grade.GradedId)
 	gradedName := ""
 	if request.Grade.IsHostGrade == true {
-		gradedProfileInfo, err := handler.profileClient.Get(ctx, &profile.GetRequest{Id: request.Grade.GradedId})
+		accommodationInfo, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: request.Grade.GradedId})
 		if err != nil {
 			return nil, err
 		}
-		gradedName = gradedProfileInfo.Profile.Username
+		gradedProfileInfo, err := handler.profileClient.Get(ctx, &profile.GetRequest{Id: accommodationInfo.Accommodation.Host.HostId})
+		if err != nil {
+			return nil, err
+		}
+		gradedId, err = primitive.ObjectIDFromHex(accommodationInfo.Accommodation.Host.HostId)
+		if err != nil {
+			return nil, err
+		}
+		gradedName = gradedProfileInfo.Profile.FirstName + " " + gradedProfileInfo.Profile.LastName
 	} else {
 		gradedAccommodationInfo, err := handler.accommodationClient.Get(ctx, &accommodation.GetAccommodationRequest{Id: request.Grade.GradedId})
 		if err != nil {
