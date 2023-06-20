@@ -15,8 +15,8 @@ const Accommodations = () => {
   const tomorrow = new Date(today);
   const start = new Date(today);
   const end = new Date(today);
-  start.setDate(tomorrow.getDate() + 4);
-  end.setDate(tomorrow.getDate() + 6);
+  start.setDate(tomorrow.getDate() + 12);
+  end.setDate(tomorrow.getDate() + 15);
   tomorrow.setDate(tomorrow.getDate() + 1);
   const [valueStart, setValueStart] = useState(dayjs(start));
   const [valueEnd, setValueEnd] = useState(dayjs(end));
