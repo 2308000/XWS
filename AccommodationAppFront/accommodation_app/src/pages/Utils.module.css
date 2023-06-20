@@ -261,3 +261,13 @@
   width: 150px;
   border-radius: 0.5rem;
 }
+.blueButtonSmall {
+  background-color: rgb(23, 72, 179);
+  color: white;
+  padding: 0.8rem;
+  border: 1px solid rgb(11, 63, 117);
+  font-weight: 500;
+  cursor: pointer;
+  width: 100px;
+  border-radius: 0.5rem;
+}

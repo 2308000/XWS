@@ -25,12 +25,15 @@ const MyPastReservations = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [openHost, setOpenHost] = useState(false);
+  const handleOpenHost = () => setOpenHost(true);
+  const handleCloseHost = () => setOpenHost(false);
   const [refresh, setRefresh] = useState(false);
   const [reservations, setReservations] = useState();
   const navigate = useNavigate();
   const [selectedAccommodation, setSelectedAccommodation] = useState();
   const gradeRef = useRef();
-
+  const gradeRefHost = useRef();
   useEffect(() => {
     fetch("http://localhost:8000/reservation/my/past", {
       method: "GET",
@@ -66,6 +69,26 @@ const MyPastReservations = () => {
       });
   };
 
+  const gradeHostHandler = () => {
+    fetch("http://localhost:8000/grade", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authCtx.token,
+      },
+      body: JSON.stringify({
+        guestId: authCtx.id,
+        gradedId: selectedAccommodation.accommodation.id,
+        value: gradeRefHost.current.value,
+        isHostGrade: true,
+      }),
+    })
+      .then((response) => response.json())
+      .then((actualData) => {
+        console.log(actualData);
+      });
+  };
+
   return (
     <div className={classes.body}>
       <div className={classes.home}>
@@ -82,6 +105,7 @@ const MyPastReservations = () => {
               <th>Number of guests</th>
               <th>Status</th>
               <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -94,7 +118,18 @@ const MyPastReservations = () => {
                 <td>{app.reservationStatus == 1 ? "Approved" : "Pending"}</td>
                 <td>
                   <button
-                    className={utils.blueButton}
+                    className={utils.blueButtonSmall}
+                    onClick={() => {
+                      setSelectedAccommodation(app);
+                      setOpenHost(true);
+                    }}
+                  >
+                    Grade Host
+                  </button>
+                </td>
+                <td>
+                  <button
+                    className={utils.blueButtonSmall}
                     onClick={() => {
                       setSelectedAccommodation(app);
                       setOpen(true);
@@ -108,6 +143,32 @@ const MyPastReservations = () => {
           </tbody>
         </table>
       </div>
+      <Modal
+        open={openHost}
+        onClose={handleCloseHost}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div>
+            <div className={classes.modalTitle}>Grade host</div>
+            <div className={classes.register}>
+              <div className={classes.grading}>
+                <div>
+                  <label>Grade: </label>
+                  <input className={utils.input} ref={gradeRefHost}></input>
+                </div>
+              </div>
+              <button
+                className={classes.reserveButton}
+                onClick={gradeHostHandler}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </Box>
+      </Modal>
       <Modal
         open={open}
         onClose={handleClose}
